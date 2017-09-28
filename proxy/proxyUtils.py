@@ -3,10 +3,11 @@ import json
 import utils.netUtils
 import re
 import socket
+import proxy.proxyThreadSingleton
 
 class proxyUtils:
 
-    localIp=None;
+
 
     @staticmethod
     def getProxyList(dict):
@@ -38,28 +39,31 @@ class proxyUtils:
                                 city = content[3].get_text().replace("\n", "").strip();
                                 serviceType = content[4].get_text();
                                 type = content[5].get_text();
-                                contentDict = {'ip': ip, 'port': port, 'city': city, 'serviceType': serviceType, 'type': type.lower()}
-                                isValid =proxyUtils.checkProxyStatus(contentDict);#检查是否有效
-                                #return ;
-                                if (isValid):
-                                    successProxyList.append(contentDict)
-                                else:
-                                    failProxyList.append(contentDict)
+                                contentDict = {'ip': ip, 'port': port, 'city': city, 'serviceType': serviceType, 'type': 'http'}
+                                #isValid =proxyUtils.checkProxyStatus(contentDict);#检查是否有效
+                                singLeton = proxy.proxyThreadSingleton.proxyThreadSingleton();
+                                singLeton.setData(contentDict)
+                                return ;
+                                #if (isValid):
+                                #    successProxyList.append(contentDict)
+                                #else:
+                                #    failProxyList.append(contentDict)
                     #请求网络写入数据库
 
                     dict['index'] = dict['index']+1;
-                    print(len(successProxyList));
-                    print(successProxyList);
-                    print('------------')
-                    print(len(failProxyList));
-                    print(failProxyList);
+                    #proxy.proxyThreadSingleton.proxyThreadSingleton().setSuccessList(None)
+                    #print(len(successProxyList));
+                    #print(successProxyList);
+                    #print('------------')
+                    #print(len(failProxyList));
+                    #print(failProxyList);
 
                     #proxyUtils.getProxyList(dict)
         elif (dict['reLoad']):
             dict['reLoad'] = False;
             proxyUtils.getProxyList(dict)
 
-
+    index=0;
 
     @staticmethod
     def checkProxyStatus(contentDict):
@@ -75,6 +79,7 @@ class proxyUtils:
         #print(dict)
         ut = utils.netUtils.netUtils();
         data = ut.getData(dict)
+
         if(data['isSuccess']):
             body=data['body'];
             soup = BeautifulSoup(body, "html.parser")
@@ -95,25 +100,4 @@ class proxyUtils:
             return ip[0]
         return None
 
-    @staticmethod
-    def getLocalIp():
-        if(proxyUtils.localIp is None):
-            dict = {
-                'url': 'http://2017.ip138.com/ic.asp',
-                'requestType': 'GET',
-                'isProxy': False,
-                'isHttps': False,
-                'reLoad': True,
-            }
-            data = utils.netUtils.netUtils().getData(dict)
-            #print("请求网络 ")
-            if(data['isSuccess']):
-                body = data['body'];
-                soup = BeautifulSoup(body, "html.parser")
-                nowplaying_movie = soup.find('center')
-                if (nowplaying_movie is not None):
-                    text = nowplaying_movie.get_text();
-                    ip = proxyUtils.drawIp(text)
-                    if(ip is not None):
-                        proxyUtils.localIp=ip
-        return proxyUtils.localIp;
+

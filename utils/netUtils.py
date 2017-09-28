@@ -58,7 +58,7 @@ class netUtils:
         isSuccess=True;
         httpCode=-1;
         try:
-            response = opener.open(url, form, 10000);
+            response = opener.open(url, form, 3000);
             data = response.read();
             httpCode=response.getcode();
             #print(httpCode==200)
@@ -67,7 +67,7 @@ class netUtils:
             opener.close();
         except Exception as err:
             isSuccess=False;
-            #print(err)
+            print(err)
 
 
 
