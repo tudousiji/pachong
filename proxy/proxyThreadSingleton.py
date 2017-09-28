@@ -32,19 +32,18 @@ class proxyThreadSingleton(object):
 
     def checkProxyStatus(self,contentDict):
         dict = {
-            'url': 'http://2017.ip138.com/ic.asp',
+            'url': 'http://httpbin.org/ip', #http://2017.ip138.com/ic.asp
             'requestType': 'GET',
             'isProxy': True,
             'isHttps': False,
             'proxyProtocol':contentDict['type'],
-            'proxyIp':contentDict['ip'],
-            'proxyPort':contentDict['port'],
+            'proxyIp':'60.23.39.219',#contentDict['ip'],
+            'proxyPort':'80',#contentDict['port'],
         }
-        #print(dict)
+
         ut = utils.netUtils.netUtils();
         data = ut.getData(dict)
-        #print(contentDict['ip'])
-        #print(data)
+        print(data)
         if(data['isSuccess']):
             body=data['body'];
             soup = BeautifulSoup(body, "html.parser")
@@ -53,6 +52,7 @@ class proxyThreadSingleton(object):
                 text=nowplaying_movie.get_text();
 
                 ip =self.drawIp(text)
+                print(ip)
                 if(ip is not None and ip !=self.getLocalIp()):
                     return True
         return False;
@@ -62,9 +62,8 @@ class proxyThreadSingleton(object):
 
 
     def handleData(self,contentDict):
-        print(dir(ThreadPoolExecutor))
         isValid=self.checkProxyStatus(contentDict);
-        print(contentDict['ip']+":"+contentDict['port']);
+        #print(contentDict['ip']+":"+contentDict['port']);
         print(isValid)
 
         print("------------------------")
@@ -80,7 +79,7 @@ class proxyThreadSingleton(object):
         proxyThreadSingleton.__lock.release()
 
     def __submitDataList(self):#请求数据map
-        print(self.__successList)
+
         return True
 
 

@@ -35,6 +35,7 @@ class netUtils:
         proxy=None;
         if ('isProxy' in parment and parment['isProxy']):
             isProxy=parment['isProxy'];
+            #print("isProxy:true")
             proxy = rq.ProxyHandler({parment['proxyProtocol']:parment['proxyIp']+":"+parment['proxyPort']});
 
         if(proxy == None):
@@ -52,6 +53,7 @@ class netUtils:
             isHeader=True;
 
         url=parment['url'];
+
         opener.addheaders=netUtils.getHeader(url);
         form = postData if requestType=='POST' else None;
 
