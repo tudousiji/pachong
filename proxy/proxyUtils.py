@@ -79,6 +79,7 @@ class proxyUtils:
 
     index=0;
 
+    #检查代理ip的状态
     @staticmethod
     def checkProxyStatus(contentDict):
         dict = {
@@ -114,7 +115,7 @@ class proxyUtils:
             return ip[0]
         return None
 
-
+    # 批量从服务器获取代理ip并检查代理ip的状态
     @staticmethod
     def checkProxyIp(dict=None):
         if(dict is None):
@@ -133,7 +134,7 @@ class proxyUtils:
         if (data['isSuccess'] is True):
             jsonObj=json.loads(data['body'])
             if(jsonObj['Code']==0):
-                failProxyIpList={}
+                failProxyIpList=[]
                 for items in jsonObj['data']:
                     dict={
                         'ip':items['ip'],
@@ -147,7 +148,15 @@ class proxyUtils:
                         }
                         failProxyIpList.append(failProxyIpDict);
                 if(len(failProxyIpList)>0):
-                    proxyUtils.updateFailProxyIp(failProxyIpList);
+                    dictList = {
+                        'url': 'http://mytaobaoke/index.php/api/Proxyip/updateFailProxyIp',
+                        'requestType': 'POST',
+                        'isProxy': False,
+                        'isHttps': False,
+                        'postData': json.dumps(failProxyIpList),
+                        'reLoad': True,
+                    }
+                    proxyUtils.updateFailProxyIp(dictList);
         elif dict['reLoad'] is True :
             dict['reLoad']=False;
             proxyUtils.checkProxyIp(dict);
@@ -155,24 +164,17 @@ class proxyUtils:
 
 
     @staticmethod
-    def updateFailProxyIp(dict):
+    def updateFailProxyIp(dictList):
 
-        dict = {
-            'url': 'http://mytaobaoke/index.php/api/Proxyip/updateFailProxyIp}',
-            'requestType': 'POST',
-            'isProxy': False,
-            'isHttps': False,
-            'postData':json.dumps(dict),
-            'reLoad': True,
-        }
+
 
         ut = utils.netUtils.netUtils();
-        data = ut.getData(dict)
+        data = ut.getData(dictList)
         if(data['isSuccess'] is True):
             jsonObj = json.loads(data['body'])
-            if (jsonObj['Code'] != 0 and dict['reLoad'] is True):
-                dict['reLoad'] = False;
+            if (jsonObj['Code'] != 0 and dictList['reLoad'] is True):
+                dictList['reLoad'] = False;
                 proxyUtils.checkProxyIp(dict);
         elif dict['reLoad'] is True:
-            dict['reLoad'] = False;
-            proxyUtils.checkProxyIp(dict);
+            dictList['reLoad'] = False;
+            proxyUtils.checkProxyIp(dictList);
