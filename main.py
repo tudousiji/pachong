@@ -70,15 +70,8 @@ pool = ThreadPoolExecutor(max_workers=50)  # 创建一个最大可容纳2个task
 
 
 
-dict = {
-            'url': 'http://www.xicidaili.com/nn/{0}',
-            'requestType': 'GET',
-            'isProxy': False,
-            'isHttps': False,
-            'index': 1,
-            'reLoad':True,
-        }
 
-data=proxy.proxyUtils.proxyUtils.getProxyList(dict);
+
+data=proxy.proxyUtils.proxyUtils.checkProxyIp();
 
 #proxy.proxyThreadSingleton.proxyThreadSingleton().getSingleton().aa();

@@ -6,11 +6,21 @@ import socket
 import proxy.proxyThreadSingleton
 
 class proxyUtils:
-
+    @staticmethod
+    def getProxyList():
+        dict = {
+            'url': 'http://www.xicidaili.com/nn/{0}',
+            'requestType': 'GET',
+            'isProxy': False,
+            'isHttps': False,
+            'index': 1,
+            'reLoad': True,
+        }
+        proxyUtils.proxyList(dict);
 
 
     @staticmethod
-    def getProxyList(dict):
+    def proxyList(dict):
 
         #contentDict = {'ip': '113.120.132.122', 'port': '8118', 'type': 'http'}
         #proxyUtils.checkProxyStatus(contentDict);
@@ -59,6 +69,10 @@ class proxyUtils:
                     #print(failProxyList);
 
                     proxyUtils.getProxyList(dict)
+                else:
+                    index=0
+            else:
+                index=0
         elif (dict['reLoad']):
             dict['reLoad'] = False;
             proxyUtils.getProxyList(dict)
@@ -101,3 +115,64 @@ class proxyUtils:
         return None
 
 
+    @staticmethod
+    def checkProxyIp(dict=None):
+        if(dict is None):
+            dict = {
+                'url': 'http://mytaobaoke/index.php/api/Proxyip/getNextProxyIpList?page={0}',
+                'requestType': 'GET',
+                'isProxy': False,
+                'isHttps': False,
+                'index': 1,
+                'reLoad': True,
+            }
+        url = dict['url'].format(dict['index'])
+        dict['url'] = url;
+        ut = utils.netUtils.netUtils();
+        data = ut.getData(dict)
+        if (data['isSuccess'] is True):
+            jsonObj=json.loads(data['body'])
+            if(jsonObj['Code']==0):
+                failProxyIpList={}
+                for items in jsonObj['data']:
+                    dict={
+                        'ip':items['ip'],
+                        'port': items['port'],
+                        'type':'http' if items['http_type']==0 else 'https',
+                    }
+                    isValid = proxy.proxyThreadSingleton.proxyThreadSingleton().checkProxyStatus(dict)
+                    if(isValid is False):
+                        failProxyIpDict={
+                            'id':items['id']
+                        }
+                        failProxyIpList.append(failProxyIpDict);
+                if(len(failProxyIpList)>0):
+                    proxyUtils.updateFailProxyIp(failProxyIpList);
+        elif dict['reLoad'] is True :
+            dict['reLoad']=False;
+            proxyUtils.checkProxyIp(dict);
+        return True;
+
+
+    @staticmethod
+    def updateFailProxyIp(dict):
+
+        dict = {
+            'url': 'http://mytaobaoke/index.php/api/Proxyip/updateFailProxyIp}',
+            'requestType': 'POST',
+            'isProxy': False,
+            'isHttps': False,
+            'postData':json.dumps(dict),
+            'reLoad': True,
+        }
+
+        ut = utils.netUtils.netUtils();
+        data = ut.getData(dict)
+        if(data['isSuccess'] is True):
+            jsonObj = json.loads(data['body'])
+            if (jsonObj['Code'] != 0 and dict['reLoad'] is True):
+                dict['reLoad'] = False;
+                proxyUtils.checkProxyIp(dict);
+        elif dict['reLoad'] is True:
+            dict['reLoad'] = False;
+            proxyUtils.checkProxyIp(dict);
