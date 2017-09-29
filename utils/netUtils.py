@@ -4,87 +4,202 @@ import http.cookiejar
 import chardet
 import urllib.response
 import urllib.error
-
+import requests
 
 typeCode = sys.getfilesystemencoding()
+
+
 class netUtils:
     @staticmethod
     def getData(parment):
-        if( type(parment) != dict):
-            print("类型错误:"+type(parment) );
-            return ;
+        return netUtils.getRequests(parment);
+
+    @staticmethod
+    def getRequests(parment):
+        if (type(parment) != dict):
+            print("类型错误:" + type(parment));
+            return;
         if ('url' not in parment):
             print("url 不存在");
-            return ;
-        requestType='GET';
-        postData="";
-        if('requestType' in parment):
-            requestType=parment['requestType'].upper();
-        if(requestType == 'GET'):
-            #print("GET")
+            return;
+        requestType = 'GET';
+        postData = "";
+        if ('requestType' in parment):
+            requestType = parment['requestType'].upper();
+        if (requestType == 'GET'):
+            # print("GET")
             pass
         else:
             if ('postData' in parment):
-                postData=parment['postData']
-                #print("POST")
+                postData = parment['postData']
 
-        cookie = http.cookiejar.CookieJar()
-        rq = urllib.request;
-        rq.HTTPCookieProcessor(cookie);
-        isProxy=False;
-        proxy=None;
+        isProxy = False;
+        proxies = None
         if ('isProxy' in parment and parment['isProxy']):
-            isProxy=parment['isProxy'];
-            #print("isProxy:true")
-            proxy = rq.ProxyHandler({parment['proxyProtocol']:parment['proxyIp']+":"+parment['proxyPort']});
+            isProxy = True
+            proxies = {parment['proxyProtocol']:  "http://" + parment['proxyIp'] + ":" + parment[
+                'proxyPort']}
 
-        if(proxy == None):
-            opener = rq.build_opener();
-        else:
-            opener = rq.build_opener(proxy);
+        isHeader = False;
+        if ('isHeader' in parment):
+            isHeader = True;
 
-        isCookie=False;
-        if ('isCookie' in parment and parment['isCookie']):
-            isCookie=True;
-            rq.build_opener(rq.HTTPCookieProcessor(parment['isCookie']));
+        isCookie = False;
+        putCookie=None;
+        if ('isCookie' in parment and parment['isCookie'] and parment['putCookie'] is not None):
+            isCookie = True;
+            putCookie=parment['putCookie'];
 
-        isHeader=False;
-        if('isHeader' in parment):
-            isHeader=True;
-
-        url=parment['url'];
-
-        opener.addheaders=netUtils.getHeader(url);
-        form = postData if requestType=='POST' else None;
-
+        # print(parment['url'])
+        r=None
         isSuccess=True;
-        httpCode=-1;
+        url=parment['url'];
         try:
-            response = opener.open(url, form, 3000);
-            data = response.read();
-            httpCode=response.getcode();
-            #print(httpCode==200)
-            charset = chardet.detect(data)['encoding'];
-            body = data.decode(charset, 'ignore');
-            opener.close();
+            if (requestType == 'GET'):
+                r = requests.get(url=url, proxies=(proxies if isProxy else None),
+                                 headers=netUtils.getHeaderDict(parment['url']), timeout=60,cookies=(putCookie if isCookie and putCookie  is not None else None))
+            else:
+                form = postData if requestType == 'POST' else None;
+                #print(form)
+                r = requests.post(url=url, data=form, proxies=(parment['isProxy'] if isProxy else None),
+                                  headers=(parment['isProxy'] if netUtils.getHeaderDict(parment['url']) else None),
+                                  timeout=60,cookies=(putCookie if isCookie and putCookie  is not None else None))
+            #print(help(r.headers()))
         except Exception as err:
-            isSuccess=False;
+            isSuccess = False;
+            #print(dir(err));
             print(err)
 
 
 
-        if(isSuccess and httpCode==200):
-            content={
-                'body':body,
-                'isProxy':isProxy,
-                'postData':postData,
-                'requestType':requestType,
-                'url':url,
-                'isHeader':isHeader,
-                'header':response.info(),
-                'isCookie':isCookie,
-                'cookie':cookie,
-                'isSuccess':isSuccess
+        if(r is not None):
+            code = r.status_code;
+            #print(code)
+            #print(r.text )
+            if(code==200):
+                if (r.encoding is not None ):
+                    text = r.text;
+                    body = text.encode(r.encoding).decode(r.apparent_encoding);
+                    #print(text)
+                else:
+                    body = r.text
+
+            else:
+                isSuccess = False;
+            r.close()
+        else:
+            isSuccess = False;
+
+        if(isSuccess):
+            content = {
+                'body': body,
+                'isProxy': isProxy,
+                'postData': postData,
+                'requestType': requestType,
+                'url': url,
+                'isHeader': isHeader,
+                'header': r.headers,
+                'isCookie': isCookie,
+                'get_cookie': r.cookies,
+                'put_cookie': 1,
+                'isSuccess': isSuccess
+            }
+        else:
+            content = {
+                'isProxy': isProxy,
+                'postData': postData,
+                'requestType': requestType,
+                'url': url,
+                'isHeader': isHeader,
+                'isCookie': isCookie,
+                'put_cookie': 1,
+                'isSuccess': isSuccess
+            }
+
+        if (r is not None):
+            r.close();
+
+        return content;
+
+
+
+
+    @staticmethod
+    def getUrllibData(parment):
+        if (type(parment) != dict):
+            print("类型错误:" + type(parment));
+            return;
+        if ('url' not in parment):
+            print("url 不存在");
+            return;
+        requestType = 'GET';
+        postData = "";
+        if ('requestType' in parment):
+            requestType = parment['requestType'].upper();
+        if (requestType == 'GET'):
+            # print("GET")
+            pass
+        else:
+            if ('postData' in parment):
+                postData = parment['postData']
+                # print("POST")
+
+        cookie = http.cookiejar.CookieJar()
+        rq = urllib.request;
+        rq.HTTPCookieProcessor(cookie);
+        isProxy = False;
+        proxy = None;
+        if ('isProxy' in parment and parment['isProxy']):
+            isProxy = parment['isProxy'];
+            # print("isProxy:true")
+            proxy = rq.ProxyHandler({parment['proxyProtocol']: parment['proxyIp'] + ":" + parment['proxyPort']});
+
+        if (proxy == None):
+            opener = rq.build_opener();
+        else:
+            opener = rq.build_opener(proxy);
+
+        isCookie = False;
+        if ('isCookie' in parment and parment['isCookie']):
+            isCookie = True;
+            rq.build_opener(rq.HTTPCookieProcessor(parment['isCookie']));
+
+        isHeader = False;
+        if ('isHeader' in parment):
+            isHeader = True;
+
+        url = parment['url'];
+
+        opener.addheaders = netUtils.getHeaderList(url);
+        form = postData if requestType == 'POST' else None;
+
+        isSuccess = True;
+        httpCode = -1;
+        try:
+            response = opener.open(url, form, 3000);
+            data = response.read();
+            httpCode = response.getcode();
+            # print(httpCode==200)
+            charset = chardet.detect(data)['encoding'];
+            body = data.decode(charset, 'ignore');
+            print(body)
+            opener.close();
+        except Exception as err:
+            isSuccess = False;
+            print(err)
+
+        if (isSuccess and httpCode == 200):
+            content = {
+                'body': body,
+                'isProxy': isProxy,
+                'postData': postData,
+                'requestType': requestType,
+                'url': url,
+                'isHeader': isHeader,
+                'header': response.info(),
+                'isCookie': isCookie,
+                'cookie': cookie,
+                'isSuccess': isSuccess
             }
         else:
             content = {
@@ -97,13 +212,11 @@ class netUtils:
                 'cookie': cookie,
                 'isSuccess': isSuccess
             }
-
-
         return content;
 
     @staticmethod
-    def getHeader(url):
-        urlInfo= urllib.request.urlparse(url);
+    def getHeaderList(url):
+        urlInfo = urllib.request.urlparse(url);
         headers = [
             ('Host', urlInfo.hostname),
             ('User-Agent', ' Mozilla/5.0 (Windows NT 6.1; WOW64; rv:43.0) Gecko/20100101 Firefox/43.0'),
@@ -114,4 +227,14 @@ class netUtils:
             ('Connection', ' keep-alive'),
             ('Cache-Control', ' max-age=0'),
         ]
+        return headers;
+
+    @staticmethod
+    def getHeaderDict(url):
+        urlInfo = urllib.request.urlparse(url);
+        headers = {
+            'Host': urlInfo.hostname,
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/57.0.2987.133 Safari/537.36',
+           "Content-Type": "application/x-www-form-urlencoded"
+        }
         return headers;

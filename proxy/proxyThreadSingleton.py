@@ -2,8 +2,9 @@ import threading
 from concurrent.futures import ThreadPoolExecutor
 import utils.netUtils
 from bs4 import BeautifulSoup
-import proxy.proxyUtils as proxyUtils
+import proxy.proxyUtils
 import re
+import json
 
 class proxyThreadSingleton(object):
     __instant = None;
@@ -12,7 +13,7 @@ class proxyThreadSingleton(object):
     __ThreadCount=100
     localIp = None;
     __successList=[];
-    __maxSuccessListCount=10;
+    __maxSuccessListCount=1;
 
     def __new__(self):
         if (proxyThreadSingleton.__instant == None):
@@ -32,18 +33,18 @@ class proxyThreadSingleton(object):
 
     def checkProxyStatus(self,contentDict):
         dict = {
-            'url': 'http://httpbin.org/ip', #http://2017.ip138.com/ic.asp
+            'url': 'http://2017.ip138.com/ic.asp', #http://2017.ip138.com/ic.asp  http://httpbin.org/ip
             'requestType': 'GET',
             'isProxy': True,
             'isHttps': False,
             'proxyProtocol':contentDict['type'],
-            'proxyIp':'60.23.39.219',#contentDict['ip'],
-            'proxyPort':'80',#contentDict['port'],
+            'proxyIp':contentDict['ip'],#'116.196.88.44',#contentDict['ip'],
+            'proxyPort':contentDict['port']#'808',#contentDict['port'],
         }
 
         ut = utils.netUtils.netUtils();
         data = ut.getData(dict)
-        print(data)
+        #print(data)
         if(data['isSuccess']):
             body=data['body'];
             soup = BeautifulSoup(body, "html.parser")
@@ -52,26 +53,36 @@ class proxyThreadSingleton(object):
                 text=nowplaying_movie.get_text();
 
                 ip =self.drawIp(text)
-                print(ip)
+                #print(ip)
                 if(ip is not None and ip !=self.getLocalIp()):
                     return True
         return False;
 
     def setData(self,contentDict):
         self.__pool.submit(self.handleData, (contentDict))
+        #print(dir(self.__pool.map))
+        #print(self.__pool.map)
 
 
     def handleData(self,contentDict):
+
+
         isValid=self.checkProxyStatus(contentDict);
         #print(contentDict['ip']+":"+contentDict['port']);
-        print(isValid)
+        #print(isValid)
+        if(isValid):
+            self.setSuccessList(contentDict);
 
-        print("------------------------")
+        #print("------------------------")
 
 
     def setSuccessList(self,contentDict):
         proxyThreadSingleton.__lock.acquire();
         if(contentDict is not None):
+            if (contentDict['type'] == 'http'):
+                contentDict['type'] = 0;
+            else:
+                contentDict['type'] = 1;
             self.__successList.append(contentDict)
         if(len(self.__successList)>=self.__maxSuccessListCount or contentDict is None):
             if(self.__submitDataList()  or contentDict is None ):
@@ -79,9 +90,42 @@ class proxyThreadSingleton(object):
         proxyThreadSingleton.__lock.release()
 
     def __submitDataList(self):#请求数据map
+        print("发起请求网络")
+        #print()
 
+        postDict={
+            'data':json.dumps(self.__successList),
+        }
+        dict = {
+            'url': 'http://mytaobaoke/index.php/api/Proxyip/addProxyIp',
+            'requestType': 'POST',
+            'isProxy': False,
+            'isHttps': False,
+            'postData':postDict,
+            'reLoad': True,
+        }
+        data = utils.netUtils.netUtils.getData(dict)
+        #print(data)
         return True
 
+    #测试方法
+    def aa(self):
+        dict={
+            'port':20,
+            'ip':'21.32.123',
+            'type':'0'
+        }
+        self.setDictList(dict)
+        self.setDictList(dict)
+        self.__submitDataList();
+
+    # 测试方法
+    def setDictList(self,dict):
+        if(dict['type'] == 'http'):
+            dict['type']=0;
+        else:
+            dict['type'] = 1;
+        self.__successList.append(dict)
 
     def getLocalIp(self):
         if (self.localIp is None):

@@ -1,7 +1,9 @@
 import socket;
 import proxy.proxyThreadSingleton
 import utils
-
+import requests
+import utils.netUtils
+import json
 
 from concurrent.futures import ThreadPoolExecutor
 import time
@@ -13,13 +15,34 @@ dict2 = {
             'isProxy': True,
             'isHttps': False,
             'proxyProtocol':'http',
-            'proxyIp':'60.23.39.219',
-            'proxyPort':'80',
+            'proxyIp':'116.196.88.44',
+            'proxyPort':'808',
         }
 
 #ut = utils.netUtils.netUtils();
-#data = ut.getData(dict)
-#print(data)
+#data = ut.getData(dict2)
+proxies = { "http": "http://116.196.88.44:808" }
+headers = {
+    'User-Agent':'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/57.0.2987.133 Safari/537.36'
+}
+
+head = {
+            'Host', '2017.ip138.com',
+            'User-Agent', ' Mozilla/5.0 (Windows NT 6.1; WOW64; rv:43.0) Gecko/20100101 Firefox/43.0',
+            'Accept', ' text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+            'Accept-Language', ' zh-CN,zh;q=0.8,en-US;q=0.5,en;q=0.3',
+            'Accept-Encoding', 'deflate',
+            'Referer', ' http://www.baidu.com',
+            'Connection', ' keep-alive',
+            'Cache-Control', ' max-age=0',
+}
+
+#r = requests.get(url=dict2['url'], proxies=proxies,headers=headers,timeout=60)
+#print(r.encoding)
+#print(r.text)#r.text.encode(r.encoding).decode('gbk')
+#r.close()
+#data = utils.netUtils.netUtils.getData(dict2);
+#print(data);
 
 
 #print(proxy.proxyUtils.proxyUtils.getLocalIp());
@@ -27,27 +50,22 @@ dict2 = {
 
 
 
-s1= proxy.proxyThreadSingleton.proxyThreadSingleton();
-s2= proxy.proxyThreadSingleton.proxyThreadSingleton().getSingleton();
-print(s1)
-print(s2)
-exit;
 
 def return_future_result(message):
     #print(threading.Thread().getName())
     #time.sleep(10)
     #print("结束"+message)
-    print(proxy.proxyThreadSingleton.proxyThreadSingleton())
-    print(proxy.proxyThreadSingleton.proxyThreadSingleton().getSingleton())
+    #print(proxy.proxyThreadSingleton.proxyThreadSingleton())
+    #print(proxy.proxyThreadSingleton.proxyThreadSingleton().getSingleton())
     return message
 pool = ThreadPoolExecutor(max_workers=50)  # 创建一个最大可容纳2个task的线程池
-for index in range(100):
-    pool.submit(return_future_result, ("hello1"))  # 往线程池里面加入一个task
+#for index in range(100):
+    #pool.submit(return_future_result, ("hello1"))  # 往线程池里面加入一个task
 
 #print(future1.done())  # 判断task1是否结束
 #time.sleep(3)
 #print(dir(pool))
-print("继续呀")
+
 
 
 
@@ -60,4 +78,7 @@ dict = {
             'index': 1,
             'reLoad':True,
         }
+
 data=proxy.proxyUtils.proxyUtils.getProxyList(dict);
+
+#proxy.proxyThreadSingleton.proxyThreadSingleton().getSingleton().aa();

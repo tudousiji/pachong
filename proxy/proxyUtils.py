@@ -39,11 +39,11 @@ class proxyUtils:
                                 city = content[3].get_text().replace("\n", "").strip();
                                 serviceType = content[4].get_text();
                                 type = content[5].get_text();
-                                contentDict = {'ip': ip, 'port': port, 'city': city, 'serviceType': serviceType, 'type': 'http'}
+                                contentDict = {'ip': ip, 'port': port, 'city': city, 'serviceType': serviceType, 'type':type}
                                 #isValid =proxyUtils.checkProxyStatus(contentDict);#检查是否有效
                                 singLeton = proxy.proxyThreadSingleton.proxyThreadSingleton();
                                 singLeton.setData(contentDict)
-                                return ;
+                                #return ;
                                 #if (isValid):
                                 #    successProxyList.append(contentDict)
                                 #else:
@@ -58,7 +58,7 @@ class proxyUtils:
                     #print(len(failProxyList));
                     #print(failProxyList);
 
-                    #proxyUtils.getProxyList(dict)
+                    proxyUtils.getProxyList(dict)
         elif (dict['reLoad']):
             dict['reLoad'] = False;
             proxyUtils.getProxyList(dict)
