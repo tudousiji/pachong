@@ -5,6 +5,7 @@ import chardet
 import urllib.response
 import urllib.error
 import requests
+import hashlib
 
 typeCode = sys.getfilesystemencoding()
 
@@ -49,6 +50,7 @@ class netUtils:
         if ('isCookie' in parment and parment['isCookie'] and parment['putCookie'] is not None):
             isCookie = True;
             putCookie=parment['putCookie'];
+
 
         # print(parment['url'])
         r=None
@@ -238,3 +240,14 @@ class netUtils:
            "Content-Type": "application/x-www-form-urlencoded"
         }
         return headers;
+
+
+
+    @staticmethod
+    def getTbkSign(cookie ,appKey,time,data):
+        data=cookie + "&" + time + "&"+ appKey+"&"+data
+        sign = hashlib.md5(data.encode('utf-8')).hexdigest();
+        #print(sign)
+        return sign
+
+

@@ -4,10 +4,12 @@ import utils
 import requests
 import utils.netUtils
 import json
+import time
 
 from concurrent.futures import ThreadPoolExecutor
 import time
 import threading
+import taobaoProbation.main
 
 dict2 = {
             'url': 'http://2017.ip138.com/ic.asp',
@@ -72,6 +74,8 @@ pool = ThreadPoolExecutor(max_workers=50)  # 创建一个最大可容纳2个task
 
 
 
-data=proxy.proxyUtils.proxyUtils.checkProxyIp();
+#data=proxy.proxyUtils.proxyUtils.checkProxyIp();
 
 #proxy.proxyThreadSingleton.proxyThreadSingleton().getSingleton().aa();
+
+#utils.netUtils.netUtils.getTbkSign("c9dde6bb0fcacccb62b744a349f815e4","12574478",str(int(round(time.time() * 1000))),'{"pNum":3,"pSize":10,"floorId":"393","qId":"","channel":"zonghe","refpid":"mm_10011550_0_0","spm":"a3126.8759693/b.zhrx","couponSrc":"temai","app_pvid":"201_10.179.66.211_807926_1506749535487","ctm":"spm-url:"}')
