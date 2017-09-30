@@ -2,14 +2,14 @@ from bs4 import BeautifulSoup
 import json
 import utils.netUtils
 import re
-import socket
+import config.config
 import proxy.proxyThreadSingleton
 
 class proxyUtils:
     @staticmethod
     def getProxyList():
         dict = {
-            'url': 'http://www.xicidaili.com/nn/{0}',
+            'url': config.config.getProxyList,
             'requestType': 'GET',
             'isProxy': False,
             'isHttps': False,
@@ -83,7 +83,7 @@ class proxyUtils:
     @staticmethod
     def checkProxyStatus(contentDict):
         dict = {
-            'url': 'http://2017.ip138.com/ic.asp',
+            'url': config.config.checkProxyStatusUrl,
             'requestType': 'GET',
             'isProxy': True,
             'isHttps': False,
@@ -120,7 +120,7 @@ class proxyUtils:
     def checkProxyIp(dict=None):
         if(dict is None):
             dict = {
-                'url': 'http://mytaobaoke/index.php/api/Proxyip/getNextProxyIpList?page={0}',
+                'url': config.config.getNextProxyIpList,
                 'requestType': 'GET',
                 'isProxy': False,
                 'isHttps': False,
@@ -149,7 +149,7 @@ class proxyUtils:
                         failProxyIpList.append(failProxyIpDict);
                 if(len(failProxyIpList)>0):
                     dictList = {
-                        'url': 'http://mytaobaoke/index.php/api/Proxyip/updateFailProxyIp',
+                        'url': config.config.updateFailProxyIp,
                         'requestType': 'POST',
                         'isProxy': False,
                         'isHttps': False,

@@ -5,6 +5,7 @@ from bs4 import BeautifulSoup
 import proxy.proxyUtils
 import re
 import json
+import config.config
 
 class proxyThreadSingleton(object):
     __instant = None;
@@ -33,7 +34,7 @@ class proxyThreadSingleton(object):
 
     def checkProxyStatus(self,contentDict):
         dict = {
-            'url': 'http://2017.ip138.com/ic.asp', #http://2017.ip138.com/ic.asp  http://httpbin.org/ip
+            'url': config.config.checkProxyStatusUrl, #http://2017.ip138.com/ic.asp  http://httpbin.org/ip
             'requestType': 'GET',
             'isProxy': True,
             'isHttps': False,
@@ -97,7 +98,7 @@ class proxyThreadSingleton(object):
             'data':json.dumps(self.__successList),
         }
         dict = {
-            'url': 'http://mytaobaoke/index.php/api/Proxyip/addProxyIp',
+            'url': config.config.addProxyIpUrl,
             'requestType': 'POST',
             'isProxy': False,
             'isHttps': False,
@@ -132,7 +133,7 @@ class proxyThreadSingleton(object):
             proxyThreadSingleton.__lock.acquire();
             if (self.localIp is None):
                 dict = {
-                    'url': 'http://2017.ip138.com/ic.asp',
+                    'url': config.config.checkProxyStatusUrl,
                     'requestType': 'GET',
                     'isProxy': False,
                     'isHttps': False,
