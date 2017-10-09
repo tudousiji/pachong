@@ -37,5 +37,5 @@ class darenCollector:
                 'postData': postDict,
                 'reLoad': True,
             }
-            data = utils.netUtils.netUtils.getData(dict2)
-            print(data)
+            data2 = utils.netUtils.netUtils.getData(dict2)
+            print(data2)
