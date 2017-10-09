@@ -46,7 +46,8 @@ class taobaokeUtils:
                 body = json.loads(jsonStr)
                 if (body is not None):
                     if (str(body['ret']).startswith("['FAIL_") is not True):
-                        print(type(body['data']['module']))
+                        pass
+                        #print(type(body['data']['module']))
                         #if(body['data'] is not None and type(body['data']['module']) is list and len(body['data']['module'])>0
                         #   and type(body['data']['module']['moduleData']) is list and
                          #          len(body['data']['module']['moduleData'])>0):

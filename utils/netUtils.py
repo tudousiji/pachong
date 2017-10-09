@@ -42,8 +42,12 @@ class netUtils:
                 'proxyPort']}
 
         isHeader = False;
+        header=None;
         if ('isHeader' in parment):
             isHeader = True;
+        if ('header' in parment):
+            header = parment['header']
+
 
         isCookie = False;
         putCookie=None;
@@ -59,12 +63,12 @@ class netUtils:
         try:
             if (requestType == 'GET'):
                 r = requests.get(url=url, proxies=(proxies if isProxy else None),
-                                 headers=netUtils.getHeaderDict(parment['url']), timeout=60,cookies=(putCookie if isCookie and putCookie  is not None else None))
+                                 headers=netUtils.getHeaderDict(parment['url'],header), timeout=60,cookies=(putCookie if isCookie and putCookie  is not None else None))
             else:
                 form = postData if requestType == 'POST' else None;
                 #print(form)
-                r = requests.post(url=url, data=form, proxies=(parment['isProxy'] if isProxy else None),
-                                  headers=(parment['isProxy'] if netUtils.getHeaderDict(parment['url']) else None),
+                r = requests.post(url=url, data=form, proxies=(proxies if isProxy else None),
+                                  headers=netUtils.getHeaderDict(parment['url'],header),
                                   timeout=60,cookies=(putCookie if isCookie and putCookie  is not None else None))
             #print(help(r.headers()))
         except Exception as err:
@@ -167,8 +171,11 @@ class netUtils:
             rq.build_opener(rq.HTTPCookieProcessor(parment['isCookie']));
 
         isHeader = False;
+        header=None;
         if ('isHeader' in parment):
             isHeader = True;
+        if('header' in parment):
+            header=parment['header']
 
         url = parment['url'];
 
@@ -232,13 +239,19 @@ class netUtils:
         return headers;
 
     @staticmethod
-    def getHeaderDict(url):
+    def getHeaderDict(url, b=None):
+
         urlInfo = urllib.request.urlparse(url);
         headers = {
             'Host': urlInfo.hostname,
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/57.0.2987.133 Safari/537.36',
-           "Content-Type": "application/x-www-form-urlencoded"
+            "Content-Type": "application/x-www-form-urlencoded",
+
         }
+        if(b is not  None and type(b)==dict and len(b)>0):
+            for x in b:
+                headers[x]=str(b[x])
+               # print(headers[x])
         return headers;
 
 
