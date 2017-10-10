@@ -10,6 +10,8 @@ class taobaokeUtils:
     taobaoToKen=[]
 
     def getUrl(self,cookie,page,cate):
+        if (cookie is None):
+            cookie = "";
         data = taobaoProbation.config.data.format(page,cate)
         times = str(int(round(time.time() * 1000)));
         sign = utils.netUtils.netUtils.getTbkSign(cookie, appConfig.appkey, times, data)
@@ -19,16 +21,15 @@ class taobaokeUtils:
 
 
     def handleDat(self,dict,page,cate):
+
         if(dict is None):
-            cookieArr = None;
-            cookiesDict = None;
-            if (len(taobaokeUtils.taobaoToKen) > 0):
-                index = random.randint(0, len(taobaokeUtils.taobaoToKen) - 1)
-                cookiesDict = taobaokeUtils.taobaoToKen[index];
-                cookieArr = dict['_m_h5_tk'].split('_')
+            cookies=self.getCookies();
+            cookiesStr = cookies['cookies'];
+            cookiesDict = cookies['putCookie'];
+
 
             dict = {
-                'url': self.getUrl(cookieArr[0] if cookieArr is not None else "", page, cate),
+                'url': self.getUrl(cookiesStr if cookiesStr is not None else "", page, cate),
                 'requestType': 'GET',
                 'isProxy': False,
                 'isHttps': False,
@@ -37,6 +38,36 @@ class taobaokeUtils:
             if (cookiesDict is not None):
                 dict['putCookie'] = cookiesDict
         self.getData(dict,page,cate);
+
+    #获取淘宝客cookies
+    @staticmethod
+    def getCookies():
+        if (len(taobaokeUtils.taobaoToKen) > 0):
+            index = random.randint(0, len(taobaokeUtils.taobaoToKen) - 1)
+            cookiesDict = taobaokeUtils.taobaoToKen[index];
+            cookieArr = cookiesDict['_m_h5_tk'].split('_')
+            dict = {
+                'cookies':cookieArr[0],
+                'putCookie':cookiesDict
+            }
+            return dict;
+        else:
+            cookie = {'_m_h5_tk': "",
+                      '_m_h5_tk_enc': ""}
+            dict = {
+                'cookies': None,
+                'putCookie': None
+            }
+            return dict
+
+    #设置cookies
+    @staticmethod
+    def putCookies(cookies):
+        cookie = {'_m_h5_tk': cookies['_m_h5_tk'],
+                  '_m_h5_tk_enc': cookies['_m_h5_tk_enc']}
+        taobaokeUtils.taobaoToKen.append(cookie)
+        return cookie
+
 
     def getData(self,dict,page,cate):
         data = utils.netUtils.netUtils.getData(dict);
@@ -59,9 +90,8 @@ class taobaokeUtils:
                     else:
                         dict['isCookie'] = True;
                         cookieArr = data['get_cookie']['_m_h5_tk'].split('_')
-                        cookie = {'_m_h5_tk': data['get_cookie']['_m_h5_tk'],
-                                  '_m_h5_tk_enc': data['get_cookie']['_m_h5_tk_enc']}
-                        taobaokeUtils.taobaoToKen.append(cookie)
+
+                        cookie = self.putCookies(data['get_cookie']);
                         #print(cookieArr[0])
                         if(dict['reLoad']):
                             dict['url'] = self.getUrl(cookieArr[0],page,cate);

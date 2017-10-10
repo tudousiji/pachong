@@ -1,4 +1,4 @@
 import daren.darenCollector
 
 
-daren.darenCollector.darenCollector().getDarenList();
+daren.darenCollector.darenCollector().getDaRenHomeUrl();
