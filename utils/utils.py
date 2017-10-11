@@ -1,3 +1,5 @@
+import utils.netUtils
+import json
 class utils:
     @staticmethod
     def replacePreGetBody(body,replace):
@@ -10,3 +12,20 @@ class utils:
             else:
                 body = body[body.index(replace) + len(replace):len(body) - 1];
         return body;
+
+
+    @staticmethod
+    def postDataForService(data,url):#data是字典等不是json字符
+        postDict = {
+            'data': json.dumps(dict),
+        }
+        dict = {
+            'url': url,
+            'requestType': 'POST',
+            'isProxy': False,
+            'isHttps': False,
+            'postData': postDict,
+            'reLoad': True,
+        }
+        data = utils.netUtils.netUtils.getData(dict)
+        utils.netUtils.netUtils.getData(dict)

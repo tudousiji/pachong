@@ -81,7 +81,7 @@ class netUtils:
         if(r is not None):
             code = r.status_code;
             #print(code)
-            print(r.text )
+            #print(r.text )
             if(code==200):
                 if (r.encoding is not None ):
                     text = r.text;
