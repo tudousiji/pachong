@@ -31,8 +31,7 @@ class utils:
             'postData': postDict,
             'reLoad': True,
         }
-        print(url)
-        print(postDict)
-        netUtils.netUtils.getData(dict)
+
+        return netUtils.netUtils.getData(dict)
         #data = utils.netUtils.netUtils.getData(dict)
         #utils.netUtils.netUtils.getData(dict)

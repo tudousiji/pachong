@@ -97,7 +97,7 @@ class taobaoTryUtils:
                             reportId = items['reportId'];
                             title=items['title'];
                             print(" title:"+title+" cate:"+str(taobaoTry.config.cateList[index])+" page:"+str(page)+" itemId:"+itemId+" reportId:"+reportId+" url:"+dict['url'])
-                            self.getItemData(None,reportId,itemId)
+                            self.getItemData(None,cate,reportId,itemId)
                         if(len(effectiveList)!=len(list)):
                             dict['reLoad'] = True;
                             nextIndex = index + 1;
@@ -167,7 +167,7 @@ class taobaoTryUtils:
         #print(url)
         return url;
 
-    def getItemData(self,dict,reportId,itemId):
+    def getItemData(self,dict,cate,reportId,itemId):
         cookies = utils.taobaokeUtils.taobaokeUtils.getCookies();
         cookiesStr = cookies['cookies'];
         cookiesDict = cookies['putCookie'];
@@ -189,8 +189,8 @@ class taobaoTryUtils:
         if (data['isSuccess']):
             if (data['body'] is not None):
                 jsonStr = utils.utils.utils.replacePreGetBody(data['body'],'mtopjsonp8(')
-                print(dict['url'])
-                print(jsonStr)
+                #print(dict['url'])
+                #print(jsonStr)
                 body = json.loads(jsonStr)
                 if (body is not None and str(body['ret']).startswith("['FAIL_") is not True and len(body['data']['module'][0]['moduleData'])>0):
                         pass#服务器上发数据
@@ -200,27 +200,28 @@ class taobaoTryUtils:
                             'data':datas,
                             'itemId':datas['tryItemId'],
                             'reportId':datas['reportId'],
+                            'cate':cate
                         }
                         #print(data)
                         statusStr = utils.utils.utils.postDataForService(dict,config.config.addTaobaoTryUrl)
-                        print(statusStr)
-                        status =json.loads(statusStr)
-                        if(status['Code']==0):
+                        #print(statusStr)
+                        status =json.loads(statusStr['body'])
+                        if(statusStr['isSuccess'] and status['Code']==0):
                             print("提交服务器成功")
                         else:
                             print("提交服务器失败")
                         print("---------------")
 
                 else:
-                    self.getItemDataReLoad(data,dict, reportId, itemId)
+                    self.getItemDataReLoad(data,dict,cate, reportId, itemId)
             else:
-                self.getItemDataReLoad(data,dict, reportId, itemId)
+                self.getItemDataReLoad(data,dict,cate, reportId, itemId)
         else:
-            self.getItemDataReLoad(data,dict, reportId, itemId)
+            self.getItemDataReLoad(data,dict,cate, reportId, itemId)
 
 
     #单条内容获取失败重试
-    def getItemDataReLoad(self,data,dict,id,itemId):
+    def getItemDataReLoad(self,data,dict,cate,id,itemId):
         if (dict.get('cookiesInfoDict')):
             if (dict.get('cookiesInfoDict').get('index')):
                 utils.taobaokeUtils.taobaokeUtils.reMoveCookies(dict['cookiesInfoDict']['index'])
@@ -237,7 +238,7 @@ class taobaoTryUtils:
             dict['url'] = self.getItemUrl(cookiesStr if cookiesStr is not None else "", id, itemId);
             dict['putCookie'] = cookiesDict
             dict['reLoad'] = False
-            self.getItemData(dict, id, itemId);
+            self.getItemData(dict,cate, id, itemId);
 
 
     def getData(self,dict,page,cate):
