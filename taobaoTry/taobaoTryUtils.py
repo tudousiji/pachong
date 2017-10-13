@@ -98,7 +98,7 @@ class taobaoTryUtils:
                             title=items['title'];
                             print(" title:"+title+" cate:"+str(taobaoTry.config.cateList[index])+" page:"+str(page)+" itemId:"+itemId+" reportId:"+reportId+" url:"+dict['url'])
                             self.getItemData(None,cate,reportId,itemId)
-                        if(len(effectiveList)!=len(list)):
+                        if(len(effectiveList['data'])!=len(list)):
                             dict['reLoad'] = True;
                             nextIndex = index + 1;
                             if (len(taobaoTry.config.cateList) > nextIndex):
