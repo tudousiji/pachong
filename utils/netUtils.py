@@ -91,6 +91,7 @@ class netUtils:
                     body = r.text
 
             else:
+                print(r.text)
                 isSuccess = False;
             r.close()
         else:

@@ -5,6 +5,7 @@ updateFailProxyIp=serviceHost+'index.php/api/Proxyip/updateFailProxyIp';#更新�
 getNextProxyIpList=serviceHost+'index.php/api/Proxyip/getNextProxyIpList?page={0}'
 addDarenUrl=serviceHost+'index.php/api/Daren/addDaRenUrlForList';#添加达人列表
 getDaRenHomeUrl=serviceHost+'index.php/api/Daren/getDaRenUrl';#获取达人首页地址
-addTaobaoTryUrl=serviceHost+'index.php/api/Probation/addTaobaoProbation';#增加试用数据
+addTaobaoTryUrl=serviceHost+'index.php/api/Tryout/addTaobaoTry';#增加试用数据
+checkEffectiveTaobaoTryIdListUrl=serviceHost+'index.php/api/Tryout/checkEffectiveTaobaoTryIdListUrl';#增加试用数据
 getProxyList='http://www.xicidaili.com/nn/{0}'
 appkey='12574478';

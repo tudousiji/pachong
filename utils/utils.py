@@ -1,5 +1,7 @@
-import utils.netUtils
+import utils.netUtils as netUtils
 import json
+
+
 class utils:
     @staticmethod
     def replacePreGetBody(body,replace):
@@ -19,7 +21,7 @@ class utils:
     @staticmethod
     def postDataForService(data,url):#data是字典等不是json字符
         postDict = {
-            'data': json.dumps(dict),
+            'data': json.dumps(data),
         }
         dict = {
             'url': url,
@@ -29,5 +31,8 @@ class utils:
             'postData': postDict,
             'reLoad': True,
         }
-        data = utils.netUtils.netUtils.getData(dict)
-        utils.netUtils.netUtils.getData(dict)
+        print(url)
+        print(postDict)
+        netUtils.netUtils.getData(dict)
+        #data = utils.netUtils.netUtils.getData(dict)
+        #utils.netUtils.netUtils.getData(dict)
