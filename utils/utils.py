@@ -7,9 +7,11 @@ class utils:
             body=body.strip();
             #print(body[len(body)-2])
             #print(len(body))
-            if(body.rfind(';')>=0):
+            if(body.rfind(';')==len(body)-1):
+                #print("是;")
                 body = body[body.index(replace) + len(replace):len(body) - 2];
-            else:
+            elif (body.rfind(')')==len(body)-1):
+                #print("是)")
                 body = body[body.index(replace) + len(replace):len(body) - 1];
         return body;
 

@@ -47,11 +47,12 @@ class taobaoTryUtils:
     def handlePcTryList(self,dict,index=0,page=1):
         if (dict is None):
 
-            cate=taobaoTry.config.taobaoTryList[index];
-            print("cate:"+cate)
+            cate=taobaoTry.config.cateList[index];
+            indexStr=str(index);
+            #print("cate:"+indexStr)
 
             dict = {
-                'url': taobaoTry.config.taobaoTryList.format(cate),
+                'url': taobaoTry.config.taobaoTryList.format(cate,page),
                 'requestType': 'GET',
                 'isProxy': False,
                 'isHttps': False,
@@ -62,22 +63,50 @@ class taobaoTryUtils:
 
 
     def parsePcTaobaoTryList(self,dict,index,page):
-        print("url:"+dict['url'])
+        #print("url:"+dict['url'])
+        cate = taobaoTry.config.cateList[index];
+        dict['url']=taobaoTry.config.taobaoTryList.format(cate,page);
         data = utils.netUtils.netUtils().getData(dict)
         if (data['isSuccess']):
             soup = BeautifulSoup(data['body'], "html.parser")
             content = soup.find('div', class_="tb-try-pg-report-list")
             item_list=content.find_all('div',class_="report-item");
-            for items in item_list:
-                #report_item = items.find('div', class_="report-item");
-                report_item_wrap=items.find('a',class_="report-item-wrap")
-                href = report_item_wrap['href']
-                result = urllib.parse.urlparse(href)
-                params = urllib.parse.parse_qs(result.query, True)
-                itemId = params['itemId'][0];
-                reportId= params['reportId'][0]
-                print("itemId:"+itemId+" reportId:"+reportId)
-                self.getItemData(None,reportId,itemId)
+            if(len(item_list)>0):
+                for items in item_list:
+                    #report_item = items.find('div', class_="report-item");
+                    report_item_wrap=items.find('a',class_="report-item-wrap")
+                    title=report_item_wrap.find('span',class_="writer").find('span',class_="title")
+
+                    href = report_item_wrap['href']
+                    result = urllib.parse.urlparse(href)
+                    params = urllib.parse.parse_qs(result.query, True)
+                    itemId = params['itemId'][0];
+                    reportId= params['reportId'][0]
+                    print(" title:"+title.getText()+" cate:"+str(taobaoTry.config.cateList[index])+" page:"+str(page)+" itemId:"+itemId+" reportId:"+reportId+" url:"+dict['url'])
+                    self.getItemData(None,reportId,itemId)
+
+                nextPage = page + 1
+                print(dict['url'] + "采集成功，下一页:" + str(nextPage));
+                dict['reLoad'] = True;
+                self.parsePcTaobaoTryList(dict, index, nextPage)
+            else:#下一个列表
+                dict['reLoad'] = True;
+                nextIndex=index+1;
+                if(len(taobaoTry.config.cateList)>nextIndex):
+                    print(dict['url'] + "采集下一个分类:"+str(nextIndex))
+                    self.parsePcTaobaoTryList(dict, nextIndex, 1)
+                else:
+                    print("列表采集结束")
+        else:
+            if(dict['reLoad']):
+                print(dict['url']+"采集失败，重试中")
+                dict['reLoad']=False;
+                self.parsePcTaobaoTryList(dict,index,page)
+            else:
+                nextPage=page+1
+                print(dict['url'] + "采集失败，下一页:"+str(nextPage));
+                dict['reLoad'] = True;
+                self.parsePcTaobaoTryList(dict, index,nextPage )
 
 
 
@@ -113,6 +142,8 @@ class taobaoTryUtils:
         if (data['isSuccess']):
             if (data['body'] is not None):
                 jsonStr = utils.utils.utils.replacePreGetBody(data['body'],'mtopjsonp8(')
+                print(jsonStr)
+                print("---------------")
                 body = json.loads(jsonStr)
                 if (body is not None):
                     if (str(body['ret']).startswith("['FAIL_") is not True):
@@ -123,21 +154,24 @@ class taobaoTryUtils:
                             'itemId':data['tryItemId'],
                             'tryId':data['reportId'],
                         }
-                        print(data)
+                        #print(data)
                         #utils.utils.utils.postDataForService(data,config.config.addTaobaoTryUrl)
                     else:
                         if (dict.get('cookiesInfoDict')):
                             if (dict.get('cookiesInfoDict').get('index')):
-                                utils.taobaokeUtils.reMoveCookies(dict['cookiesInfoDict']['index'])
+                                utils.taobaokeUtils.taobaokeUtils.reMoveCookies(dict['cookiesInfoDict']['index'])
 
                         dict['isCookie'] = True;
-                        cookieArr = data['get_cookie']['_m_h5_tk'].split('_')
+                        #cookieArr = data['get_cookie']['_m_h5_tk'].split('_')
 
-                        cookie = utils.taobaokeUtils.taobaokeUtils.putCookies(data['get_cookie']);
+                        utils.taobaokeUtils.taobaokeUtils.putCookies(data['get_cookie']);
+                        cookies = utils.taobaokeUtils.taobaokeUtils.getCookies();
+                        cookiesStr = cookies['cookies'];
+                        cookiesDict = cookies['putCookie'];
                         # print(cookieArr[0])
                         if (dict['reLoad']):
-                            dict['url'] = self.getItemUrl(cookieArr[0], id, itemId);
-                            dict['putCookie'] = cookie
+                            dict['url'] = self.getItemUrl(cookiesStr if cookiesStr is not None else "", id, itemId);
+                            dict['putCookie'] = cookiesDict
                             dict['reLoad'] = False
                             self.getItemData(dict, id,itemId);
 
