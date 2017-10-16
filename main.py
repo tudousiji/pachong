@@ -1,6 +1,7 @@
 
 from concurrent.futures import ThreadPoolExecutor
-import taobaoTry.main
+#import taobaoTry.main
+import keyWord.main
 
 dict2 = {
             'url': 'http://2017.ip138.com/ic.asp',
