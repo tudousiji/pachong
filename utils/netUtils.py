@@ -108,7 +108,7 @@ class netUtils:
                 'header': r.headers,
                 'isCookie': isCookie,
                 'get_cookie': r.cookies,
-                'put_cookie': 1,
+                'put_cookie': putCookie,
                 'isSuccess': isSuccess
             }
         else:
@@ -117,9 +117,10 @@ class netUtils:
                 'postData': postData,
                 'requestType': requestType,
                 'url': url,
+                'get_cookie': None,
                 'isHeader': isHeader,
                 'isCookie': isCookie,
-                'put_cookie': 1,
+                'put_cookie': putCookie,
                 'isSuccess': isSuccess
             }
 

@@ -205,12 +205,15 @@ class taobaoTryUtils:
                         #print(data)
                         statusStr = utils.utils.utils.postDataForService(dict,config.config.addTaobaoTryUrl)
                         #print(statusStr)
-                        status =json.loads(statusStr['body'])
-                        if(statusStr['isSuccess'] and status['Code']==0):
-                            print("提交服务器成功")
+                        if(statusStr['isSuccess']):
+                            status =json.loads(statusStr['body'])
+                            if(statusStr['isSuccess'] and status['Code']==0):
+                                print("提交服务器成功")
+                            else:
+                                print("提交服务器失败")
+                            print("---------------")
                         else:
-                            print("提交服务器失败")
-                        print("---------------")
+                            utils.utils.utils.postDataForService(dict, config.config.addTaobaoTryUrl)
 
                 else:
                     self.getItemDataReLoad(data,dict,cate, reportId, itemId)
@@ -228,8 +231,8 @@ class taobaoTryUtils:
 
         dict['isCookie'] = True;
         # cookieArr = data['get_cookie']['_m_h5_tk'].split('_')
-
-        utils.taobaokeUtils.taobaokeUtils.putCookies(data['get_cookie']);
+        if(data['get_cookie'] is not None):
+            utils.taobaokeUtils.taobaokeUtils.putCookies(data['get_cookie']);
         cookies = utils.taobaokeUtils.taobaokeUtils.getCookies();
         cookiesStr = cookies['cookies'];
         cookiesDict = cookies['putCookie'];
