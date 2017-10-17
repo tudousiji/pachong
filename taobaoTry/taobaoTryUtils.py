@@ -47,6 +47,7 @@ class taobaoTryUtils:
     def handlePcTryList(self,dict,index=0,page=1):
         if (dict is None):
             if(index>=0):
+                self.getTryCate();
                 cate=taobaoTry.config.cateList[index];
             else:
                 cate="";
@@ -62,6 +63,26 @@ class taobaoTryUtils:
             }
 
         self.parsePcTaobaoTryList(dict, index,page);
+
+
+    def getTryCate(self):
+        dict = {
+            'url': config.config.getTryCate,
+            'requestType': 'GET',
+            'isProxy': False,
+            'isHttps': False,
+            'reLoad': True,
+        }
+
+        jsonStr = utils.netUtils.netUtils.getData(dict)
+
+        if(jsonStr['isSuccess']):
+            data = json.loads(jsonStr['body'])
+            #print(data)
+            if(data['Status']):
+                taobaoTry.config.cateList=data['data']
+                print(taobaoTry.config.cateList)
+
 
 
     def parsePcTaobaoTryList(self,dict,index,page):
