@@ -10,7 +10,7 @@ from bs4 import BeautifulSoup
 import urllib.parse
 
 class taobaoTryUtils:
-
+    jingXuanMaxPage=3;
     def getUrl(self,cookie,page,cate):
         if (cookie is None):
             cookie = "";
@@ -43,11 +43,13 @@ class taobaoTryUtils:
                 dict['putCookie'] = cookiesDict
         self.getData(dict,page,cate);
 
-
+    #有分类的 定时运行
     def handlePcTryList(self,dict,index=0,page=1):
         if (dict is None):
-
-            cate=taobaoTry.config.cateList[index];
+            if(index>=0):
+                cate=taobaoTry.config.cateList[index];
+            else:
+                cate="";
             indexStr=str(index);
             #print("cate:"+indexStr)
 
@@ -64,7 +66,11 @@ class taobaoTryUtils:
 
     def parsePcTaobaoTryList(self,dict,index,page):
         #print("url:"+dict['url'])
-        cate = taobaoTry.config.cateList[index];
+        if(index>=0):
+            cate = taobaoTry.config.cateList[index];
+        else:
+            cate="";
+
         dict['url']=taobaoTry.config.taobaoTryList.format(cate,page);
         data = utils.netUtils.netUtils().getData(dict)
         if (data['isSuccess']):
@@ -90,7 +96,7 @@ class taobaoTryUtils:
                     list.append(idDict)
 
                 effectiveList=self.checkEffectiveList(list)
-                if(effectiveList is not None):
+                if(effectiveList is not None or index<0):
                     if(len(effectiveList['data'])>0):
                         for items in effectiveList['data']:
                             itemId = items['itemId'];
@@ -98,22 +104,26 @@ class taobaoTryUtils:
                             title=items['title'];
                             print(" title:"+title+" cate:"+str(taobaoTry.config.cateList[index])+" page:"+str(page)+" itemId:"+itemId+" reportId:"+reportId+" url:"+dict['url'])
                             self.getItemData(None,cate,reportId,itemId)
-                        if(len(effectiveList['data'])!=len(list)):
+                        if(effectiveList['isNextCate'] is True):
                             dict['reLoad'] = True;
                             nextIndex = index + 1;
-                            if (len(taobaoTry.config.cateList) > nextIndex):
+                            if ( ( len(taobaoTry.config.cateList) > nextIndex and index>=0)):
                                 print(dict['url'] + "采集下一个分类:" + str(nextIndex))
                                 self.parsePcTaobaoTryList(dict, nextIndex, 1)
                             else:
                                 print("采集完成")
                             return
-                nextPage = page + 1
-                if(effectiveList is not None):
-                    print(dict['url'] + "采集成功，下一页:" + str(nextPage));
+                if((index<0 and page>=taobaoTryUtils.jingXuanMaxPage)):
+                    print("采集完成")
+                    return
                 else:
-                    print(dict['url'] + "采集失败，下一页:" + str(nextPage));
-                dict['reLoad'] = True;
-                self.parsePcTaobaoTryList(dict, index, nextPage)
+                    nextPage = page + 1
+                    if(effectiveList is not None):
+                        print(dict['url'] + "采集成功，下一页:" + str(nextPage));
+                    else:
+                        print(dict['url'] + "采集失败，下一页:" + str(nextPage));
+                    dict['reLoad'] = True;
+                    self.parsePcTaobaoTryList(dict, index, nextPage)
             else:#下一个列表
                 dict['reLoad'] = True;
                 nextIndex=index+1;

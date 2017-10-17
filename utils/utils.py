@@ -25,6 +25,7 @@ class utils:
         postDict = {
             'data': json.dumps(data),
         }
+        #print(postDict)
         dict = {
             'url': url,
             'requestType': 'POST',
