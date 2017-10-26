@@ -60,6 +60,7 @@ class netUtils:
         r=None
         isSuccess=True;
         url=parment['url'];
+        errInfo=None;
         try:
             if (requestType == 'GET'):
                 r = requests.get(url=url, proxies=(proxies if isProxy else None),
@@ -73,10 +74,11 @@ class netUtils:
             #print(help(r.headers()))
         except Exception as err:
             isSuccess = False;
-            #print(dir(err));
+            errInfo=err;
             print(err)
 
 
+        #print(r)
 
         if(r is not None):
             code = r.status_code;
@@ -106,6 +108,7 @@ class netUtils:
                 'url': url,
                 'isHeader': isHeader,
                 'header': r.headers,
+                'code':r.status_code,
                 'isCookie': isCookie,
                 'get_cookie': r.cookies,
                 'put_cookie': putCookie,
@@ -113,6 +116,7 @@ class netUtils:
             }
         else:
             content = {
+                'err':errInfo,
                 'isProxy': isProxy,
                 'postData': postData,
                 'requestType': requestType,
