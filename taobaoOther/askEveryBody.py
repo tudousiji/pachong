@@ -5,7 +5,10 @@ import config.config
 import utils.netUtils
 import json
 import utils.utils
+from requests.packages.urllib3.exceptions import InsecureRequestWarning
 
+
+requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 class askEveryBody:
     def getData(self, itemId, page=1):
         cookiesDict = utils.taobaokeUtils.taobaokeUtils.getCookies();
@@ -32,8 +35,7 @@ class askEveryBody:
                 body = json.loads(jsonStr)
                 if (body is not None):
                     if (str(body['ret']).startswith("['FAIL_") is not True):
-                        print(body)
-                        pass
+                        return json.dumps(body);
                     else:
                         dict['isCookie'] = True;
                         cookieArr = data['get_cookie']['_m_h5_tk'].split('_')
@@ -44,7 +46,11 @@ class askEveryBody:
                             dict['url'] = self.getUrl(cookieArr[0], itemId);
                             dict['putCookie'] = cookie
                             dict['reLoad'] = False
-                            self.getItemData(dict,itemId);
+                            return self.getItemData(dict,itemId);
+                        else:
+                            return None;
+                else:
+                    return None
 
     def getUrl(self,cookie,itemId,size=10,page=1):
         if (cookie is None):

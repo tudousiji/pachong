@@ -2,9 +2,9 @@
 from concurrent.futures import ThreadPoolExecutor
 #import taobaoTry.main
 #import taobaoTry.main
-import taobaoOther.askEveryBody
+import taobaoOther.baiduKeyWordsPos
 
-taobaoOther.askEveryBody.askEveryBody().getData(554834643882)
+taobaoOther.baiduKeyWordsPos.baiduKeyWordsPos().getData("小米手机双11清仓大促")
 
 dict2 = {
             'url': 'http://2017.ip138.com/ic.asp',
