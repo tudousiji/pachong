@@ -1,2 +1,57 @@
+import utils.taobaokeUtils
+import time
+import taobaoOther.config
+import config.config
+import utils.netUtils
+import json
+import utils.utils
+
 class askEveryBody:
-    pass
+    def getData(self, itemId, page=1):
+        cookiesDict = utils.taobaokeUtils.taobaokeUtils.getCookies();
+        url = self.getUrl(cookiesDict['cookies'],itemId);
+        dict = {
+            'url': url,
+            'requestType': 'GET',
+            'isProxy': False,
+            'isHttps': False,
+            'reLoad': True,
+            'putCookie': cookiesDict['putCookie'],
+            'isCookie': True,
+        }
+        self.getItemData(dict, itemId);
+
+
+    def getItemData(self,dict,itemId):
+        data = utils.netUtils.netUtils.getData(dict);
+        if (data['isSuccess']):
+            if (data['body'] is not None):
+                # jsonStr = data['body'][data['body'].index('mtopjsonp8(') + len('mtopjsonp8('):len(data['body']) - 1];
+                #print(data['body'])
+                jsonStr = utils.utils.utils.replacePreGetBody(data['body'], "mtopjsonp2(");
+                body = json.loads(jsonStr)
+                if (body is not None):
+                    if (str(body['ret']).startswith("['FAIL_") is not True):
+                        print(body)
+                        pass
+                    else:
+                        dict['isCookie'] = True;
+                        cookieArr = data['get_cookie']['_m_h5_tk'].split('_')
+                        #print(data['get_cookie'])
+                        cookie = utils.taobaokeUtils.taobaokeUtils.putCookies(data['get_cookie']);
+                        # print(cookieArr[0])
+                        if (dict['reLoad']):
+                            dict['url'] = self.getUrl(cookieArr[0], itemId);
+                            dict['putCookie'] = cookie
+                            dict['reLoad'] = False
+                            self.getItemData(dict,itemId);
+
+    def getUrl(self,cookie,itemId,size=10,page=1):
+        if (cookie is None):
+            cookie = "";
+
+        times = str(int(round(time.time() * 1000)));
+        data = taobaoOther.config.askEveryBodyData.format(itemId, size,page)
+        sign = utils.netUtils.netUtils.getTbkSign(cookie, config.config.appkey, times, data)
+        url = taobaoOther.config.askEveryBodyUrl.format(config.config.appkey, times, sign, data)
+        return url;

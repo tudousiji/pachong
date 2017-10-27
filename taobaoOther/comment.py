@@ -38,7 +38,7 @@ class comment:
         data = utils.netUtils.netUtils.getData(dict);
         #print(data['header']['Location'])
         if (data['isSuccess']):
-            print("成功:"+data['body'])
+            #print("成功:"+data['body'])
             if (data['body'] is not None):
                 jsonStr = utils.utils.utils.replacePreGetBody(data['body'], 'jsonp_tbcrate_reviews_list(')
                 body = json.loads(jsonStr);
