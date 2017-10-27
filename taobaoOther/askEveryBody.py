@@ -1,0 +1,2 @@
+class askEveryBody:
+    pass

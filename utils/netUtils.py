@@ -54,6 +54,7 @@ class netUtils:
         if ('isCookie' in parment and parment['isCookie'] and parment['putCookie'] is not None):
             isCookie = True;
             putCookie=parment['putCookie'];
+            #print(putCookie)
 
 
         # print(parment['url'])
@@ -80,7 +81,8 @@ class netUtils:
             print(err)
 
 
-        #print(r)
+
+
 
         if(r is not None):
             code = r.status_code;
@@ -89,7 +91,10 @@ class netUtils:
             if(code==200):
                 if (r.encoding is not None ):
                     text = r.text;
-                    body = text.encode(r.encoding).decode(r.apparent_encoding);
+                    if(len(text)>0):
+                        body = text.encode(r.encoding).decode(r.apparent_encoding,'ignore');
+                    else:
+                        body="";
                     #print(text)
                 else:
                     body = r.text

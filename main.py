@@ -1,7 +1,13 @@
 
 from concurrent.futures import ThreadPoolExecutor
 #import taobaoTry.main
-import taobaoTry.main
+#import taobaoTry.main
+import taobaoOther.comment
+
+for index in range(100):
+    data = taobaoOther.comment.comment().getData(554834643882)
+    print((str)(index)+":"+(str)(data))
+    print("-------------------------------------------")
 
 dict2 = {
             'url': 'http://2017.ip138.com/ic.asp',
