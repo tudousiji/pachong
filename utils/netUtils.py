@@ -64,7 +64,9 @@ class netUtils:
         try:
             if (requestType == 'GET'):
                 r = requests.get(url=url, proxies=(proxies if isProxy else None),
-                                 headers=netUtils.getHeaderDict(parment['url'],header), timeout=60,cookies=(putCookie if isCookie and putCookie  is not None else None))
+                                 headers=netUtils.getHeaderDict(parment['url'],header), timeout=60,cookies=(putCookie if isCookie and putCookie  is not None else None),verify=False,allow_redirects=False)
+
+
             else:
                 form = postData if requestType == 'POST' else None;
                 #print(form)
@@ -93,7 +95,7 @@ class netUtils:
                     body = r.text
 
             else:
-                print(r.text)
+                #print(r.text)
                 isSuccess = False;
             r.close()
         else:
@@ -121,8 +123,10 @@ class netUtils:
                 'postData': postData,
                 'requestType': requestType,
                 'url': url,
-                'get_cookie': None,
+                'code':r.status_code if r is not None else None ,
+                'get_cookie': r.cookies if r is not None else None,
                 'isHeader': isHeader,
+                'header': r.headers if r is not None else None,
                 'isCookie': isCookie,
                 'put_cookie': putCookie,
                 'isSuccess': isSuccess
