@@ -7,6 +7,8 @@ import urllib.error
 import requests
 import hashlib
 
+
+
 typeCode = sys.getfilesystemencoding()
 
 
@@ -62,6 +64,9 @@ class netUtils:
         isSuccess=True;
         url=parment['url'];
         errInfo=None;
+
+
+
         try:
             if (requestType == 'GET'):
                 r = requests.get(url=url, proxies=(proxies if isProxy else None),
@@ -102,7 +107,7 @@ class netUtils:
             else:
                 #print(r.text)
                 isSuccess = False;
-            r.close()
+            #r.close()
         else:
             isSuccess = False;
 
@@ -260,8 +265,13 @@ class netUtils:
         headers = {
             'Host': urlInfo.hostname,
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/57.0.2987.133 Safari/537.36',
-            "Content-Type": "application/x-www-form-urlencoded",
-
+            'Accept':'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+            'Accept-Language':'zh-CN,zh;q=0.8,en-US;q=0.5,en;q=0.3',
+            'Accept-Encoding':'gzip, deflate',
+            'Connection':'keep-alive',
+            'Upgrade-Insecure-Requests':'1',
+            'Pragma':'no-cache',
+            'Cache-Control':'no-cache',
         }
         if(b is not  None and type(b)==dict and len(b)>0):
             for x in b:
@@ -279,3 +289,20 @@ class netUtils:
         return sign
 
 
+
+#from selenium import webdriver
+#driver=webdriver.PhantomJS();
+#driver.implicitly_wait(3)
+#driver.set_page_load_timeout(3)
+#driver.set_script_timeout(3)#这两种设置都进行才有效
+#for index in range(10000):
+#    url='http://zhannei.baidu.com/api/customsearch/keywords?title=小米手机怎么样/值得推荐吗'+(str)(index);
+    #print("url:"+url)
+#    try:
+#        driver.get(url)
+        #print(dir(driver))
+#        print((str)(index)+":"+ (str)(driver.page_source));
+ #       print("-------------")
+ #   except Exception as err:
+ #       print(err)
+#driver.quit()#退出浏览器

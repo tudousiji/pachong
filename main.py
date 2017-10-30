@@ -3,8 +3,38 @@ from concurrent.futures import ThreadPoolExecutor
 #import taobaoTry.main
 #import taobaoTry.main
 import taobaoOther.baiduKeyWordsPos
+import time
+import os
 
-taobaoOther.baiduKeyWordsPos.baiduKeyWordsPos().getData("小米手机双11清仓大促")
+
+
+
+
+
+class main:
+
+    def __init__(self):
+        print("开始程序")
+        if(os.path.exists('.lock')):
+            print("文件已存在，即将退出")
+            os._exit(0)
+        else:
+            #os.mknod('.lock')
+            open('.lock',"w")
+
+    def mainStart(self):
+        for index in range(0,100):
+            time.sleep(1)
+            data = taobaoOther.baiduKeyWordsPos.baiduKeyWordsPos().getData("小米手机双11清仓大促")
+            print((str)(index)+"-->"+(str)(data))
+            print("-------")
+
+    def __del__(self):
+        if (os.path.exists('.lock')):
+            os.remove('.lock')
+        print("退出程序")
+
+#main().mainStart();
 
 dict2 = {
             'url': 'http://2017.ip138.com/ic.asp',
@@ -74,3 +104,4 @@ pool = ThreadPoolExecutor(max_workers=50)  # 创建一个最大可容纳2个task
 #proxy.proxyThreadSingleton.proxyThreadSingleton().getSingleton().aa();
 
 #utils.netUtils.netUtils.getTbkSign("c9dde6bb0fcacccb62b744a349f815e4","12574478",str(int(round(time.time() * 1000))),'{"pNum":3,"pSize":10,"floorId":"393","qId":"","channel":"zonghe","refpid":"mm_10011550_0_0","spm":"a3126.8759693/b.zhrx","couponSrc":"temai","app_pvid":"201_10.179.66.211_807926_1506749535487","ctm":"spm-url:"}')
+
