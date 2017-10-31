@@ -9,5 +9,8 @@ addTaobaoTryUrl=serviceHost+'index.php/api/Tryout/addTaobaoTry';#增加试用数
 checkEffectiveTaobaoTryIdListUrl=serviceHost+'index.php/api/Tryout/checkEffectiveTaobaoTryIdListUrl';#检测试用数据
 addHotKeyWords=serviceHost+'index.php/api/Keywords/addHotKeyWords'#添加热门关键词，采集来源来自阿离爸爸
 getTryCate=serviceHost+'index.php/api/Tryout/getCateId'#获取淘宝试用id
+getTaoBaoItemInfoList=serviceHost+'index.php/api/Taobaoinfo/getTaobaoInfoList'#采集百度分词，评论，问大家等
+addTaoBaoItemInfo=serviceHost+'index.php/api/Taobaoinfo/addTaobaoItemInfo'#采集百度分词，评论，问大家等
+
 getProxyList='http://www.xicidaili.com/nn/{0}'
 appkey='12574478';

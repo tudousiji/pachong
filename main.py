@@ -5,11 +5,11 @@ from concurrent.futures import ThreadPoolExecutor
 import taobaoOther.baiduKeyWordsPos
 import time
 import os
+import taobaoOther.taobaoOtherUtils
 
 
 
-
-
+taobaoOther.taobaoOtherUtils.taobaoOtherUtils().getData();
 
 class main:
 
