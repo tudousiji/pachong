@@ -18,6 +18,7 @@ class reasin:
         return self.getItemData(dict)
 
     def getItemData(self,dict):
+
         data=utils.netUtils.netUtils.getData(dict);
         if(data['isSuccess']):
             if (data['body'] is not None):

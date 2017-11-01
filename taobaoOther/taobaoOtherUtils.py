@@ -29,10 +29,10 @@ class taobaoOtherUtils:
                     for item in body:
                         dictData={}
                         keywordsDict={}
-                        if(item["keywords"]):
-                            data = taobaoOther.baiduKeyWordsPos.baiduKeyWordsPos().getData()
+                        if(item["keywords"]['status']):
+                            data = taobaoOther.baiduKeyWordsPos.baiduKeyWordsPos().getData(item["keywords"]['title'])
                             if(data is not None):
-                                keywordsDict['status'] =item["keywords"]
+                                keywordsDict['status'] =item["keywords"]['status']
                                 keywordsDict['data']=data
                             else:
                                 keywordsDict['status'] = False;
@@ -41,8 +41,10 @@ class taobaoOtherUtils:
                         dictData['keywords']=keywordsDict
 
                         reasonDict = {}
+
                         if (item["reason"]):
                             data =taobaoOther.reason.reasin().getData(item['itemId'])
+
                             if (data is not None):
                                 reasonDict['status'] = item["reason"]
                                 reasonDict['data'] = data
@@ -79,8 +81,9 @@ class taobaoOtherUtils:
 
                         dictData['itemId']=item['itemId'];
                         list.append(dictData);
+
                     self.postData(list);
-                    self.getItemData(dict);
+                    #self.getItemData(dict);
                 else:
                     print("已结束")
 
@@ -99,7 +102,6 @@ class taobaoOtherUtils:
             'reLoad': True,
         }
         data = utils.netUtils.netUtils.getData(dict)
-        print(data)
         if (data['isSuccess']):
             print("提交服务器成功")
         else:
