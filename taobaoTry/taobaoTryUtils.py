@@ -10,7 +10,7 @@ from bs4 import BeautifulSoup
 import urllib.parse
 
 class taobaoTryUtils:
-    jingXuanMaxPage=3;
+    jingXuanMaxPage=3;#精选最大页数
     def getUrl(self,cookie,page,cate):
         if (cookie is None):
             cookie = "";
