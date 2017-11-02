@@ -11,6 +11,10 @@ addHotKeyWords=serviceHost+'index.php/api/Keywords/addHotKeyWords'#添加热门�
 getTryCate=serviceHost+'index.php/api/Tryout/getCateId'#获取淘宝试用id
 getTaoBaoItemInfoList=serviceHost+'index.php/api/Taobaoinfo/getTaobaoInfoList'#采集百度分词，评论，问大家等
 addTaoBaoItemInfo=serviceHost+'index.php/api/Taobaoinfo/addTaobaoItemInfo'#采集百度分词，评论，问大家等
-
 getProxyList='http://www.xicidaili.com/nn/{0}'
 appkey='12574478';
+
+def enum(**enums):
+    return type('Enum', (), enums)
+
+taskType = enum(BAIDU=1, COMMENT=2)

@@ -3,6 +3,8 @@ import utils.netUtils
 import utils.utils
 import json
 import random
+import config.config
+import urllib.parse
 
 
 class baiduKeyWordsPos:
@@ -10,14 +12,15 @@ class baiduKeyWordsPos:
     maxKeyWordsCount=5;
     def getData(self,keyword):
         cookie=self.getCookies();
-        print("获取到的:"+(str)(cookie))
+
         dict = {
-            'url': taobaoOther.config.baiduKeyWordsPos.format(keyword),
+            'url': taobaoOther.config.baiduKeyWordsPos.format(urllib.parse.quote(keyword) ),
             'requestType': 'GET',
             'isProxy': False,
             'isHttps': False,
             'reLoad': True,
-            'putCookie':cookie['putCookie']
+            #'putCookie':cookie['putCookie'],
+            'taskType':config.config.taskType.BAIDU,
         }
         return self.getItemData(dict)
 
@@ -27,8 +30,8 @@ class baiduKeyWordsPos:
             if (data['body'] is not None):
                 body=json.loads(data['body']);
                 if('result' in body and "res" in body['result'] and "keyword_list" in body['result']['res']):
-                    if (data['get_cookie'] is not None and len(data['get_cookie']) > 0):
-                        cookie = self.putCookies(data['get_cookie']);
+                    #if (data['get_cookie'] is not None and len(data['get_cookie']) > 0):
+                    #    cookie = self.putCookies(data['get_cookie']);
                     if(len(body['result']['res']['keyword_list'])>=baiduKeyWordsPos.maxKeyWordsCount):
                         return json.dumps(body['result']['res']['keyword_list'])
                     else:
@@ -55,7 +58,6 @@ class baiduKeyWordsPos:
             return self.isReLoad(data,dict);
 
     def isReLoad(self,data,dict):
-
         if(dict['reLoad']):
             dict['reLoad']=False;
 

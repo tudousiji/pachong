@@ -5,6 +5,7 @@ import taobaoOther.baiduKeyWordsPos
 import taobaoOther.comment
 import taobaoOther.reason
 import taobaoOther.askEveryBody
+import sys
 
 
 class taobaoOtherUtils:
@@ -21,12 +22,14 @@ class taobaoOtherUtils:
 
     def getItemData(self,dict):
         data= utils.netUtils.netUtils.getData(dict);
+
         if (data['isSuccess']):
             if (data['body'] is not None):
                 body = json.loads(data['body'])
                 if(len(body)>0):
                     list=[];
                     for item in body:
+                        print("开始itemId:",item['itemId'])
                         dictData={}
                         keywordsDict={}
                         if(item["keywords"]['status']):
@@ -38,8 +41,9 @@ class taobaoOtherUtils:
                                 keywordsDict['status'] = False;
                         else:
                             keywordsDict['status'] = False;
-                        dictData['keywords']=keywordsDict
 
+                        dictData['keywords']=keywordsDict
+                        print("结束关键词itemId:", item['itemId'])
                         reasonDict = {}
 
                         if (item["reason"]):
@@ -53,7 +57,7 @@ class taobaoOtherUtils:
                         else:
                             reasonDict['status'] = False;
                         dictData['reason'] = reasonDict
-
+                        print("结束理由itemId:", item['itemId'])
                         commentDict = {}
                         if (item["commentList"]):
                             data=taobaoOther.comment.comment().getData(item['itemId'],1)
@@ -65,7 +69,7 @@ class taobaoOtherUtils:
                         else:
                             commentDict['status'] = False;
                         dictData['commentList'] = commentDict
-
+                        print("结束评论itemId:", item['itemId'])
                         askeverybodyListDict = {}
                         if (item["askeverybodyList"]):
                             data=taobaoOther.askEveryBody.askEveryBody().getData(item['itemId'])
@@ -77,13 +81,14 @@ class taobaoOtherUtils:
                         else:
                             askeverybodyListDict['status'] = False;
                         dictData['askeverybodyList'] = askeverybodyListDict
-
+                        print("结束问大家itemId:", item['itemId'])
 
                         dictData['itemId']=item['itemId'];
+                        print(dictData)
                         list.append(dictData);
 
                     self.postData(list);
-                    #self.getItemData(dict);
+                    self.getItemData(dict);
                 else:
                     print("已结束")
 
@@ -105,5 +110,5 @@ class taobaoOtherUtils:
         if (data['isSuccess']):
             print("提交服务器成功")
         else:
-            print("提交服务器失败")
+            print("提交服务器失败",data)
         print("----")

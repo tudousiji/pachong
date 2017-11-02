@@ -5,6 +5,7 @@ import json
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
 import random
 import requests
+import config.config
 
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 class comment:
@@ -18,23 +19,26 @@ class comment:
             'isProxy': False,
             'isHttps': True,
             'reLoad': True,
-            'isHeader':True,
-            'isCookie':True,
-            'putCookie':cookie['putCookie'],
-            'header':{
-                "Accept":"text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
-                "Accept-Language":"zh-CN,zh;q=0.8,en-US;q=0.5,en;q=0.3",
-                "Accept-Encoding":"gzip, deflate, br",
-                "Connection":"keep-alive",
-                "Upgrade-Insecure-Requests":"1",
-                "Pragma":"no-cache",
-                "Cache-Control":"no-cache"
-            }
+            'taskType': config.config.taskType.COMMENT,
+            # 'isHeader':True,
+            # 'isCookie':True,
+            # 'putCookie':cookie['putCookie'],
+            # 'header':{
+            #     "Accept":"text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+            #     "Accept-Language":"zh-CN,zh;q=0.8,en-US;q=0.5,en;q=0.3",
+            #     "Accept-Encoding":"gzip, deflate, br",
+            #     "Connection":"keep-alive",
+            #     "Upgrade-Insecure-Requests":"1",
+            #     "Pragma":"no-cache",
+            #     "Cache-Control":"no-cache"
+            # }
         }
         #print(dict)
+
         return self.getItemData(dict)
 
     def getItemData(self, dict):
+
         data = utils.netUtils.netUtils.getData(dict);
         #print(data['header']['Location'])
         if (data['isSuccess']):
@@ -45,8 +49,10 @@ class comment:
 
                 if ('rateDetail' in body  and  body['rateDetail'] is not None and 'rateList' in body['rateDetail'] and len(body['rateDetail']['rateList']) > 0):
                     return json.dumps(body['rateDetail']['rateList']);
-                else:
+                elif(dict['reLoad'] is True):
                     return self.getItemDataReLoad(dict);
+                else:
+                    return None;
             else:
                 return None;
         elif (data['code'] ==302):
@@ -66,6 +72,7 @@ class comment:
             dict['reLoad'] = False,
             dict['isCookie']=True,
             dict['putCookie'] =cookie['putCookie']
+
             return self.getItemData(dict);
         else:
             return None;
@@ -96,7 +103,10 @@ class comment:
         if (dict['reLoad']):
             dict['putCookie'] = cookie
             dict['reLoad'] = False
+
             return self.getItemData(dict);
+        else:
+            return None
 
     # 获取淘宝客cookies
     @staticmethod

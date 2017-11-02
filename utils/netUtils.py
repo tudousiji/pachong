@@ -6,7 +6,9 @@ import urllib.response
 import urllib.error
 import requests
 import hashlib
-
+import config.config
+from selenium.webdriver.common.proxy import ProxyType
+from selenium import webdriver
 
 
 typeCode = sys.getfilesystemencoding()
@@ -15,16 +17,101 @@ typeCode = sys.getfilesystemencoding()
 class netUtils:
     @staticmethod
     def getData(parment):
-        return netUtils.getRequests(parment);
-
-    @staticmethod
-    def getRequests(parment):
         if (type(parment) != dict):
             print("类型错误:" + type(parment));
             return;
         if ('url' not in parment):
             print("url 不存在");
             return;
+        if('taskType' in parment and (parment['taskType']==config.config.taskType.BAIDU
+                                      or parment['taskType']==config.config.taskType.COMMENT)):
+
+            return netUtils.getRequestsForSelenium(parment);
+        else:
+
+            return netUtils.getRequests(parment);
+
+    @staticmethod
+    def getRequestsForSelenium(parment):
+        driver = webdriver.PhantomJS();
+        driver.implicitly_wait(3)
+        driver.set_page_load_timeout(3)
+        driver.set_script_timeout(3)  # 这两种设置都进行才有效
+        proxy = webdriver.Proxy()
+
+        isProxy = False;
+        isSuccess = False;
+        isCookie = False;
+        putCookie = None;
+        if ('putCookie' in parment  and parment['putCookie'] is not None):
+            isCookie = True;
+            putCookie=parment['putCookie'];
+            driver.add_cookie(putCookie)
+
+
+        if ('isProxy' in parment and parment['isProxy']):
+            isProxy=True
+            proxy.proxy_type = ProxyType.MANUAL
+            proxy.http_proxy = parment['proxyIp']+':'+parment['proxyPort'];
+            # 将代理设置添加到webdriver.DesiredCapabilities.PHANTOMJS中
+            proxy.add_to_capabilities(webdriver.DesiredCapabilities.PHANTOMJS)
+            driver.start_session(webdriver.DesiredCapabilities.PHANTOMJS)
+        else:
+            proxy = webdriver.Proxy()
+            proxy.proxy_type = ProxyType.DIRECT
+            proxy.add_to_capabilities(webdriver.DesiredCapabilities.PHANTOMJS)
+            driver.start_session(webdriver.DesiredCapabilities.PHANTOMJS)
+
+        url = parment['url'];
+        driver.get(url)
+        #data = driver.page_source
+        body = driver.find_element_by_tag_name("body").text
+
+        get_cookie={}
+        for item in driver.get_cookies():
+            #print(item["name"], ":", item["value"])
+            get_cookie[item["name"]]=item["value"]
+
+        if(len(body)>0):
+            isSuccess=True
+            content = {
+                'body': body,
+                'isProxy': isProxy,
+                'postData': None,
+                'requestType': 'GET',
+                'url': url,
+                'isHeader': False,
+                'header': None,
+                'code': None,
+                'isCookie': isCookie,
+                'get_cookie': get_cookie,
+                'put_cookie': putCookie,
+                'isSuccess': isSuccess
+            }
+
+        else:
+            isSuccess = False
+            content = {
+                'body': None,
+                'isProxy': isProxy,
+                'postData': None,
+                'requestType': 'GET',
+                'url': url,
+                'isHeader': False,
+                'header': None,
+                'code': None,
+                'isCookie': isCookie,
+                'get_cookie': get_cookie,
+                'put_cookie': putCookie,
+                'isSuccess': isSuccess
+            }
+        driver.quit()
+
+        return content
+
+
+    @staticmethod
+    def getRequests(parment):
         requestType = 'GET';
         postData = "";
         if ('requestType' in parment):

@@ -41,9 +41,9 @@ class taobaokeUtils:
         cookie = {'_m_h5_tk': cookies['_m_h5_tk'],
                   '_m_h5_tk_enc': cookies['_m_h5_tk_enc'],
                   }
-        dictCookies = requests.utils.dict_from_cookiejar(cookies);
+        #dictCookies = requests.utils.dict_from_cookiejar(cookies);
         #print(dictCookies.get('cna'))
-        if(dictCookies.get('cna')):
+        if(('cna') in cookies):
             cookie['cna']=cookies['cna'];
 
         taobaokeUtils.taobaoToKen.append(cookie)

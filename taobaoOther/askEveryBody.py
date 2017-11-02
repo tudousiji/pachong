@@ -27,7 +27,7 @@ class askEveryBody:
 
     def getItemData(self,dict,itemId):
         data = utils.netUtils.netUtils.getData(dict);
-        print(data)
+
         if (data['isSuccess']):
             if (data['body'] is not None):
                 # jsonStr = data['body'][data['body'].index('mtopjsonp8(') + len('mtopjsonp8('):len(data['body']) - 1];
