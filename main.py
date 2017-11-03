@@ -2,7 +2,7 @@ import os
 import time
 from concurrent.futures import ThreadPoolExecutor
 
-import taobaoTry.main
+import test.test5
 #import goods.goodsList
 
 #data=taobaoOther.askEveryBody.askEveryBody().getData(557806129437)
