@@ -6,7 +6,56 @@ import utils.netUtils
 import json
 
 class goodsList:
-    def getData(self,keyWords):
+    pageSize=1;
+    def getData(self,page=1):
+        dict = {
+            'url': config.config.getKeyWordsList.format(page,goodsList.pageSize),
+            'requestType': 'GET',
+            'isProxy': False,
+            'isHttps': False,
+            'reLoad': True,
+        }
+        self.getKeyWordslit(dict,page);
+
+    def getKeyWordslit(self,dict,page):
+        print("采集列表:",dict['url'])
+        data = utils.netUtils.netUtils.getData(dict);
+        if (data['isSuccess']):
+            #print("成功:"+data['body'])
+            if (data['body'] is not None):
+                body=json.loads(data['body'])
+                for item in body:
+                    data = self.getGoodsData(item['keyword'])
+                    if(data is not None):
+                        dict={
+                            'keyword_id':item['id'],
+                            'data':data
+                        }
+                        print("成功:" , dict)
+                        self.postData(dict)
+                    else:
+                        print("内容失败")
+
+                if(len(body)>=goodsList.pageSize):
+                    nextPage=page+1;
+                    dict['url']=config.config.getKeyWordsList.format(nextPage,goodsList.pageSize)
+                    self.getKeyWordslit(dict,nextPage)
+                else:
+                    print("采集结束")
+            else:
+                return None
+        else:
+            return None
+
+
+    def postData(self,dict):
+        data = utils.utils.utils.postDataForService(dict, config.config.addGoodsItem)
+        if(data['isSuccess']):
+            print("服务器提交成功")
+        else:
+            print("服务器提交失败:",data)
+
+    def getGoodsData(self,keyWords):
         cookiesDict = utils.taobaokeUtils.taobaokeUtils.getCookies();
         url = self.getUrl(cookiesDict['cookies'], keyWords);
 
@@ -22,16 +71,21 @@ class goodsList:
         return self.getItemData( dict,keyWords);
 
     def getItemData(self,dict,keyWords):
-
+        print("采集内容:", dict['url'])
         data=utils.netUtils.netUtils.getData(dict)
 
         if (data['isSuccess']):
-            #print("成功:"+data['body'])
+
             if (data['body'] is not None):
                 jsonStr = utils.utils.utils.replacePreGetBody(data['body'], "mtopjsonp1(");
                 body = json.loads(jsonStr)
                 if (str(body['ret']).startswith("['FAIL_") is not True):
-                    return json.dumps(body);
+                    # if('data' in body and 'data' in body['data'] and 'auctionList' in body['data']['data'] and 'auctions' in body['data']['data']['auctionList']):
+                    #     return body['data']['data']['auctionList']['auctions'];
+                    # else:
+                    #
+                    #     return None
+                    return body
                 elif(dict['reLoad'] is True):
                     dict['isCookie'] = True;
                     cookie = utils.taobaokeUtils.taobaokeUtils.putCookies(data['get_cookie']);
@@ -61,7 +115,7 @@ class goodsList:
         else:
             return None;
 
-    def getUrl(self,cookie,keyWords,size=10,page=1):
+    def getUrl(self,cookie,keyWords,size=1000,page=1):
         if (cookie is None):
             cookie = "";
         times = str(int(round(time.time() * 1000)));

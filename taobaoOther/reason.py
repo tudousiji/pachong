@@ -3,10 +3,7 @@ import utils.netUtils
 import utils.utils
 import json
 
-class reasin:
-
-
-
+class reason:
     def getData(self,itemId):
         dict = {
             'url': taobaoOther.config.reasonUrl.format(itemId),

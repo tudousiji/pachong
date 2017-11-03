@@ -192,7 +192,8 @@ class netUtils:
                     body = r.text
 
             else:
-                #print(r.text)
+                print("错误code:",code)
+                print(r.text)
                 isSuccess = False;
             #r.close()
         else:

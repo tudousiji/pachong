@@ -8,9 +8,14 @@ import taobaoOther.taobaoOtherUtils
 
 #import taobaoOther.test
 
+#import goods.goodsList
+import taobaoOther.askEveryBody
+import taobaoOther.comment
+import taobaoOther.reason
 import goods.goodsList
-data= goods.goodsList.goodsList().getData("手机")
-print(data)
+for index in range(1,2):
+    data= goods.goodsList.goodsList().getData(1)
+    print(index,data)
 #data=taobaoOther.askEveryBody.askEveryBody().getData(557806129437)
 #taobaoOther.taobaoOtherUtils.taobaoOtherUtils().getData();
 #data = taobaoOther.comment.comment().getData(557806129437)
