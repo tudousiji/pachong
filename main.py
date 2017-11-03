@@ -1,18 +1,16 @@
-from concurrent.futures import ThreadPoolExecutor
-import taobaoOther.baiduKeyWordsPos
-import time
 import os
-import taobaoOther.taobaoOtherUtils
-from selenium.webdriver.common.proxy import ProxyType
-from selenium import webdriver
-import utils.netUtils
+import time
+from concurrent.futures import ThreadPoolExecutor
 
-import taobaoOther.test
+import taobaoOther.baiduKeyWordsPos
+import taobaoOther.taobaoOtherUtils
+
 
 #import taobaoOther.test
-import urllib.parse
 
-
+import goods.goodsList
+data= goods.goodsList.goodsList().getData("手机")
+print(data)
 #data=taobaoOther.askEveryBody.askEveryBody().getData(557806129437)
 #taobaoOther.taobaoOtherUtils.taobaoOtherUtils().getData();
 #data = taobaoOther.comment.comment().getData(557806129437)

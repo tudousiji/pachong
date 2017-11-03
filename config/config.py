@@ -13,7 +13,7 @@ getTaoBaoItemInfoList=serviceHost+'index.php/api/Taobaoinfo/getTaobaoInfoList'#�
 addTaoBaoItemInfo=serviceHost+'index.php/api/Taobaoinfo/addTaobaoItemInfo'#采集百度分词，评论，问大家等
 getProxyList='http://www.xicidaili.com/nn/{0}'
 appkey='12574478';
-
+pid="mm_29947721_14832832_57874820";
 def enum(**enums):
     return type('Enum', (), enums)
 

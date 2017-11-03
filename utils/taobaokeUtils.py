@@ -8,11 +8,6 @@ import requests
 class taobaokeUtils:
     taobaoToKen=[]
 
-
-
-
-
-
     #获取淘宝客cookies
     @staticmethod
     def getCookies():
