@@ -47,7 +47,7 @@ class taobaoOtherUtils:
                         reasonDict = {}
 
                         if (item["reason"]):
-                            data =taobaoOther.reason.reasin().getData(item['itemId'])
+                            data =taobaoOther.reason.reason().getData(item['itemId'])
 
                             if (data is not None):
                                 reasonDict['status'] = item["reason"]

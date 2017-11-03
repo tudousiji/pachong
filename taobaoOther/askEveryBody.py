@@ -37,7 +37,10 @@ class askEveryBody:
                 body = json.loads(jsonStr)
                 if (body is not None):
                     if (str(body['ret']).startswith("['FAIL_") is not True):
-                        return json.dumps(body);
+                        if('data' in data and 'cards' in data['data']):
+                            return json.dumps(body);
+                        else:
+                            return None
                     else:
                         dict['isCookie'] = True;
                         if('_m_h5_tk' in  data['get_cookie']):

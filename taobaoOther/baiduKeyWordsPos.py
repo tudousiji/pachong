@@ -5,6 +5,7 @@ import json
 import random
 import config.config
 import urllib.parse
+import logging
 
 
 class baiduKeyWordsPos:

@@ -1,10 +1,13 @@
 import utils.taobaokeUtils
-import goods.config
-import time
+
 import config.config
 import utils.netUtils
 import json
 import taobaoOther.config
+import requests
+from requests.packages.urllib3.exceptions import InsecureRequestWarning
+# 禁用安全请求警告
+requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
 class taobaoSubKeyWords:
     pageSize = 100;
