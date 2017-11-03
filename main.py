@@ -13,8 +13,9 @@ import taobaoOther.askEveryBody
 import taobaoOther.comment
 import taobaoOther.reason
 import goods.goodsList
+import taobaoOther.taobaoSubKeyWords
 for index in range(1,2):
-    data= goods.goodsList.goodsList().getData(1)
+    data= taobaoOther.taobaoSubKeyWords.taobaoSubKeyWords().getData(1)
     print(index,data)
 #data=taobaoOther.askEveryBody.askEveryBody().getData(557806129437)
 #taobaoOther.taobaoOtherUtils.taobaoOtherUtils().getData();

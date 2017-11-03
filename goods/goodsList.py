@@ -6,7 +6,7 @@ import utils.netUtils
 import json
 
 class goodsList:
-    pageSize=1;
+    pageSize=100;
     def getData(self,page=1):
         dict = {
             'url': config.config.getKeyWordsList.format(page,goodsList.pageSize),

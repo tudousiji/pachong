@@ -12,6 +12,8 @@ getTryCate=serviceHost+'index.php/api/Tryout/getCateId'#获取淘宝试用id
 getTaoBaoItemInfoList=serviceHost+'index.php/api/Taobaoinfo/getTaobaoInfoList'#采集百度分词，评论，问大家等
 addTaoBaoItemInfo=serviceHost+'index.php/api/Taobaoinfo/addTaobaoItemInfo'#采集百度分词，评论，问大家等
 getKeyWordsList=serviceHost+'index.php/api/Keywords/getKeyWordsList?page={0}&pageSize={1}';#获取关键词列表
+getKeyWordsForSubKeyWordsNullList=serviceHost+'index.php/api/Keywords/getKeyWordsForSubKeyWordsNullList?page={0}&pageSize={1}';#获取关键词的衍生关键词为空的列表
+addKeyWordsForSubKeyWordsNull=serviceHost+'index.php/api/Keywords/addKeyWordsForSubKeyWordsNull';#设置关键词的衍生关键词为空的
 addGoodsItem=serviceHost+'index.php/api/AddGoods/addGoodsItem';#添加商品
 getProxyList='http://www.xicidaili.com/nn/{0}'
 appkey='12574478';
