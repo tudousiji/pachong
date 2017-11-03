@@ -6,15 +6,15 @@ import taobaoOther.taobaoOtherUtils
 from selenium.webdriver.common.proxy import ProxyType
 from selenium import webdriver
 import utils.netUtils
-import taobaoOther.comment
 
+import taobaoOther.test
 
 #import taobaoOther.test
 import urllib.parse
 
 
 #data=taobaoOther.askEveryBody.askEveryBody().getData(557806129437)
-taobaoOther.taobaoOtherUtils.taobaoOtherUtils().getData();
+#taobaoOther.taobaoOtherUtils.taobaoOtherUtils().getData();
 #data = taobaoOther.comment.comment().getData(557806129437)
 #print(data)
 class main:

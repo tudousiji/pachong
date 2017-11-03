@@ -22,7 +22,7 @@ class askEveryBody:
             'putCookie': cookiesDict['putCookie'],
             'isCookie': True,
         }
-        self.getItemData(dict, itemId);
+        return self.getItemData(dict, itemId);
 
 
     def getItemData(self,dict,itemId):
