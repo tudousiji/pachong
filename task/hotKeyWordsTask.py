@@ -2,7 +2,7 @@ import os
 import hotKeyWord.keyWordUtils
 
 class hotKeyWordsTask:
-    hotKeyWordsLockFile = "taobaoInfo.lock"
+    hotKeyWordsLockFile = "lockFile" + os.path.sep + "taobaoInfo.lock"
 
     def __init__(self):
 

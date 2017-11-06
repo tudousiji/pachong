@@ -1,8 +1,9 @@
 import os
 import goods.goodsList
+import os
 
 class goodsTask:
-    goodsTaskLockFile = "goods.lock"
+    goodsTaskLockFile = "lockFile" + os.path.sep + "goods.lock"
 
     def __init__(self):
 

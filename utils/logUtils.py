@@ -36,5 +36,6 @@ class logUtils:
         writeTime=time.strftime('%Y-%m-%d %H:%M:%S', localTime)
         f.write("["+writeTime+"] "+msg+'\n')
         f.newlines
+        f.flush()
         f.close()
         print("----------------")

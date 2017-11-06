@@ -2,12 +2,11 @@ import os
 import time
 from concurrent.futures import ThreadPoolExecutor
 import taobaoOther.baiduKeyWordsPos
-import task.hotKeyWordsTask
-import task.goodsTask
-import task.taobaoOtherTask
 import taobaoOther.askEveryBody
+import task.taobaoTryTask
 
-task.taobaoOtherTask.taobaoOtherTask().actionTask()
+# task.taobaoOtherTask.taobaoOtherTask().actionTask()
+task.taobaoTryTask.taobaoTryTask(task.taobaoTryTask.taobaoTryTask.taskType.JingXuan)
 #data=taobaoOther.askEveryBody.askEveryBody().getData(539342264315)
 #task.taobaoInfo.taobaoInfo();
 #aa=os.linesep

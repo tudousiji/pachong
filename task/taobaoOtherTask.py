@@ -4,7 +4,7 @@ import logging
 import taobaoOther.taobaoOtherUtils
 
 class taobaoOtherTask:
-    taobaoLockFile="taobaoInfo.lock"
+    taobaoLockFile = "lockFile" + os.path.sep + "taobaoInfo.lock"
     def __init__(self):
 
         if (os.path.exists(taobaoOtherTask.taobaoLockFile)):

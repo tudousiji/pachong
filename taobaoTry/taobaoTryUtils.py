@@ -8,6 +8,7 @@ import json
 import config.config
 from bs4 import BeautifulSoup
 import urllib.parse
+from taobaoTry.logUtils import logUtils
 
 class taobaoTryUtils:
     jingXuanMaxPage=3;#精选最大页数
@@ -81,7 +82,7 @@ class taobaoTryUtils:
             #print(data)
             if(data['Status']):
                 taobaoTry.config.cateList=data['data']
-                print(taobaoTry.config.cateList)
+                logUtils.info(taobaoTry.config.cateList)
 
 
 
@@ -123,44 +124,46 @@ class taobaoTryUtils:
                             itemId = items['itemId'];
                             reportId = items['reportId'];
                             title=items['title'];
-                            print(" title:"+title+" cate:"+str(taobaoTry.config.cateList[index])+" page:"+str(page)+" itemId:"+itemId+" reportId:"+reportId+" url:"+dict['url'])
+                            logUtils.info(
+                                " title:" + title + " cate:" + str(taobaoTry.config.cateList[index]) + " page:" + str(
+                                    page) + " itemId:" + itemId + " reportId:" + reportId + " url:" + dict['url'])
                             self.getItemData(None,cate,reportId,itemId)
                         if(effectiveList['isNextCate'] is True):
                             dict['reLoad'] = True;
                             nextIndex = index + 1;
                             if ( ( len(taobaoTry.config.cateList) > nextIndex and index>=0)):
-                                print(dict['url'] + "采集下一个分类:" + str(nextIndex))
+                                logUtils.info(dict['url'] + "采集下一个分类:" + str(nextIndex))
                                 self.parsePcTaobaoTryList(dict, nextIndex, 1)
                             else:
-                                print("采集完成")
+                                logUtils.info("采集完成")
                             return
                 if((index<0 and page>=taobaoTryUtils.jingXuanMaxPage)):
-                    print("采集完成")
+                    logUtils.info("采集完成")
                     return
                 else:
                     nextPage = page + 1
                     if(effectiveList is not None):
-                        print(dict['url'] + "采集成功，下一页:" + str(nextPage));
+                        logUtils.info(dict['url'] + "采集成功，下一页:" + str(nextPage));
                     else:
-                        print(dict['url'] + "采集失败，下一页:" + str(nextPage));
+                        logUtils.info(dict['url'] + "采集失败，下一页:" + str(nextPage));
                     dict['reLoad'] = True;
                     self.parsePcTaobaoTryList(dict, index, nextPage)
             else:#下一个列表
                 dict['reLoad'] = True;
                 nextIndex=index+1;
                 if(len(taobaoTry.config.cateList)>nextIndex):
-                    print(dict['url'] + "采集下一个分类:"+str(nextIndex))
+                    logUtils.info(dict['url'] + "采集下一个分类:" + str(nextIndex))
                     self.parsePcTaobaoTryList(dict, nextIndex, 1)
                 else:
-                    print("列表采集结束")
+                    logUtils.info("列表采集结束")
         else:
             if(dict['reLoad']):
-                print(dict['url']+"采集失败，重试中")
+                logUtils.info(dict['url'] + "采集失败，重试中")
                 dict['reLoad']=False;
                 self.parsePcTaobaoTryList(dict,index,page)
             else:
                 nextPage=page+1
-                print(dict['url'] + "采集失败，下一页:"+str(nextPage));
+                logUtils.info(dict['url'] + "采集失败，下一页:" + str(nextPage));
                 dict['reLoad'] = True;
                 self.parsePcTaobaoTryList(dict, index,nextPage )
 
@@ -226,7 +229,7 @@ class taobaoTryUtils:
                 if (body is not None and str(body['ret']).startswith("['FAIL_") is not True and len(body['data']['module'][0]['moduleData'])>0):
                         pass#服务器上发数据
                         datas = body['data']['module'][0]['moduleData']
-                        print(datas)
+                        logUtils.info(datas)
                         dict ={
                             'data':datas,
                             'itemId':datas['tryItemId'],
@@ -239,10 +242,10 @@ class taobaoTryUtils:
                         if(statusStr['isSuccess']):
                             status =json.loads(statusStr['body'])
                             if(statusStr['isSuccess'] and status['Code']==0):
-                                print("提交服务器成功")
+                                logUtils.info("提交服务器成功")
                             else:
-                                print("提交服务器失败")
-                            print("---------------")
+                                logUtils.info("提交服务器失败")
+                            logUtils.info("---------------")
                         else:
                             utils.utils.utils.postDataForService(dict, config.config.addTaobaoTryUrl)
 
