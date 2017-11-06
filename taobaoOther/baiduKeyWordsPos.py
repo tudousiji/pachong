@@ -8,11 +8,14 @@ import urllib.parse
 from taobaoOther.logUtils import logUtils
 
 
+# A-005多功能地面酒店用洗地机手推式地毯清洗机
 class baiduKeyWordsPos:
     baiduToKen = []
     maxKeyWordsCount=5;
     def getData(self,keyword):
         cookie=self.getCookies();
+        if (keyword is None or len(keyword) <= 0):
+            return None
         dict = {
             'url': taobaoOther.config.baiduKeyWordsPos.format(urllib.parse.quote(keyword) ),
             'requestType': 'GET',
@@ -32,7 +35,9 @@ class baiduKeyWordsPos:
                 if('result' in body and "res" in body['result'] and "keyword_list" in body['result']['res']):
                     #if (data['get_cookie'] is not None and len(data['get_cookie']) > 0):
                     #    cookie = self.putCookies(data['get_cookie']);
-                    if(len(body['result']['res']['keyword_list'])>=baiduKeyWordsPos.maxKeyWordsCount):
+
+                    if (body['result']['res']['keyword_list'] is not None and len(
+                            body['result']['res']['keyword_list']) >= baiduKeyWordsPos.maxKeyWordsCount):
                         return json.dumps(body['result']['res']['keyword_list'])
                     else:
                         #keyWordsList=[];

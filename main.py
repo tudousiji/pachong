@@ -18,6 +18,7 @@ task.taobaoOtherTask.taobaoOtherTask().actionTask()
 #taobaoOther.taobaoOtherUtils.taobaoOtherUtils().getData();
 #data = taobaoOther.comment.comment().getData(557806129437)
 #print(data)
+# taobaoOther.baiduKeyWordsPos.baiduKeyWordsPos().getData("A-005多功能地面酒店用洗地机手推式地毯清洗机")
 class main:
 
     def __init__(self):

@@ -34,7 +34,7 @@ class taobaoOtherUtils:
                         keywordsDict={}
                         if(item["keywords"]['status']):
                             data = taobaoOther.baiduKeyWordsPos.baiduKeyWordsPos().getData(item["keywords"]['title'])
-                            if(data is not None):
+                            if (data is not None and data != 'null'):
                                 keywordsDict['status'] =item["keywords"]['status']
                                 keywordsDict['data']=data
                             else:
