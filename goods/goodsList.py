@@ -4,7 +4,7 @@ import time
 import config.config
 import utils.netUtils
 import json
-
+from goods.logUtils import logUtils
 class goodsList:
     pageSize=100;
     def getData(self,page=1):
@@ -18,7 +18,7 @@ class goodsList:
         self.getKeyWordslit(dict,page);
 
     def getKeyWordslit(self,dict,page):
-        print("采集列表:",dict['url'])
+        logUtils.info("采集列表:",dict['url'])
         data = utils.netUtils.netUtils.getData(dict);
         if (data['isSuccess']):
             #print("成功:"+data['body'])
@@ -31,17 +31,17 @@ class goodsList:
                             'keyword_id':item['id'],
                             'data':data
                         }
-                        print("成功:" , dict)
+                        logUtils.info("成功:" , dict)
                         self.postData(dict)
                     else:
-                        print("内容失败")
+                        logUtils.info("内容失败")
 
                 if(len(body)>=goodsList.pageSize):
                     nextPage=page+1;
                     dict['url']=config.config.getKeyWordsList.format(nextPage,goodsList.pageSize)
                     self.getKeyWordslit(dict,nextPage)
                 else:
-                    print("采集结束")
+                    logUtils.info("采集结束")
             else:
                 return None
         else:
@@ -51,9 +51,9 @@ class goodsList:
     def postData(self,dict):
         data = utils.utils.utils.postDataForService(dict, config.config.addGoodsItem)
         if(data['isSuccess']):
-            print("服务器提交成功")
+            logUtils.info("服务器提交成功")
         else:
-            print("服务器提交失败:",data)
+            logUtils.info("服务器提交失败:",data)
 
     def getGoodsData(self,keyWords):
         cookiesDict = utils.taobaokeUtils.taobaokeUtils.getCookies();
@@ -71,7 +71,7 @@ class goodsList:
         return self.getItemData( dict,keyWords);
 
     def getItemData(self,dict,keyWords):
-        print("采集内容:", dict['url'])
+        logUtils.info("采集内容:", dict['url'])
         data=utils.netUtils.netUtils.getData(dict)
 
         if (data['isSuccess']):

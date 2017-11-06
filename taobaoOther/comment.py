@@ -6,6 +6,7 @@ from requests.packages.urllib3.exceptions import InsecureRequestWarning
 import random
 import requests
 import config.config
+from taobaoOther.logUtils import logUtils
 
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 class comment:
@@ -40,9 +41,9 @@ class comment:
     def getItemData(self, dict):
 
         data = utils.netUtils.netUtils.getData(dict);
-        #print(data['header']['Location'])
+
         if (data['isSuccess']):
-            #print("成功:"+data['body'])
+
             if (data['body'] is not None):
                 jsonStr = utils.utils.utils.replacePreGetBody(data['body'], 'jsonp_tbcrate_reviews_list(')
                 body = json.loads(jsonStr);
@@ -56,12 +57,12 @@ class comment:
             else:
                 return None;
         elif (data['code'] ==302):
-            print("302处理")
+            logUtils.info("302处理")
             return self.url302Handler(data['header']['Location']);
             #print(data['header']['Location'])
             pass
         else:
-            print("失败，重试")
+            logUtils.info("失败，重试")
             return self.getItemDataReLoad(dict);
 
     # 单条内容获取失败重试

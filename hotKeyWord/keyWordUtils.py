@@ -1,9 +1,10 @@
-import keyWord.config
+import hotKeyWord.config
 import utils.netUtils
 from bs4 import BeautifulSoup
 import utils.utils
 import config.config
 import json
+from hotKeyWord.logUtils import logUtils
 
 class keyWordUtils:
     def getHotKeyWords(self):
@@ -14,7 +15,7 @@ class keyWordUtils:
 
     def getLevel1(self):
         dict={
-            'url':keyWord.config.level1Url,
+            'url':hotKeyWord.config.level1Url,
             'requestType': 'GET'
         }
         data= utils.netUtils.netUtils.getData(dict)
@@ -30,13 +31,13 @@ class keyWordUtils:
 
     def parseLevel1Xls(self,id):
         list = [];
-        for type in keyWord.config.type:
-            url= keyWord.config.getXlsUrl.format(id,type)
+        for type in hotKeyWord.config.type:
+            url= hotKeyWord.config.getXlsUrl.format(id, type)
             data = utils.utils.utils.parseXls(url)
             for items in data:
                 for index in range(2,len(items)):
                     if(len(items[index])>0 and items[index][0].isdigit()):
-                        print(items[index][1])
+                        logUtils.info(items[index][1])
                         list.append(items[index][1])
         self.postHotKeyWords(list)
 
@@ -55,9 +56,9 @@ class keyWordUtils:
             'reLoad': True,
         }
         data  = utils.netUtils.netUtils.getData(dict)
-        print(data)
+        logUtils.info(data)
         if(data['isSuccess']):
-            print("提交服务器成功")
+            logUtils.info("提交服务器成功")
         else:
-            print("提交服务器失败")
-        print("----")
+            logUtils.info("提交服务器失败")
+        logUtils.info("----")

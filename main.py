@@ -1,10 +1,19 @@
 import os
 import time
 from concurrent.futures import ThreadPoolExecutor
+import taobaoOther.baiduKeyWordsPos
+import task.hotKeyWordsTask
+import task.goodsTask
+import task.taobaoOtherTask
+import taobaoOther.askEveryBody
 
-import test.test5
-#import goods.goodsList
+task.taobaoOtherTask.taobaoOtherTask().actionTask()
+#data=taobaoOther.askEveryBody.askEveryBody().getData(539342264315)
+#task.taobaoInfo.taobaoInfo();
+#aa=os.linesep
 
+#utils.logUtils.logUtils.getData("main","dsfsfdsfsdfds递四方速递范德萨范德萨范德萨范德萨发生第三方的舒服舒服似懂非懂是范德萨发生发生范德萨范德萨发生的 的事发生地方")
+#utils.logUtils.logUtils.getData("main","321")
 #data=taobaoOther.askEveryBody.askEveryBody().getData(557806129437)
 #taobaoOther.taobaoOtherUtils.taobaoOtherUtils().getData();
 #data = taobaoOther.comment.comment().getData(557806129437)

@@ -5,7 +5,7 @@ import json
 import random
 import config.config
 import urllib.parse
-import logging
+from taobaoOther.logUtils import logUtils
 
 
 class baiduKeyWordsPos:
@@ -13,7 +13,6 @@ class baiduKeyWordsPos:
     maxKeyWordsCount=5;
     def getData(self,keyword):
         cookie=self.getCookies();
-
         dict = {
             'url': taobaoOther.config.baiduKeyWordsPos.format(urllib.parse.quote(keyword) ),
             'requestType': 'GET',
@@ -93,7 +92,7 @@ class baiduKeyWordsPos:
     # 设置cookies
 
     def putCookies(self,cookies):
-        print("putCookies:"+(str)(cookies))
+        logUtils.info("putCookies:"+(str)(cookies))
         cookie = {'BAIDUID': cookies['BAIDUID'],
                   }
         #if(cookie not in baiduKeyWordsPos.baiduToKen):

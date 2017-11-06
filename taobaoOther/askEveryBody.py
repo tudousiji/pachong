@@ -7,12 +7,14 @@ import json
 import utils.utils
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
 import requests
+from taobaoOther.logUtils import logUtils
 
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 class askEveryBody:
     def getData(self, itemId, page=1):
         cookiesDict = utils.taobaokeUtils.taobaokeUtils.getCookies();
         url = self.getUrl(cookiesDict['cookies'],itemId);
+
         dict = {
             'url': url,
             'requestType': 'GET',
@@ -26,6 +28,7 @@ class askEveryBody:
 
 
     def getItemData(self,dict,itemId):
+
         data = utils.netUtils.netUtils.getData(dict);
 
         if (data['isSuccess']):
@@ -33,12 +36,12 @@ class askEveryBody:
                 # jsonStr = data['body'][data['body'].index('mtopjsonp8(') + len('mtopjsonp8('):len(data['body']) - 1];
                 #print(data['body'])
                 jsonStr = utils.utils.utils.replacePreGetBody(data['body'], "mtopjsonp12(");
-
                 body = json.loads(jsonStr)
                 if (body is not None):
                     if (str(body['ret']).startswith("['FAIL_") is not True):
-                        if('data' in data and 'cards' in data['data']):
-                            return json.dumps(body);
+
+                        if('data' in body and 'cards' in body['data'] and len(body['data']['cards'])>0):
+                            return json.dumps(body['data']['cards']);
                         else:
                             return None
                     else:

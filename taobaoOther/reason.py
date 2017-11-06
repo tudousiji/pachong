@@ -2,6 +2,7 @@ import taobaoOther.config
 import utils.netUtils
 import utils.utils
 import json
+from taobaoOther.logUtils import logUtils
 
 class reason:
     def getData(self,itemId):

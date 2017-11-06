@@ -1,6 +1,6 @@
 from collections import OrderedDict
 import utils.utils
-import keyWord.keyWordUtils
+import hotKeyWord.keyWordUtils
 
 
 def read_xls_file():
@@ -13,6 +13,6 @@ def read_xls_file():
     }
     utils.utils.utils.parseXls(dict['url'])
 
-data = keyWord.keyWordUtils.keyWordUtils().getHotKeyWords()
+data = hotKeyWord.keyWordUtils.keyWordUtils().getHotKeyWords()
 
 
