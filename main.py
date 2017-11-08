@@ -5,10 +5,10 @@ import taobaoOther.baiduKeyWordsPos
 import taobaoOther.askEveryBody
 import task.taobaoTryTask
 import task.taobaoOtherTask
-
-# import test.test5
+# import test.test4
+import test.test6
 # task.taobaoOtherTask.taobaoOtherTask().actionTask()
-task.taobaoTryTask.taobaoTryTask(task.taobaoTryTask.taobaoTryTask.taskType.All)
+#task.taobaoTryTask.taobaoTryTask(task.taobaoTryTask.taobaoTryTask.taskType.All)
 #data=taobaoOther.askEveryBody.askEveryBody().getData(539342264315)
 #task.taobaoInfo.taobaoInfo();
 #aa=os.linesep
