@@ -22,3 +22,5 @@ def enum(**enums):
     return type('Enum', (), enums)
 
 taskType = enum(BAIDU=1, COMMENT=2)
+
+keyWordsExtendList = ["淘宝优惠券", "天猫优惠券", "淘宝内部优惠券", "天猫内部优惠券", "京东优惠券"]

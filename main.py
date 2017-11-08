@@ -4,13 +4,16 @@ from concurrent.futures import ThreadPoolExecutor
 import taobaoOther.baiduKeyWordsPos
 import taobaoOther.askEveryBody
 import task.taobaoTryTask
+import task.taobaoOtherTask
 
+# import test.test5
 # task.taobaoOtherTask.taobaoOtherTask().actionTask()
-task.taobaoTryTask.taobaoTryTask(task.taobaoTryTask.taobaoTryTask.taskType.JingXuan)
+task.taobaoTryTask.taobaoTryTask(task.taobaoTryTask.taobaoTryTask.taskType.All)
 #data=taobaoOther.askEveryBody.askEveryBody().getData(539342264315)
 #task.taobaoInfo.taobaoInfo();
 #aa=os.linesep
-
+# data = taobaoOther.baiduKeyWordsPos.baiduKeyWordsPos().getData("小米手机咋样呢，推荐表")
+#print(data)
 #utils.logUtils.logUtils.getData("main","dsfsfdsfsdfds递四方速递范德萨范德萨范德萨范德萨发生第三方的舒服舒服似懂非懂是范德萨发生发生范德萨范德萨发生的 的事发生地方")
 #utils.logUtils.logUtils.getData("main","321")
 #data=taobaoOther.askEveryBody.askEveryBody().getData(557806129437)

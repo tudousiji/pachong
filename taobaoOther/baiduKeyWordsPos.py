@@ -38,7 +38,7 @@ class baiduKeyWordsPos:
 
                     if (body['result']['res']['keyword_list'] is not None and len(
                             body['result']['res']['keyword_list']) >= baiduKeyWordsPos.maxKeyWordsCount):
-                        return json.dumps(body['result']['res']['keyword_list'])
+                        return json.dumps(self.handleList(body['result']['res']['keyword_list']))
                     else:
                         #keyWordsList=[];
                         keyWordsList=(body['result']['res']['keyword_list'])
@@ -54,7 +54,7 @@ class baiduKeyWordsPos:
                                 keyWordsList.append(item[0])
                             if(len(keyWordsList)>=baiduKeyWordsPos.maxKeyWordsCount):
                                 break
-                        return json.dumps(keyWordsList)
+                        return json.dumps(self.handleList(keyWordsList))
                 else:
                     return self.isReLoad(data,dict);
             else:
@@ -111,7 +111,14 @@ class baiduKeyWordsPos:
     def reMoveCookies(self,index):
         del baiduKeyWordsPos.baiduToKen[index]
 
+    def getKeyWords(self):
+        list = config.config.keyWordsExtendList;
+        size = len(list)
+        index = random.randint(0, size - 1)
+        return list[index];
 
-
-
-
+    def handleList(self, list):
+        size = len(list)
+        index = random.randint(0, size - 1)
+        list.insert(index, self.getKeyWords())
+        return list;

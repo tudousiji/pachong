@@ -9,6 +9,7 @@ import config.config
 from bs4 import BeautifulSoup
 import urllib.parse
 from taobaoTry.logUtils import logUtils
+import taobaoOther.baiduKeyWordsPos
 
 class taobaoTryUtils:
     jingXuanMaxPage=3;#精选最大页数
@@ -234,7 +235,8 @@ class taobaoTryUtils:
                             'data':datas,
                             'itemId':datas['tryItemId'],
                             'reportId':datas['reportId'],
-                            'cate':cate
+                            'cate': cate,
+                            'keywords': taobaoOther.baiduKeyWordsPos.baiduKeyWordsPos().getData(datas['item']['title']),
                         }
                         #print(data)
                         statusStr = utils.utils.utils.postDataForService(dict,config.config.addTaobaoTryUrl)
