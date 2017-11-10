@@ -6,6 +6,7 @@ import json
 import config.config
 from taobaoBuyInventory.logUtils import logUtils
 
+
 class buyInventoryUtils:
     def getData(self, page, tabId):
         # return self.listHandleData(page, tabId);
@@ -78,7 +79,7 @@ class buyInventoryUtils:
             else:
                 return self.reLoadList(data, dict, page, psId, sceneId);
         else:
-    return self.reLoadList(data, dict, page, psId, sceneId);
+            return self.reLoadList(data, dict, page, psId, sceneId);
 
 
 def parserListItem(self, body):
@@ -106,94 +107,98 @@ def parserListItem(self, body):
 
 
 def reLoadList(self, data, dict, page, psId, sceneId):
-        dict['isCookie'] = True;
-        if ('_m_h5_tk' in data['get_cookie']):
-            cookieArr = data['get_cookie']['_m_h5_tk'].split('_')
-            cookie = utils.taobaokeUtils.taobaokeUtils.putCookies(data['get_cookie']);
-            if (dict['reLoadList']):
-                dict['url'] = self.getListUrl(cookieArr[0], page, psId, sceneId);
-                dict['putCookie'] = cookie
-                dict['reLoadList'] = False
-                return self.getListData(dict, page, psId, sceneId);
-            else:
-                return None;
+    dict['isCookie'] = True;
+    if ('_m_h5_tk' in data['get_cookie']):
+        cookieArr = data['get_cookie']['_m_h5_tk'].split('_')
+        cookie = utils.taobaokeUtils.taobaokeUtils.putCookies(data['get_cookie']);
+        if (dict['reLoadList']):
+            dict['url'] = self.getListUrl(cookieArr[0], page, psId, sceneId);
+            dict['putCookie'] = cookie
+            dict['reLoadList'] = False
+            return self.getListData(dict, page, psId, sceneId);
         else:
-            return None
+            return None;
+    else:
+        return None
 
 
 def getListUrl(self, cookie, page, psId, sceneId):
-        if (cookie is None):
-            cookie = "";
-        dataStr = str(taobaoBuyInventory.config.buyInventoryListData)
-        topic = str(psId) + "_" + str(sceneId)
-        data = dataStr % (
+    if (cookie is None):
+        cookie = "";
+    dataStr = str(taobaoBuyInventory.config.buyInventoryListData)
+    topic = str(psId) + "_" + str(sceneId)
+    data = dataStr % (
         page, topic, taobaoBuyInventory.config.listPageSize, psId, page, "" if sceneId == 0 else sceneId)
-        times = str(int(round(time.time() * 1000)));
-        sign = utils.netUtils.netUtils.getTbkSign(cookie, appConfig.appkey, times, data)
-        url = taobaoBuyInventory.config.buyInventoryListUrl.format(appConfig.appkey, times, sign, data)
-        # print(url)
-        return url;
+    times = str(int(round(time.time() * 1000)));
+    sign = utils.netUtils.netUtils.getTbkSign(cookie, appConfig.appkey, times, data)
+    url = taobaoBuyInventory.config.buyInventoryListUrl.format(appConfig.appkey, times, sign, data)
+    # print(url)
+    return url
 
-    def itemHandleData(self, contentId):
-        cookiesDict = utils.taobaokeUtils.taobaokeUtils.getCookies();
-        url = self.getItemUrl(cookiesDict['cookies'], contentId);
 
-        dict = {
-            'url': url,
-            'requestType': 'GET',
-            'isProxy': False,
-            'isHttps': False,
-            'reLoadList': True,
-            'putCookie': cookiesDict['putCookie'],
-            'isCookie': True,
-        }
-        return self.getItemData(dict, contentId);
+def itemHandleData(self, contentId):
+    cookiesDict = utils.taobaokeUtils.taobaokeUtils.getCookies();
+    url = self.getItemUrl(cookiesDict['cookies'], contentId);
 
-    def getItemData(self, dict, contentId):
-        data = utils.netUtils.netUtils.getData(dict);
-        if (data['isSuccess']):
-            if (data['body'] is not None):
-                jsonStr = utils.utils.utils.replacePreGetBody(data['body'], "mtopjsonp1(");
-                body = json.loads(jsonStr)
+    dict = {
+        'url': url,
+        'requestType': 'GET',
+        'isProxy': False,
+        'isHttps': False,
+        'reLoadList': True,
+        'putCookie': cookiesDict['putCookie'],
+        'isCookie': True,
+    }
+    return self.getItemData(dict, contentId)
 
-                if (body is not None):
-                    if (str(body['ret']).startswith("['FAIL_") is not True):
 
-                        return body;
-                    elif (dict['reLoadList']):
-                        return self.reLoadItem(data, dict, contentId);
-                    else:
-                        return None;
-                else:
+def getItemData(self, dict, contentId):
+    data = utils.netUtils.netUtils.getData(dict);
+    if (data['isSuccess']):
+        if (data['body'] is not None):
+            jsonStr = utils.utils.utils.replacePreGetBody(data['body'], "mtopjsonp1(");
+            body = json.loads(jsonStr)
+
+            if (body is not None):
+                if (str(body['ret']).startswith("['FAIL_") is not True):
+
+                    return body;
+                elif (dict['reLoadList']):
                     return self.reLoadItem(data, dict, contentId);
+                else:
+                    return None;
             else:
                 return self.reLoadItem(data, dict, contentId);
         else:
             return self.reLoadItem(data, dict, contentId);
+    else:
+        return self.reLoadItem(data, dict, contentId);
 
-    def reLoadItem(self, data, dict, contentId):
-        dict['isCookie'] = True;
-        #print(str(type(data)), str(type(['get_cookie'])))
-        if (data is not None and 'get_cookie' in data and data['get_cookie'] is not None and '_m_h5_tk' in data[
-            'get_cookie']):
-            cookieArr = data['get_cookie']['_m_h5_tk'].split('_')
-            cookie = utils.taobaokeUtils.taobaokeUtils.putCookies(data['get_cookie']);
-            if (dict['reLoadList']):
-                dict['url'] = self.getItemData(cookieArr[0], dict, contentId);
-                dict['putCookie'] = cookie
-                dict['reLoadList'] = False
-                return self.getItemData(dict, dict, contentId);
-            else:
-                return None;
+
+def reLoadItem(self, data, dict, contentId):
+    dict['isCookie'] = True;
+    # print(str(type(data)), str(type(['get_cookie'])))
+    if (data is not None and 'get_cookie' in data and data['get_cookie'] is not None and '_m_h5_tk' in data[
+        'get_cookie']):
+        cookieArr = data['get_cookie']['_m_h5_tk'].split('_')
+        cookie = utils.taobaokeUtils.taobaokeUtils.putCookies(data['get_cookie']);
+        if (dict['reLoadList']):
+            dict['url'] = self.getItemData(cookieArr[0], dict, contentId);
+            dict['putCookie'] = cookie
+            dict['reLoadList'] = False
+            return self.getItemData(dict, dict, contentId);
         else:
-            return None
+            return None;
+    else:
+        return None
 
-    def getItemUrl(self, cookie, contentId):
-        if (cookie is None):
-            cookie = "";
-        data = taobaoBuyInventory.config.buyInventoryItemData.format(contentId)
-        times = str(int(round(time.time() * 1000)));
-        sign = utils.netUtils.netUtils.getTbkSign(cookie, appConfig.appkey, times, data)
-        url = taobaoBuyInventory.config.buyInventoryItemUrl.format(appConfig.appkey, times, sign, data)
-        # print(url)
-        return url;
+
+def getItemUrl(self, cookie, contentId):
+    if (cookie is None):
+        cookie = "";
+    data = taobaoBuyInventory.config.buyInventoryItemData.format(contentId)
+    times = str(int(round(time.time() * 1000)));
+    sign = utils.netUtils.netUtils.getTbkSign(cookie, appConfig.appkey, times, data)
+    url = taobaoBuyInventory.config.buyInventoryItemUrl.format(appConfig.appkey, times, sign, data)
+    # print(url)
+    return url;
