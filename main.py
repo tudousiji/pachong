@@ -14,7 +14,7 @@ import urllib.parse
 # print(data2)
 for index in range(1, 2):
     data = taobaoBuyInventory.buyInventoryUtils.buyInventoryUtils().getData(index, 1)
-    print(data)
+    # print(data)
 # import test.test4
 #import test.test6
 # task.taobaoOtherTask.taobaoOtherTask().actionTask()

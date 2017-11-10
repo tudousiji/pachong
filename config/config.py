@@ -15,6 +15,7 @@ getKeyWordsList=serviceHost+'index.php/api/Keywords/getKeyWordsList?page={0}&pag
 getKeyWordsForSubKeyWordsNullList=serviceHost+'index.php/api/Keywords/getKeyWordsForSubKeyWordsNullList?page={0}&pageSize={1}';#获取关键词的衍生关键词为空的列表
 addKeyWordsForSubKeyWordsNull=serviceHost+'index.php/api/Keywords/addKeyWordsForSubKeyWordsNull';#设置关键词的衍生关键词为空的
 addGoodsItem=serviceHost+'index.php/api/AddGoods/addGoodsItem';#添加商品
+getBuyinventoryCate = serviceHost + 'index.php/api/Buyinventory/getCateList';  # 获取淘宝必买清单分类
 getProxyList='http://www.xicidaili.com/nn/{0}'
 appkey='12574478';
 pid="mm_29947721_14832832_57874820";
