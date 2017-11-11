@@ -40,21 +40,24 @@ class baiduKeyWordsPos:
                             body['result']['res']['keyword_list']) >= baiduKeyWordsPos.maxKeyWordsCount):
                         return json.dumps(self.handleList(body['result']['res']['keyword_list']))
                     else:
+                        if(body['result']['res']['keyword_list'] is not None):
                         #keyWordsList=[];
-                        keyWordsList=(body['result']['res']['keyword_list'])
-                        itemList=[];
-                        for item in body['result']['res']['wordrank'] :
-                            item2=item.split(":");
-                            if(len(item2[0])>=2 and item2[0].isdigit() is False):
-                                itemList.append(item2)
+                            keyWordsList=(body['result']['res']['keyword_list'])
+                            itemList=[];
+                            for item in body['result']['res']['wordrank'] :
+                                item2=item.split(":");
+                                if(len(item2[0])>=2 and item2[0].isdigit() is False):
+                                    itemList.append(item2)
 
-                        itemList.sort(key=lambda x: x[1],reverse=True)
-                        for item in itemList:
-                            if(item[0] not in keyWordsList):
-                                keyWordsList.append(item[0])
-                            if(len(keyWordsList)>=baiduKeyWordsPos.maxKeyWordsCount):
-                                break
-                        return json.dumps(self.handleList(keyWordsList))
+                            itemList.sort(key=lambda x: x[1],reverse=True)
+                            for item in itemList:
+                                if(item[0] not in keyWordsList):
+                                    keyWordsList.append(item[0])
+                                if(len(keyWordsList)>=baiduKeyWordsPos.maxKeyWordsCount):
+                                    break
+                            return json.dumps(self.handleList(keyWordsList))
+                        else:
+                            return None;
                 else:
                     return self.isReLoad(data,dict);
             else:
