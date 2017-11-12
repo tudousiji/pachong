@@ -8,9 +8,9 @@ from taobaoBuyInventory.logUtils import logUtils
 
 
 class buyInventoryUtils:
-    def getData(self, page, tabId):
+    def getData(self, page=1, index=0):
         # return self.listHandleData(page, tabId);
-        self.getCate()
+        self.getCate(page,index)
 
     def getCate(self, page=1, index=0):
         dict = {
@@ -202,3 +202,8 @@ def getItemUrl(self, cookie, contentId):
     url = taobaoBuyInventory.config.buyInventoryItemUrl.format(appConfig.appkey, times, sign, data)
     # print(url)
     return url;
+
+
+def checkEffectiveContentId(self):
+    pass
+
