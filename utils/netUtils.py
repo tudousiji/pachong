@@ -9,7 +9,8 @@ import hashlib
 import config.config
 from selenium.webdriver.common.proxy import ProxyType
 from selenium import webdriver
-
+import utils.logUtils
+import traceback
 
 typeCode = sys.getfilesystemencoding()
 
@@ -73,7 +74,10 @@ class netUtils:
                     # print(item["name"], ":", item["value"])
                     get_cookie[item["name"]] = item["value"]
         except Exception as err:
-            err.args
+            errorData = traceback.format_exc()
+            utils.logUtils.logUtils.info("error", str(errorData));
+            driver.quit()
+
 
         if (body is not None and len(body) > 0):
             isSuccess=True
