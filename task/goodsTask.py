@@ -22,3 +22,7 @@ class goodsTask:
 
     def actionTask(self):
         goods.goodsList.goodsList().getData()
+
+
+# 执行这个类
+goodsTask().actionTask();

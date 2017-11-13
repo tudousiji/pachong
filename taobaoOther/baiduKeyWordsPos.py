@@ -6,7 +6,7 @@ import random
 import config.config
 import urllib.parse
 from taobaoOther.logUtils import logUtils
-
+import traceback
 
 # A-005多功能地面酒店用洗地机手推式地毯清洗机
 class baiduKeyWordsPos:
@@ -31,8 +31,16 @@ class baiduKeyWordsPos:
         data = utils.netUtils.netUtils.getData(dict);
         if(data['isSuccess']):
             if (data['body'] is not None):
-                body=json.loads(data['body']);
-                if('result' in body and "res" in body['result'] and "keyword_list" in body['result']['res']):
+                body = None;
+                try:
+                    body = json.loads(data['body']);
+                except Exception as err:
+                    utils.logUtils.logUtils.info("error", data['body']);
+                    errorData = traceback.format_exc()
+                    utils.logUtils.logUtils.info("error", str(errorData));
+
+                if (body is not None and 'result' in body and "res" in body['result'] and "keyword_list" in
+                    body['result']['res']):
                     #if (data['get_cookie'] is not None and len(data['get_cookie']) > 0):
                     #    cookie = self.putCookies(data['get_cookie']);
 
