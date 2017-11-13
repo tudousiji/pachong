@@ -63,16 +63,19 @@ class netUtils:
             driver.start_session(webdriver.DesiredCapabilities.PHANTOMJS)
 
         url = parment['url'];
-        driver.get(url)
-        #data = driver.page_source
-        body = driver.find_element_by_tag_name("body").text
+        get_cookie = {}
+        try:
+            driver.get(url)
+            # data = driver.page_source
+            body = driver.find_element_by_tag_name("body").text
+            if (driver.get_cookies() is not None):
+                for item in driver.get_cookies():
+                    # print(item["name"], ":", item["value"])
+                    get_cookie[item["name"]] = item["value"]
+        except Exception as err:
+            err.args
 
-        get_cookie={}
-        for item in driver.get_cookies():
-            #print(item["name"], ":", item["value"])
-            get_cookie[item["name"]]=item["value"]
-
-        if(len(body)>0):
+        if (body is not None and len(body) > 0):
             isSuccess=True
             content = {
                 'body': body,

@@ -236,8 +236,12 @@ class taobaoTryUtils:
                             'itemId':datas['tryItemId'],
                             'reportId':datas['reportId'],
                             'cate': cate,
-                            'keywords': taobaoOther.baiduKeyWordsPos.baiduKeyWordsPos().getData(datas['item']['title']),
+                            # 'keywords': taobaoOther.baiduKeyWordsPos.baiduKeyWordsPos().getData(datas['item']['title']),
                         }
+                        if (datas is not None and 'item' in datas and datas['item'] is not None and 'title' in datas[
+                            'item'] and datas['item']['title'] is not None):
+                            dict['keywords'] = taobaoOther.baiduKeyWordsPos.baiduKeyWordsPos().getData(
+                                datas['item']['title']);
                         #print(data)
                         statusStr = utils.utils.utils.postDataForService(dict,config.config.addTaobaoTryUrl)
                         #print(statusStr)
