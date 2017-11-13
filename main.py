@@ -23,7 +23,7 @@ import traceback
 # task.taobaoOtherTask.taobaoOtherTask().actionTask()
 try:
     pass
-    task.taobaoTryTask.taobaoTryTask(task.taobaoTryTask.taobaoTryTask.taskType.All)
+    taobaoBuyInventory.buyInventoryUtils.buyInventoryUtils().getData(1,0)
 except  Exception as err:
     # exc_type, exc_obj, exc_tb = sys.exc_info()
     # fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
