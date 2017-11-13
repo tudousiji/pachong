@@ -78,7 +78,8 @@ class baiduKeyWordsPos:
             dict['reLoad']=False;
 
             if (data['get_cookie'] is not None and len(data['get_cookie']) >0):
-                cookie = self.putCookies(data['get_cookie']);
+                #cookie = self.putCookies(data['get_cookie']);
+                pass
             else:
                 getCook = self.getCookies()
                 cookie = getCook['putCookie'];
