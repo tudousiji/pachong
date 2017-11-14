@@ -24,8 +24,8 @@ class netUtils:
         if ('url' not in parment):
             print("url 不存在");
             return;
-        if('taskType' in parment and (parment['taskType']==config.config.taskType.BAIDU
-                                      or parment['taskType']==config.config.taskType.COMMENT)):
+        if ('taskType' in parment and (parment['taskType'] == config.config.taskType.BAIDU
+                                       or parment['taskType'] == config.config.taskType.COMMENT)):
 
             return netUtils.getRequestsForSelenium(parment);
         else:
@@ -34,38 +34,39 @@ class netUtils:
 
     @staticmethod
     def getRequestsForSelenium(parment):
-        driver = webdriver.PhantomJS();
-        driver.implicitly_wait(3)
-        driver.set_page_load_timeout(3)
-        driver.set_script_timeout(3)  # 这两种设置都进行才有效
-        proxy = webdriver.Proxy()
-
         isProxy = False;
         isSuccess = False;
         isCookie = False;
         putCookie = None;
-        if ('putCookie' in parment  and parment['putCookie'] is not None):
-            isCookie = True;
-            putCookie=parment['putCookie'];
-            driver.add_cookie(putCookie)
-
-
-        if ('isProxy' in parment and parment['isProxy']):
-            isProxy=True
-            proxy.proxy_type = ProxyType.MANUAL
-            proxy.http_proxy = parment['proxyIp']+':'+parment['proxyPort'];
-            # 将代理设置添加到webdriver.DesiredCapabilities.PHANTOMJS中
-            proxy.add_to_capabilities(webdriver.DesiredCapabilities.PHANTOMJS)
-            driver.start_session(webdriver.DesiredCapabilities.PHANTOMJS)
-        else:
-            proxy = webdriver.Proxy()
-            proxy.proxy_type = ProxyType.DIRECT
-            proxy.add_to_capabilities(webdriver.DesiredCapabilities.PHANTOMJS)
-            driver.start_session(webdriver.DesiredCapabilities.PHANTOMJS)
-
-        url = parment['url'];
         get_cookie = {}
+        body = None
+        url = None
         try:
+            driver = webdriver.PhantomJS();
+            driver.implicitly_wait(3)
+            driver.set_page_load_timeout(3)
+            driver.set_script_timeout(3)  # 这两种设置都进行才有效
+            proxy = webdriver.Proxy()
+            if ('putCookie' in parment and parment['putCookie'] is not None):
+                isCookie = True;
+                putCookie = parment['putCookie'];
+                driver.add_cookie(putCookie)
+
+            if ('isProxy' in parment and parment['isProxy']):
+                isProxy = True
+                proxy.proxy_type = ProxyType.MANUAL
+                proxy.http_proxy = parment['proxyIp'] + ':' + parment['proxyPort'];
+                # 将代理设置添加到webdriver.DesiredCapabilities.PHANTOMJS中
+                proxy.add_to_capabilities(webdriver.DesiredCapabilities.PHANTOMJS)
+                driver.start_session(webdriver.DesiredCapabilities.PHANTOMJS)
+            else:
+                proxy = webdriver.Proxy()
+                proxy.proxy_type = ProxyType.DIRECT
+                proxy.add_to_capabilities(webdriver.DesiredCapabilities.PHANTOMJS)
+                driver.start_session(webdriver.DesiredCapabilities.PHANTOMJS)
+
+            url = parment['url'];
+
             driver.get(url)
             # data = driver.page_source
             body = driver.find_element_by_tag_name("body").text
@@ -76,11 +77,12 @@ class netUtils:
         except Exception as err:
             errorData = traceback.format_exc()
             utils.logUtils.logUtils.info("error", str(errorData));
+        finally:
             driver.quit()
 
 
         if (body is not None and len(body) > 0):
-            isSuccess=True
+            isSuccess = True
             content = {
                 'body': body,
                 'isProxy': isProxy,
@@ -112,10 +114,9 @@ class netUtils:
                 'put_cookie': putCookie,
                 'isSuccess': isSuccess
             }
-        driver.quit()
+
 
         return content
-
 
     @staticmethod
     def getRequests(parment):
@@ -134,79 +135,73 @@ class netUtils:
         proxies = None
         if ('isProxy' in parment and parment['isProxy']):
             isProxy = True
-            proxies = {parment['proxyProtocol']:  "http://" + parment['proxyIp'] + ":" + parment[
+            proxies = {parment['proxyProtocol']: "http://" + parment['proxyIp'] + ":" + parment[
                 'proxyPort']}
 
         isHeader = False;
-        header=None;
+        header = None;
         if ('isHeader' in parment):
             isHeader = True;
         if ('header' in parment):
             header = parment['header']
 
-
         isCookie = False;
-        putCookie=None;
+        putCookie = None;
         if ('isCookie' in parment and parment['isCookie'] and parment['putCookie'] is not None):
             isCookie = True;
-            putCookie=parment['putCookie'];
-            #print(putCookie)
-
+            putCookie = parment['putCookie'];
+            # print(putCookie)
 
         # print(parment['url'])
-        r=None
-        isSuccess=True;
-        url=parment['url'];
-        errInfo=None;
-
-
+        r = None
+        isSuccess = True;
+        url = parment['url'];
+        errInfo = None;
 
         try:
             if (requestType == 'GET'):
                 r = requests.get(url=url, proxies=(proxies if isProxy else None),
-                                 headers=netUtils.getHeaderDict(parment['url'],header), timeout=60,cookies=(putCookie if isCookie and putCookie  is not None else None),verify=False,allow_redirects=False)
+                                 headers=netUtils.getHeaderDict(parment['url'], header), timeout=60,
+                                 cookies=(putCookie if isCookie and putCookie is not None else None), verify=False,
+                                 allow_redirects=False)
 
 
             else:
                 form = postData if requestType == 'POST' else None;
-                #print(form)
+                # print(form)
                 r = requests.post(url=url, data=form, proxies=(proxies if isProxy else None),
-                                  headers=netUtils.getHeaderDict(parment['url'],header),
-                                  timeout=60,cookies=(putCookie if isCookie and putCookie  is not None else None))
-            #print(help(r.headers()))
+                                  headers=netUtils.getHeaderDict(parment['url'], header),
+                                  timeout=60, cookies=(putCookie if isCookie and putCookie is not None else None))
+                # print(help(r.headers()))
         except Exception as err:
             isSuccess = False;
-            errInfo=err;
+            errInfo = err;
             print(err)
 
-
-
-
-
-        if(r is not None):
+        if (r is not None):
             code = r.status_code;
-            #print(code)
-            #print(r.text,"---",url )
-            if(code==200):
-                if (r.encoding is not None ):
+            # print(code)
+            # print(r.text,"---",url )
+            if (code == 200):
+                if (r.encoding is not None):
                     text = r.text;
-                    if(len(text)>0):
-                        body = text.encode(r.encoding).decode(r.apparent_encoding,'ignore');
+                    if (len(text) > 0):
+                        body = text.encode(r.encoding).decode(r.apparent_encoding, 'ignore');
                     else:
-                        body="";
-                    #print(text)
+                        body = "";
+                        # print(text)
                 else:
                     body = r.text
 
             else:
-                print("错误code:",code)
+                print("错误code:", code)
                 print(r.text)
                 isSuccess = False;
-            #r.close()
+                # r.close()
         else:
             isSuccess = False;
 
-        if(isSuccess):
+        if (isSuccess):
             content = {
                 'body': body,
                 'isProxy': isProxy,
@@ -215,7 +210,7 @@ class netUtils:
                 'url': url,
                 'isHeader': isHeader,
                 'header': r.headers,
-                'code':r.status_code,
+                'code': r.status_code,
                 'isCookie': isCookie,
                 'get_cookie': r.cookies,
                 'put_cookie': putCookie,
@@ -223,12 +218,12 @@ class netUtils:
             }
         else:
             content = {
-                'err':errInfo,
+                'err': errInfo,
                 'isProxy': isProxy,
                 'postData': postData,
                 'requestType': requestType,
                 'url': url,
-                'code':r.status_code if r is not None else None ,
+                'code': r.status_code if r is not None else None,
                 'get_cookie': r.cookies if r is not None else None,
                 'isHeader': isHeader,
                 'header': r.headers if r is not None else None,
@@ -241,9 +236,6 @@ class netUtils:
             r.close();
 
         return content;
-
-
-
 
     @staticmethod
     def getUrllibData(parment):
@@ -286,11 +278,11 @@ class netUtils:
             rq.build_opener(rq.HTTPCookieProcessor(parment['isCookie']));
 
         isHeader = False;
-        header=None;
+        header = None;
         if ('isHeader' in parment):
             isHeader = True;
-        if('header' in parment):
-            header=parment['header']
+        if ('header' in parment):
+            header = parment['header']
 
         url = parment['url'];
 
@@ -360,44 +352,42 @@ class netUtils:
         headers = {
             'Host': urlInfo.hostname,
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/57.0.2987.133 Safari/537.36',
-            'Accept':'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-            'Accept-Language':'zh-CN,zh;q=0.8,en-US;q=0.5,en;q=0.3',
-            'Accept-Encoding':'gzip, deflate',
-            'Connection':'keep-alive',
-            'Upgrade-Insecure-Requests':'1',
-            'Pragma':'no-cache',
-            'Cache-Control':'no-cache',
+            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+            'Accept-Language': 'zh-CN,zh;q=0.8,en-US;q=0.5,en;q=0.3',
+            'Accept-Encoding': 'gzip, deflate',
+            'Connection': 'keep-alive',
+            'Upgrade-Insecure-Requests': '1',
+            'Pragma': 'no-cache',
+            'Cache-Control': 'no-cache',
         }
-        if(b is not  None and type(b)==dict and len(b)>0):
+        if (b is not None and type(b) == dict and len(b) > 0):
             for x in b:
-                headers[x]=str(b[x])
-               # print(headers[x])
+                headers[x] = str(b[x])
+                # print(headers[x])
         return headers;
 
-
-
     @staticmethod
-    def getTbkSign(cookie ,appKey,time,data):
-        data=cookie + "&" + time + "&"+ appKey+"&"+data
+    def getTbkSign(cookie, appKey, time, data):
+        data = cookie + "&" + time + "&" + appKey + "&" + data
         sign = hashlib.md5(data.encode('utf-8')).hexdigest();
-        #print(sign)
+        # print(sign)
         return sign
 
 
 
-#from selenium import webdriver
-#driver=webdriver.PhantomJS();
-#driver.implicitly_wait(3)
-#driver.set_page_load_timeout(3)
-#driver.set_script_timeout(3)#这两种设置都进行才有效
-#for index in range(10000):
-#    url='http://zhannei.baidu.com/api/customsearch/keywords?title=小米手机怎么样/值得推荐吗'+(str)(index);
-    #print("url:"+url)
-#    try:
-#        driver.get(url)
-        #print(dir(driver))
-#        print((str)(index)+":"+ (str)(driver.page_source));
- #       print("-------------")
- #   except Exception as err:
- #       print(err)
-#driver.quit()#退出浏览器
+        # from selenium import webdriver
+        # driver=webdriver.PhantomJS();
+        # driver.implicitly_wait(3)
+        # driver.set_page_load_timeout(3)
+        # driver.set_script_timeout(3)#这两种设置都进行才有效
+        # for index in range(10000):
+        #    url='http://zhannei.baidu.com/api/customsearch/keywords?title=小米手机怎么样/值得推荐吗'+(str)(index);
+        # print("url:"+url)
+        #    try:
+        #        driver.get(url)
+        # print(dir(driver))
+        #        print((str)(index)+":"+ (str)(driver.page_source));
+        #       print("-------------")
+        #   except Exception as err:
+        #       print(err)
+        # driver.quit()#退出浏览器
