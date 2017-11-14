@@ -29,8 +29,6 @@ class buyInventoryUtils:
                 for index in range(index, len(body)):
                     self.listHandleData(page, body[index]['psId'], body[index]['sceneId'])
 
-                    logUtils.info("------------------------------------")
-                    return
 
     def listHandleData(self, page, psId, sceneId):
         cookiesDict = utils.taobaokeUtils.taobaokeUtils.getCookies();
@@ -60,19 +58,18 @@ class buyInventoryUtils:
                     if (str(body['ret']).startswith("['FAIL_") is not True):
                         # itemList = body['data']['result']['1891397']['result'][0]['data'][0]['data'][0][0]['pre'];
                         itemList = self.parserListItem(body)
+                        # print(itemList)
                         effectiveContentId=self.checkEffectiveContentId(itemList)
+                        #print("effectiveContentId:",effectiveContentId)
                         if (effectiveContentId is not None):
                             for index in range(len(effectiveContentId)):
                                 contentId = effectiveContentId[index]
-                                # print("contentId:",contentId)
                                 itemData = self.itemHandleData(contentId)
                                 dict={'data':itemData,
                                       'contentId':contentId,
                                       }
                                 self.postItemData(dict)
-                                print("page:", page, " index:", index, " ", contentId, ":", itemData)
-                            itemData = self
-                            #print(body)
+
                         return body;
 
                     elif (dict['reLoadList']):
@@ -88,7 +85,7 @@ class buyInventoryUtils:
 
 
     def parserListItem(self, body):
-        body['data']['result']['1891397']['result'][0]['data'][0]['data'][0][0]['pre']
+        #body['data']['result']['1891397']['result'][0]['data'][0]['data'][0][0]['pre']
         if (body is not None and 'data' in body and
                     body['data'] is not None and 'result' in body['data'] and
                     body['data']['result'] is not None and '1891397' in body['data']['result'] and
@@ -158,6 +155,7 @@ class buyInventoryUtils:
 
 
     def getItemData(self, dict, contentId):
+
         data = utils.netUtils.netUtils.getData(dict);
         if (data['isSuccess']):
             if (data['body'] is not None):
@@ -166,8 +164,10 @@ class buyInventoryUtils:
 
                 if (body is not None):
                     if (str(body['ret']).startswith("['FAIL_") is not True):
-
-                        return body;
+                        if (body['data'] is not None and body['data']['models'] is not None):
+                            return body['data']['models'];
+                        else:
+                            return None
                     elif (dict['reLoadList']):
                         return self.reLoadItem(data, dict, contentId);
                     else:
@@ -211,16 +211,34 @@ class buyInventoryUtils:
 
     def checkEffectiveContentId(self,dict):
         list = [];
-        if (dict is not None):
+        if (dict is not None and len(dict) > 0):
             for index in range(len(dict)):
                 contentId = dict[index]['contentId']
                 list.append(contentId)
-        return  list
+            if (len(list) > 0):
+                postDict = {
+                    'data': json.dumps(list),
+                }
+
+                dict = {
+                    'url': config.config.checkEffectiveContentIdList,
+                    'requestType': 'POST',
+                    'isProxy': False,
+                    'isHttps': False,
+                    'postData': postDict,
+                    'reLoad': True,
+                }
+                data = utils.netUtils.netUtils.getData(dict)
+                if (data["isSuccess"] and data["body"] is not None):
+                    return json.loads(data["body"])
+
+        return list
 
     def postItemData(self,dict):
         postDict = {
             'data': json.dumps(dict),
         }
+
         dict = {
             'url': config.config.addbuyInventoryItemData,
             'requestType': 'POST',
@@ -229,6 +247,7 @@ class buyInventoryUtils:
             'postData': postDict,
             'reLoad': True,
         }
+
         data = utils.netUtils.netUtils.getData(dict)
         if (data['isSuccess']):
             logUtils.info("提交服务器成功")
