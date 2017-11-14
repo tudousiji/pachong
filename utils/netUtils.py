@@ -24,8 +24,8 @@ class netUtils:
         if ('url' not in parment):
             print("url 不存在");
             return;
-        if ('taskType' in parment and (parment['taskType'] == config.config.taskType.BAIDU
-                                       or parment['taskType'] == config.config.taskType.COMMENT)):
+        if('taskType' in parment and (parment['taskType']==config.config.taskType.BAIDU
+                                      or parment['taskType']==config.config.taskType.COMMENT)):
 
             return netUtils.getRequestsForSelenium(parment);
         else:
