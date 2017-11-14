@@ -10,6 +10,7 @@ import urllib.parse
 import utils.logUtils
 import traceback
 
+# import test.test7
 # import test.writeFile
 # url="http://www.qq.om/index.php?a=10&b=100"
 # data=urllib.parse.urlparse(url).query

@@ -14,6 +14,7 @@ import taobaoOther.baiduKeyWordsPos
 class taobaoTryUtils:
     jingXuanMaxPage=3;#精选最大页数
     def getUrl(self,cookie,page,cate):
+        logUtils.info("getUrl")
         if (cookie is None):
             cookie = "";
         data = taobaoTry.config.data.format(page, cate)
@@ -26,7 +27,7 @@ class taobaoTryUtils:
 
     #wap版本采集（未完成）
     def handleWapDat(self,dict,page,cate):
-
+        logUtils.info("handleWapDat")
         if(dict is None):
             cookies=self.getCookies();
             cookiesStr = cookies['cookies'];
@@ -47,6 +48,7 @@ class taobaoTryUtils:
 
     #有分类的 定时运行
     def handlePcTryList(self,dict,index=0,page=1):
+        logUtils.info("handlePcTryList")
         if (dict is None):
             if(index>=0):
                 self.getTryCate();
@@ -68,6 +70,7 @@ class taobaoTryUtils:
 
 
     def getTryCate(self):
+        logUtils.info("getTryCate")
         dict = {
             'url': config.config.getTryCate,
             'requestType': 'GET',
@@ -88,6 +91,7 @@ class taobaoTryUtils:
 
 
     def parsePcTaobaoTryList(self,dict,index,page):
+        logUtils.info("parsePcTaobaoTryList")
         #print("url:"+dict['url'])
         if(index>=0):
             cate = taobaoTry.config.cateList[index];
@@ -170,6 +174,7 @@ class taobaoTryUtils:
 
     #判断是否已经采集过了
     def checkEffectiveList(self,list):
+        logUtils.info("checkEffectiveList")
         postDict = {
             'data': json.dumps(list),
         }
@@ -193,6 +198,7 @@ class taobaoTryUtils:
 
 
     def getItemUrl(self,cookie,reportId,itemId):
+        logUtils.info("getItemUrl")
         if (cookie is None):
             cookie = "";
         data = taobaoTry.config.itemData.format(itemId, reportId)
@@ -203,6 +209,7 @@ class taobaoTryUtils:
         return url;
 
     def getItemData(self,dict,cate,reportId,itemId):
+        logUtils.info("getItemData")
         cookies = utils.taobaokeUtils.taobaokeUtils.getCookies();
         cookiesStr = cookies['cookies'];
         cookiesDict = cookies['putCookie'];
@@ -240,8 +247,10 @@ class taobaoTryUtils:
                         }
                         if (datas is not None and 'item' in datas and datas['item'] is not None and 'title' in datas[
                             'item'] and datas['item']['title'] is not None):
+                            logUtils.info("baiduKeyWordsPos start")
                             dict['keywords'] = taobaoOther.baiduKeyWordsPos.baiduKeyWordsPos().getData(
                                 datas['item']['title']);
+                            logUtils.info("baiduKeyWordsPos end")
                         #print(data)
                         statusStr = utils.utils.utils.postDataForService(dict,config.config.addTaobaoTryUrl)
                         #print(statusStr)
@@ -265,6 +274,7 @@ class taobaoTryUtils:
 
     #单条内容获取失败重试
     def getItemDataReLoad(self,data,dict,cate,id,itemId):
+        logUtils.info("getItemDataReLoad")
         if (dict.get('cookiesInfoDict')):
             if (dict.get('cookiesInfoDict').get('index')):
                 utils.taobaokeUtils.taobaokeUtils.reMoveCookies(dict['cookiesInfoDict']['index'])
@@ -285,6 +295,7 @@ class taobaoTryUtils:
 
 
     def getData(self,dict,page,cate):
+        logUtils.info("getData")
         data = utils.netUtils.netUtils.getData(dict);
         if (data['isSuccess']):
             if (data['body'] is not None):

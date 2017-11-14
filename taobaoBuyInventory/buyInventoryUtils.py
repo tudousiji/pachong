@@ -11,9 +11,11 @@ import os
 class buyInventoryUtils:
     def getData(self, page=1, index=0):
         # return self.listHandleData(page, tabId);
+        print("log getData")
         self.getCate(page,index)
 
     def getCate(self, page=1, index=0):
+        print("log getCate")
         dict = {
             'url': config.config.getBuyinventoryCate,
             'requestType': 'GET',
@@ -31,6 +33,7 @@ class buyInventoryUtils:
                     self.listHandleData(page, body[index]['id'], body[index]['psId'], body[index]['sceneId'])
 
     def listHandleData(self, cateId, page, psId, sceneId):
+        print("log listHandleData")
         cookiesDict = utils.taobaokeUtils.taobaokeUtils.getCookies();
         url = self.getListUrl(cookiesDict['cookies'], page, psId, sceneId);
         logUtils.info("list url:", url)
@@ -47,6 +50,7 @@ class buyInventoryUtils:
         return self.getListData(cateId, dict, page, psId, sceneId);
 
     def getListData(self, cateId, dict, page, psId, sceneId):
+        print("log getListData")
         data = utils.netUtils.netUtils.getData(dict);
         if (data['isSuccess']):
             if (data['body'] is not None):
@@ -71,8 +75,10 @@ class buyInventoryUtils:
                                             'contentId': contentId,
                                             }
                                     if ('title' in itemData and itemData['title'] is not None):
+                                        print("log baiduKeyWordsPos 111")
                                         dict['keywords'] = taobaoOther.baiduKeyWordsPos.baiduKeyWordsPos().getData(
                                             itemData['title'])
+                                        print("log baiduKeyWordsPos 222")
 
                                     self.postItemData(dict)
 
@@ -92,6 +98,7 @@ class buyInventoryUtils:
 
 
     def parserListItem(self, body):
+        print("log parserListItem")
         #body['data']['result']['1891397']['result'][0]['data'][0]['data'][0][0]['pre']
         if (body is not None and 'data' in body and
                     body['data'] is not None and 'result' in body['data'] and
@@ -115,6 +122,7 @@ class buyInventoryUtils:
             return None;
 
     def reLoadList(self, data, cateId, dict, page, psId, sceneId):
+        print("log reLoadList")
         dict['isCookie'] = True;
         if ('_m_h5_tk' in data['get_cookie']):
             cookieArr = data['get_cookie']['_m_h5_tk'].split('_')
@@ -131,6 +139,7 @@ class buyInventoryUtils:
 
 
     def getListUrl(self, cookie, page, psId, sceneId):
+        print("log getListUrl")
         if (cookie is None):
             cookie = "";
         dataStr = str(taobaoBuyInventory.config.buyInventoryListData)
@@ -145,6 +154,7 @@ class buyInventoryUtils:
 
 
     def itemHandleData(self, contentId):
+        print("log itemHandleData")
         cookiesDict = utils.taobaokeUtils.taobaokeUtils.getCookies();
         url = self.getItemUrl(cookiesDict['cookies'], contentId);
 
@@ -161,7 +171,7 @@ class buyInventoryUtils:
 
 
     def getItemData(self, dict, contentId):
-
+        print("log getItemData")
         data = utils.netUtils.netUtils.getData(dict);
         if (data['isSuccess']):
             if (data['body'] is not None):
@@ -191,6 +201,7 @@ class buyInventoryUtils:
 
 
     def reLoadItem(self, data, dict, contentId):
+        print("log reLoadItem")
         dict['isCookie'] = True;
         # print(str(type(data)), str(type(['get_cookie'])))
         if (data is not None and 'get_cookie' in data and data['get_cookie'] is not None and '_m_h5_tk' in data[
@@ -198,10 +209,10 @@ class buyInventoryUtils:
             cookieArr = data['get_cookie']['_m_h5_tk'].split('_')
             cookie = utils.taobaokeUtils.taobaokeUtils.putCookies(data['get_cookie']);
             if (dict['reLoadList']):
-                dict['url'] = self.getItemData(cookieArr[0], dict, contentId);
+                dict['url'] = self.getItemUrl(cookieArr[0], contentId);
                 dict['putCookie'] = cookie
                 dict['reLoadList'] = False
-                return self.getItemData(dict, dict, contentId);
+                return self.getItemData(dict, contentId);
             else:
                 return None;
         else:
@@ -209,6 +220,7 @@ class buyInventoryUtils:
 
 
     def getItemUrl(self, cookie, contentId):
+        print("log getItemUrl")
         if (cookie is None):
             cookie = "";
         data = taobaoBuyInventory.config.buyInventoryItemData.format(contentId)
@@ -220,6 +232,7 @@ class buyInventoryUtils:
 
 
     def checkEffectiveContentId(self,dict):
+        print("log checkEffectiveContentId")
         contentIdList = [];
         if (dict is not None and len(dict) > 0):
             for index in range(len(dict)):
@@ -247,6 +260,7 @@ class buyInventoryUtils:
         return contentIdList
 
     def postItemData(self,dict):
+        print("log postItemData")
         postDict = {
             'data': json.dumps(dict),
         }

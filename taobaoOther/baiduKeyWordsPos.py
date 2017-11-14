@@ -13,6 +13,7 @@ class baiduKeyWordsPos:
     baiduToKen = []
     maxKeyWordsCount=5;
     def getData(self,keyword):
+        logUtils.info("baiduKeyWordsPos getData")
         cookie=self.getCookies();
         if (keyword is None or len(keyword) <= 0):
             return None
@@ -28,7 +29,9 @@ class baiduKeyWordsPos:
         return self.getItemData(dict)
 
     def getItemData(self,dict):
+        logUtils.info("baiduKeyWordsPos getItemData")
         data = utils.netUtils.netUtils.getData(dict);
+        logUtils.info("baiduKeyWordsPos getItemData 222")
         if(data['isSuccess']):
             if (data['body'] is not None):
                 body = None;
@@ -74,6 +77,7 @@ class baiduKeyWordsPos:
             return self.isReLoad(data,dict);
 
     def isReLoad(self,data,dict):
+        logUtils.info("baiduKeyWordsPos isReLoad")
         if(dict['reLoad']):
             dict['reLoad']=False;
 
@@ -91,6 +95,7 @@ class baiduKeyWordsPos:
 
     # 获取淘宝客cookies
     def getCookies(self):
+        logUtils.info("baiduKeyWordsPos getCookies")
         if (len(baiduKeyWordsPos.baiduToKen) > 0):
             index = random.randint(0, len(baiduKeyWordsPos.baiduToKen) - 1)
             cookiesDict = baiduKeyWordsPos.baiduToKen[index];
@@ -109,6 +114,7 @@ class baiduKeyWordsPos:
     # 设置cookies
 
     def putCookies(self,cookies):
+        logUtils.info("baiduKeyWordsPos putCookies")
         logUtils.info("putCookies:"+(str)(cookies))
         cookie = {'BAIDUID': cookies['BAIDUID'],
                   }
@@ -121,15 +127,18 @@ class baiduKeyWordsPos:
 
 
     def reMoveCookies(self,index):
+        logUtils.info("baiduKeyWordsPos reMoveCookies")
         del baiduKeyWordsPos.baiduToKen[index]
 
     def getKeyWords(self):
+        logUtils.info("baiduKeyWordsPos getKeyWords")
         list = config.config.keyWordsExtendList;
         size = len(list)
         index = random.randint(0, size - 1)
         return list[index];
 
     def handleList(self, list):
+        logUtils.info("baiduKeyWordsPos handleList")
         size = len(list)
         index = random.randint(0, size - 1)
         list.insert(index, self.getKeyWords())

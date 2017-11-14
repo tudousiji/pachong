@@ -11,7 +11,7 @@ from selenium.webdriver.common.proxy import ProxyType
 from selenium import webdriver
 import utils.logUtils
 import traceback
-
+from utils.logUtils import logUtils
 typeCode = sys.getfilesystemencoding()
 
 
@@ -34,6 +34,7 @@ class netUtils:
 
     @staticmethod
     def getRequestsForSelenium(parment):
+        logUtils.info("utils", "baiduKeyWordsPos getRequestsForSelenium")
         isProxy = False;
         isSuccess = False;
         isCookie = False;
@@ -66,8 +67,9 @@ class netUtils:
                 driver.start_session(webdriver.DesiredCapabilities.PHANTOMJS)
 
             url = parment['url'];
-
+            logUtils.info("utils", "baiduKeyWordsPos getRequestsForSelenium 222")
             driver.get(url)
+            logUtils.info("utils", "baiduKeyWordsPos getRequestsForSelenium 333")
             # data = driver.page_source
             body = driver.find_element_by_tag_name("body").text
             if (driver.get_cookies() is not None):
@@ -75,9 +77,11 @@ class netUtils:
                     # print(item["name"], ":", item["value"])
                     get_cookie[item["name"]] = item["value"]
         except Exception as err:
+            logUtils.info("utils", "baiduKeyWordsPos getRequestsForSelenium 444")
             errorData = traceback.format_exc()
             utils.logUtils.logUtils.info("error", str(errorData));
         finally:
+            logUtils.info("utils", "baiduKeyWordsPos getRequestsForSelenium 555")
             driver.quit()
 
 
@@ -115,7 +119,7 @@ class netUtils:
                 'isSuccess': isSuccess
             }
 
-
+        logUtils.info("utils", "baiduKeyWordsPos getRequestsForSelenium 666")
         return content
 
     @staticmethod
