@@ -124,7 +124,8 @@ class buyInventoryUtils:
     def reLoadList(self, data, cateId, dict, page, psId, sceneId):
         print("log reLoadList")
         dict['isCookie'] = True;
-        if ('_m_h5_tk' in data['get_cookie']):
+        if (data is not None and data['get_cookie'] is not None and '_m_h5_tk' in data['get_cookie'] and
+                    data['get_cookie']['_m_h5_tk'] is not None):
             cookieArr = data['get_cookie']['_m_h5_tk'].split('_')
             cookie = utils.taobaokeUtils.taobaokeUtils.putCookies(data['get_cookie']);
             if (dict['reLoadList']):

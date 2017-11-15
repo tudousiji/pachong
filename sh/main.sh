@@ -4,4 +4,4 @@ source /etc/profile
 source ~/.bash_profile
 #phantomjs >> /home/python/phantomjs.log 2>&1
 cd /home/python/
-/root/anaconda3/bin/python /home/python/main.py >> /home/python/main.log 2>&1
+/root/anaconda3/bin/python /home/python/main.py >> /home/python/cronTabLog/main.log 2>&1

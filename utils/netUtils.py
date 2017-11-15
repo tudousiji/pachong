@@ -35,6 +35,15 @@ class netUtils:
     @staticmethod
     def getRequestsForSelenium(parment):
         logUtils.info("utils", "baiduKeyWordsPos getRequestsForSelenium")
+        global driver
+        global isProxy
+        global isSuccess
+        global isCookie
+        global putCookie
+        global get_cookie
+        global body
+        global url
+
         isProxy = False;
         isSuccess = False;
         isCookie = False;
@@ -42,9 +51,13 @@ class netUtils:
         get_cookie = {}
         body = None
         url = None
+        driver = None
+
+
         try:
+
             driver = webdriver.PhantomJS();
-            driver.implicitly_wait(3)
+            # driver.implicitly_wait(3)
             driver.set_page_load_timeout(3)
             driver.set_script_timeout(3)  # 这两种设置都进行才有效
             proxy = webdriver.Proxy()
@@ -82,8 +95,13 @@ class netUtils:
             utils.logUtils.logUtils.info("error", str(errorData));
         finally:
             logUtils.info("utils", "baiduKeyWordsPos getRequestsForSelenium 555")
-            driver.quit()
-
+            try:
+                if (driver is not None):
+                    driver.quit()
+            except Exception as err:
+                logUtils.info("utils", "baiduKeyWordsPos getRequestsForSelenium driver.quit 777")
+                errorData = traceback.format_exc()
+                utils.logUtils.logUtils.info("error", str(errorData));
 
         if (body is not None and len(body) > 0):
             isSuccess = True

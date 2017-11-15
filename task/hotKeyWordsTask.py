@@ -1,5 +1,6 @@
 import os
 import hotKeyWord.keyWordUtils
+from task.logUtils import logUtils
 
 class hotKeyWordsTask:
     hotKeyWordsLockFile = "lockFile" + os.path.sep + "taobaoInfo.lock"
@@ -7,17 +8,17 @@ class hotKeyWordsTask:
     def __init__(self):
 
         if (os.path.exists(hotKeyWordsTask.hotKeyWordsLockFile)):
-            print("文件已存在，即将退出")
+            logUtils.info("文件已存在，即将退出")
             os._exit(0)
         else:
             # os.mknod('.lock')
-            print("创建文件")
+            logUtils.info("创建文件")
             open(hotKeyWordsTask.hotKeyWordsLockFile, "w")
 
     def __del__(self):
         if (os.path.exists(hotKeyWordsTask.hotKeyWordsLockFile)):
             os.remove(hotKeyWordsTask.hotKeyWordsLockFile)
-        print("退出程序")
+        logUtils.info("退出程序")
 
     def actionTask(self):
         hotKeyWord.keyWordUtils.keyWordUtils().getHotKeyWords()

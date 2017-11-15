@@ -3,6 +3,7 @@ import goods.config
 import time
 import config.config
 import utils.netUtils
+import utils.utils
 import json
 from goods.logUtils import logUtils
 class goodsList:
@@ -57,7 +58,7 @@ class goodsList:
 
     def getGoodsData(self,keyWords):
         cookiesDict = utils.taobaokeUtils.taobaokeUtils.getCookies();
-        url = self.getUrl(cookiesDict['cookies'], keyWords);
+        url = self.getUrl(cookiesDict['cookies'], keyWords, goods.config.goodsPageSize);
 
         dict = {
             'url': url,
@@ -104,7 +105,7 @@ class goodsList:
 
     def getItemDataReLoad(self, dict,keyWords):
         cookie = utils.taobaokeUtils.taobaokeUtils.getCookies()
-        url = self.getUrl(cookie['cookies'], keyWords);
+        url = self.getUrl(cookie['cookies'], keyWords, goods.config.goodsPageSize);
 
         if (dict['reLoad']):
             dict['url'] = url;

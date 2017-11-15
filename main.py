@@ -9,7 +9,9 @@ import task.taobaoOtherTask
 import urllib.parse
 import utils.logUtils
 import traceback
+import sys
 
+print(sys.path)
 # import test.test7
 # import test.writeFile
 # url="http://www.qq.om/index.php?a=10&b=100"

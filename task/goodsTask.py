@@ -1,6 +1,7 @@
 import os
 import goods.goodsList
 import os
+from task.logUtils import logUtils
 
 class goodsTask:
     goodsTaskLockFile = "lockFile" + os.path.sep + "goods.lock"
@@ -8,7 +9,7 @@ class goodsTask:
     def __init__(self):
 
         if (os.path.exists(goodsTask.goodsTaskLockFile)):
-            print("文件已存在，即将退出")
+            logUtils.info("文件已存在，即将退出")
             os._exit(0)
         else:
             # os.mknod('.lock')
@@ -18,11 +19,7 @@ class goodsTask:
     def __del__(self):
         if (os.path.exists(goodsTask.goodsTaskLockFile)):
             os.remove(goodsTask.goodsTaskLockFile)
-        print("退出程序")
+        logUtils.info("退出程序")
 
     def actionTask(self):
         goods.goodsList.goodsList().getData()
-
-
-# 执行这个类
-goodsTask().actionTask();
