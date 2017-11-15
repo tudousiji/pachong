@@ -11,11 +11,11 @@ import os
 class buyInventoryUtils:
     def getData(self, page=1, index=0):
         # return self.listHandleData(page, tabId);
-        print("log getData")
+
         self.getCate(page,index)
 
     def getCate(self, page=1, index=0):
-        print("log getCate")
+
         dict = {
             'url': config.config.getBuyinventoryCate,
             'requestType': 'GET',
@@ -32,8 +32,8 @@ class buyInventoryUtils:
                 for index in range(index, len(body)):
                     self.listHandleData(page, body[index]['id'], body[index]['psId'], body[index]['sceneId'])
 
-    def listHandleData(self, cateId, page, psId, sceneId):
-        print("log listHandleData")
+    def listHandleData(self, page, cateId, psId, sceneId):
+
         cookiesDict = utils.taobaokeUtils.taobaokeUtils.getCookies();
         url = self.getListUrl(cookiesDict['cookies'], page, psId, sceneId);
         logUtils.info("list url:", url)
@@ -50,7 +50,6 @@ class buyInventoryUtils:
         return self.getListData(cateId, dict, page, psId, sceneId);
 
     def getListData(self, cateId, dict, page, psId, sceneId):
-        print("log getListData")
         data = utils.netUtils.netUtils.getData(dict);
         if (data['isSuccess']):
             if (data['body'] is not None):
@@ -62,9 +61,11 @@ class buyInventoryUtils:
                     if (str(body['ret']).startswith("['FAIL_") is not True):
                         # itemList = body['data']['result']['1891397']['result'][0]['data'][0]['data'][0][0]['pre'];
                         itemList = self.parserListItem(body)
-                        # print(itemList)
+
                         effectiveContentId=self.checkEffectiveContentId(itemList)
-                        print("effectiveContentId:", effectiveContentId)
+                        print("itemList size:", len(itemList))
+                        print("effectiveContentId size:", len(effectiveContentId))
+                        print("列表json:", itemList)
                         if (effectiveContentId is not None):
                             for index in range(len(effectiveContentId)):
                                 contentId = effectiveContentId[index]
@@ -79,7 +80,8 @@ class buyInventoryUtils:
                                         dict['keywords'] = taobaoOther.baiduKeyWordsPos.baiduKeyWordsPos().getData(
                                             itemData['title'])
                                         print("log baiduKeyWordsPos 222")
-
+                                    print("正在采集 size:", len(effectiveContentId), " index:", index, " cate:", cateId,
+                                          " page:", page, " contentId:", contentId)
                                     self.postItemData(dict)
 
 
@@ -98,7 +100,7 @@ class buyInventoryUtils:
 
 
     def parserListItem(self, body):
-        print("log parserListItem")
+
         #body['data']['result']['1891397']['result'][0]['data'][0]['data'][0][0]['pre']
         if (body is not None and 'data' in body and
                     body['data'] is not None and 'result' in body['data'] and
@@ -140,7 +142,7 @@ class buyInventoryUtils:
 
 
     def getListUrl(self, cookie, page, psId, sceneId):
-        print("log getListUrl")
+
         if (cookie is None):
             cookie = "";
         dataStr = str(taobaoBuyInventory.config.buyInventoryListData)
@@ -155,7 +157,6 @@ class buyInventoryUtils:
 
 
     def itemHandleData(self, contentId):
-        print("log itemHandleData")
         cookiesDict = utils.taobaokeUtils.taobaokeUtils.getCookies();
         url = self.getItemUrl(cookiesDict['cookies'], contentId);
 
@@ -172,7 +173,7 @@ class buyInventoryUtils:
 
 
     def getItemData(self, dict, contentId):
-        print("log getItemData")
+
         data = utils.netUtils.netUtils.getData(dict);
         if (data['isSuccess']):
             if (data['body'] is not None):
@@ -221,7 +222,7 @@ class buyInventoryUtils:
 
 
     def getItemUrl(self, cookie, contentId):
-        print("log getItemUrl")
+
         if (cookie is None):
             cookie = "";
         data = taobaoBuyInventory.config.buyInventoryItemData.format(contentId)
@@ -233,11 +234,11 @@ class buyInventoryUtils:
 
 
     def checkEffectiveContentId(self,dict):
-        print("log checkEffectiveContentId")
+
         contentIdList = [];
         if (dict is not None and len(dict) > 0):
             for index in range(len(dict)):
-                contentId = dict[index]['contentId']
+                contentId = int(dict[index]['contentId'])
                 contentIdList.append(contentId)
             if (len(contentIdList) > 0):
                 postDict = {
@@ -255,17 +256,19 @@ class buyInventoryUtils:
                 data = utils.netUtils.netUtils.getData(dict)
                 if (data["isSuccess"] and data["body"] is not None):
                     body = json.loads(data["body"])
-                    ret = list(set(contentIdList) ^ set(body))
+                    ret = [item for item in contentIdList if item not in body]
+
+                    # os._exit(0)
                     return ret
 
         return contentIdList
 
     def postItemData(self,dict):
-        print("log postItemData")
+
         postDict = {
             'data': json.dumps(dict),
         }
-        print("postItemData:", dict)
+
         dict = {
             'url': config.config.addbuyInventoryItemData,
             'requestType': 'POST',
