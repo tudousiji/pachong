@@ -58,8 +58,8 @@ class netUtils:
 
             driver = webdriver.PhantomJS();
             # driver.implicitly_wait(3)
-            driver.set_page_load_timeout(3)
-            driver.set_script_timeout(3)  # 这两种设置都进行才有效
+            driver.set_page_load_timeout(30)
+            driver.set_script_timeout(30)  # 这两种设置都进行才有效
             proxy = webdriver.Proxy()
             if ('putCookie' in parment and parment['putCookie'] is not None):
                 isCookie = True;
@@ -97,6 +97,7 @@ class netUtils:
             logUtils.info("utils", "baiduKeyWordsPos getRequestsForSelenium 555")
             try:
                 if (driver is not None):
+                    driver.close()
                     driver.quit()
             except Exception as err:
                 logUtils.info("utils", "baiduKeyWordsPos getRequestsForSelenium driver.quit 777")

@@ -32,7 +32,7 @@ class goodsList:
                             'keyword_id':item['id'],
                             'data':data
                         }
-                        logUtils.info("成功:" , dict)
+                        logUtils.info("成功:", " 关键词Id:", item['id'], " 关键词:", item['keyword'], dict)
                         self.postData(dict)
                     else:
                         logUtils.info("内容失败")
