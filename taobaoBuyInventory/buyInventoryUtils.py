@@ -33,7 +33,6 @@ class buyInventoryUtils:
                     self.listHandleData(page, body[index]['id'], body[index]['psId'], body[index]['sceneId'])
 
     def listHandleData(self, page, cateId, psId, sceneId):
-
         cookiesDict = utils.taobaokeUtils.taobaokeUtils.getCookies();
         url = self.getListUrl(cookiesDict['cookies'], page, psId, sceneId);
         logUtils.info("list url:", url)
@@ -62,13 +61,13 @@ class buyInventoryUtils:
                         # itemList = body['data']['result']['1891397']['result'][0]['data'][0]['data'][0][0]['pre'];
                         itemList = self.parserListItem(body)
 
-                        effectiveContentId=self.checkEffectiveContentId(itemList)
+                        effectiveContentId = self.checkEffectiveContentId(itemList, cateId, page)
                         print("itemList size:", len(itemList))
                         print("effectiveContentId size:", len(effectiveContentId))
                         print("列表json:", itemList)
-                        if (effectiveContentId is not None):
-                            for index in range(len(effectiveContentId)):
-                                contentId = effectiveContentId[index]
+                        if (effectiveContentId is not None and effectiveContentId['list'] is not None):
+                            for index in range(len(effectiveContentId['list'])):
+                                contentId = effectiveContentId['list'][index]
                                 itemData = self.itemHandleData(contentId)
                                 if (itemData is not None):
                                     dict = {'data': itemData,
@@ -80,12 +79,24 @@ class buyInventoryUtils:
                                         dict['keywords'] = taobaoOther.baiduKeyWordsPos.baiduKeyWordsPos().getData(
                                             itemData['title'])
                                         print("log baiduKeyWordsPos 222")
-                                    print("正在采集 size:", len(effectiveContentId), " index:", index, " cate:", cateId,
+                                    print("正在采集 size:", len(effectiveContentId['list']), " index:", index, " cate:",
+                                          cateId,
                                           " page:", page, " contentId:", contentId)
                                     self.postItemData(dict)
 
+                            if (effectiveContentId['isNextpage'] is not None and effectiveContentId[
+                                'isNextpage'] is True):
+                                nextPage = page + 1;
+                                self.getListData(cateId, dict, nextPage, psId, sceneId)
+                            else:
+                                return None
+                        elif (effectiveContentId['isNextpage'] is not None and effectiveContentId[
+                            'isNextpage'] is True):
+                            nextPage = page + 1;
+                            self.getListData(cateId, dict, nextPage, psId, sceneId)
+                        else:
+                            return None;
 
-                        return body;
 
                     elif (dict['reLoadList']):
                         return self.reLoadList(data, cateId, dict, page, psId, sceneId);
@@ -232,8 +243,7 @@ class buyInventoryUtils:
         # print(url)
         return url;
 
-
-    def checkEffectiveContentId(self,dict):
+    def checkEffectiveContentId(self, dict, cateId, page):
 
         contentIdList = [];
         if (dict is not None and len(dict) > 0):
@@ -241,8 +251,13 @@ class buyInventoryUtils:
                 contentId = int(dict[index]['contentId'])
                 contentIdList.append(contentId)
             if (len(contentIdList) > 0):
+                dataDict = {
+                    'data': contentIdList,
+                    'cateId': cateId,
+                    'page': page,
+                }
                 postDict = {
-                    'data': json.dumps(contentIdList),
+                    'data': json.dumps(dataDict),
                 }
 
                 dict = {
@@ -256,10 +271,13 @@ class buyInventoryUtils:
                 data = utils.netUtils.netUtils.getData(dict)
                 if (data["isSuccess"] and data["body"] is not None):
                     body = json.loads(data["body"])
-                    ret = [item for item in contentIdList if item not in body]
-
+                    ret = [item for item in contentIdList if item not in body['data']]
+                    dictData = {
+                        'list': ret,
+                        'isNextpage': body['isNextpage'],
+                    }
                     # os._exit(0)
-                    return ret
+                    return dictData
 
         return contentIdList
 
