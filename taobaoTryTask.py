@@ -1,4 +1,4 @@
 import task.taobaoTryTask
 
-task.taobaoTryTask.taobaoTryTask().actionJingXuanTask()
-task.taobaoTryTask.taobaoTryTask().actionAllTask()
+# task.taobaoTryTask.taobaoTryTask(task.taobaoTryTask.taobaoTryTask.taskType.JingXuan)
+task.taobaoTryTask.taobaoTryTask(task.taobaoTryTask.taobaoTryTask.taskType.All)

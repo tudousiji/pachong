@@ -25,10 +25,11 @@ print(sys.path)
 # import test.test4
 # import test.test6
 # task.taobaoOtherTask.taobaoOtherTask().actionTask()
+import taobaoTryTask
 
 try:
     pass
-    taobaoBuyInventory.buyInventoryUtils.buyInventoryUtils().getData(1,0)
+    # taobaoBuyInventory.buyInventoryUtils.buyInventoryUtils().getData(1,0)
 except  Exception as err:
     # exc_type, exc_obj, exc_tb = sys.exc_info()
     # fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]

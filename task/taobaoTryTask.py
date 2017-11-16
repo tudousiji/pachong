@@ -39,7 +39,7 @@ class taobaoTryTask:
     def __del__(self):
         if (os.path.exists(taobaoTryTask.taobaoTryTaskLockFile)):
             os.remove(taobaoTryTask.taobaoTryTaskLockFile)
-        if (mTaskTypeFor == taobaoTryTask.taskType.JingXuan):
+        if (taobaoTryTask.mTaskTypeFor == taobaoTryTask.taskType.JingXuan):
             logUtils.info("精选类型退出程序")
         else:
             logUtils.info("所有类型退出程序")

@@ -10,6 +10,7 @@ from bs4 import BeautifulSoup
 import urllib.parse
 from taobaoTry.logUtils import logUtils
 import taobaoOther.baiduKeyWordsPos
+import os
 
 class taobaoTryUtils:
     jingXuanMaxPage=3;#精选最大页数
@@ -49,14 +50,14 @@ class taobaoTryUtils:
     #有分类的 定时运行
     def handlePcTryList(self,dict,index=0,page=1):
         logUtils.info("handlePcTryList")
+        cate = ""
         if (dict is None):
+
             if(index>=0):
                 self.getTryCate();
-                cate=taobaoTry.config.cateList[index];
+                cate = taobaoTry.config.cateList[index + 1];
             else:
                 cate="";
-            indexStr=str(index);
-            #print("cate:"+indexStr)
 
             dict = {
                 'url': taobaoTry.config.taobaoTryList.format(cate,page),
@@ -66,7 +67,7 @@ class taobaoTryUtils:
                 'reLoad': True,
             }
 
-        self.parsePcTaobaoTryList(dict, index,page);
+        self.parsePcTaobaoTryList(cate, dict, index, page);
 
 
     def getTryCate(self):
@@ -88,15 +89,13 @@ class taobaoTryUtils:
                 taobaoTry.config.cateList=data['data']
                 logUtils.info(taobaoTry.config.cateList)
 
-
-
-    def parsePcTaobaoTryList(self,dict,index,page):
+    def parsePcTaobaoTryList(self, cate, dict, index, page):
         logUtils.info("parsePcTaobaoTryList")
         #print("url:"+dict['url'])
-        if(index>=0):
-            cate = taobaoTry.config.cateList[index];
-        else:
-            cate="";
+        # if(index>=0):
+        #    cate = taobaoTry.config.cateList[index+1];
+        # else:
+        #    cate="";
 
         dict['url']=taobaoTry.config.taobaoTryList.format(cate,page);
         data = utils.netUtils.netUtils().getData(dict)
@@ -138,7 +137,7 @@ class taobaoTryUtils:
                             nextIndex = index + 1;
                             if ( ( len(taobaoTry.config.cateList) > nextIndex and index>=0)):
                                 logUtils.info(dict['url'] + "采集下一个分类:" + str(nextIndex))
-                                self.parsePcTaobaoTryList(dict, nextIndex, 1)
+                                self.parsePcTaobaoTryList(cate, dict, nextIndex, 1)
                             else:
                                 logUtils.info("采集完成")
                             return
@@ -152,25 +151,25 @@ class taobaoTryUtils:
                     else:
                         logUtils.info(dict['url'] + "采集失败，下一页:" + str(nextPage));
                     dict['reLoad'] = True;
-                    self.parsePcTaobaoTryList(dict, index, nextPage)
+                    self.parsePcTaobaoTryList(cate, dict, index, nextPage)
             else:#下一个列表
                 dict['reLoad'] = True;
                 nextIndex=index+1;
                 if(len(taobaoTry.config.cateList)>nextIndex):
                     logUtils.info(dict['url'] + "采集下一个分类:" + str(nextIndex))
-                    self.parsePcTaobaoTryList(dict, nextIndex, 1)
+                    self.parsePcTaobaoTryList(cate, dict, nextIndex, 1)
                 else:
                     logUtils.info("列表采集结束")
         else:
             if(dict['reLoad']):
                 logUtils.info(dict['url'] + "采集失败，重试中")
                 dict['reLoad']=False;
-                self.parsePcTaobaoTryList(dict,index,page)
+                self.parsePcTaobaoTryList(cate, dict, index, page)
             else:
                 nextPage=page+1
                 logUtils.info(dict['url'] + "采集失败，下一页:" + str(nextPage));
                 dict['reLoad'] = True;
-                self.parsePcTaobaoTryList(dict, index,nextPage )
+                self.parsePcTaobaoTryList(cate, dict, index, nextPage )
 
     #判断是否已经采集过了
     def checkEffectiveList(self,list):
@@ -223,7 +222,7 @@ class taobaoTryUtils:
                 'putCookie':cookiesDict,
                 'isCookie':True,
                 'cookiesInfoDict': cookies,
-                'reLoad':True
+
             }
         if (cookiesDict is not None):
             dict['putCookie'] = cookiesDict
@@ -238,6 +237,7 @@ class taobaoTryUtils:
                         pass#服务器上发数据
                         datas = body['data']['module'][0]['moduleData']
                         logUtils.info(datas)
+                        print("cate:::", cate);
                         dict ={
                             'data':datas,
                             'itemId':datas['tryItemId'],
@@ -248,8 +248,7 @@ class taobaoTryUtils:
                         if (datas is not None and 'item' in datas and datas['item'] is not None and 'title' in datas[
                             'item'] and datas['item']['title'] is not None):
                             logUtils.info("baiduKeyWordsPos start")
-                            dict['keywords'] = taobaoOther.baiduKeyWordsPos.baiduKeyWordsPos().getData(
-                                datas['item']['title']);
+                            #dict['keywords'] = taobaoOther.baiduKeyWordsPos.baiduKeyWordsPos().getData(datas['item']['title']);
                             logUtils.info("baiduKeyWordsPos end")
                         #print(data)
                         statusStr = utils.utils.utils.postDataForService(dict,config.config.addTaobaoTryUrl)
@@ -265,11 +264,11 @@ class taobaoTryUtils:
                             utils.utils.utils.postDataForService(dict, config.config.addTaobaoTryUrl)
 
                 else:
-                    self.getItemDataReLoad(data,dict,cate, reportId, itemId)
+                    return self.getItemDataReLoad(data, dict, cate, reportId, itemId)
             else:
-                self.getItemDataReLoad(data,dict,cate, reportId, itemId)
+                return self.getItemDataReLoad(data, dict, cate, reportId, itemId)
         else:
-            self.getItemDataReLoad(data,dict,cate, reportId, itemId)
+            return self.getItemDataReLoad(data, dict, cate, reportId, itemId)
 
 
     #单条内容获取失败重试
@@ -291,7 +290,9 @@ class taobaoTryUtils:
             dict['url'] = self.getItemUrl(cookiesStr if cookiesStr is not None else "", id, itemId);
             dict['putCookie'] = cookiesDict
             dict['reLoad'] = False
-            self.getItemData(dict,cate, id, itemId);
+            return self.getItemData(dict, cate, id, itemId);
+        else:
+            return None
 
 
     def getData(self,dict,page,cate):
