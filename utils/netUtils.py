@@ -154,8 +154,36 @@ class netUtils:
 
     @staticmethod
     def getRequests(parment):
+
+        global r;
+        global body;
+        global isProxy;
+        global errInfo;
+        global postData;
+        global requestType;
+        global url;
+        global isHeader;
+        global isCookie;
+        global putCookie;
+        global isSuccess;
+
+
+
         requestType = 'GET';
         postData = "";
+        isProxy = False;
+        proxies = None
+        isHeader = False;
+        header = None;
+        isCookie = False;
+        putCookie = None;
+        r = None
+        isSuccess = True;
+        errInfo = None;
+        url = parment['url'];
+        r = None
+
+
         if ('requestType' in parment):
             requestType = parment['requestType'].upper();
         if (requestType == 'GET'):
@@ -165,32 +193,25 @@ class netUtils:
             if ('postData' in parment):
                 postData = parment['postData']
 
-        isProxy = False;
-        proxies = None
+
         if ('isProxy' in parment and parment['isProxy']):
             isProxy = True
             proxies = {parment['proxyProtocol']: "http://" + parment['proxyIp'] + ":" + parment[
                 'proxyPort']}
 
-        isHeader = False;
-        header = None;
         if ('isHeader' in parment):
             isHeader = True;
         if ('header' in parment):
             header = parment['header']
 
-        isCookie = False;
-        putCookie = None;
         if ('isCookie' in parment and parment['isCookie'] and parment['putCookie'] is not None):
             isCookie = True;
             putCookie = parment['putCookie'];
             # print(putCookie)
 
         # print(parment['url'])
-        r = None
-        isSuccess = True;
-        url = parment['url'];
-        errInfo = None;
+
+
 
         try:
             if (requestType == 'GET'):
