@@ -9,8 +9,11 @@ import config.config
 from bs4 import BeautifulSoup
 import urllib.parse
 from taobaoTry.logUtils import logUtils
-import taobaoOther.baiduKeyWordsPos
-import os
+# import taobaoOther.baiduKeyWordsPos
+import gc
+
+
+# from memory_profiler import profile
 
 class taobaoTryUtils:
     jingXuanMaxPage=3;#精选最大页数
@@ -48,6 +51,7 @@ class taobaoTryUtils:
         self.getData(dict,page,cate);
 
     #有分类的 定时运行
+
     def handlePcTryList(self,dict,index=0,page=1):
         logUtils.info("handlePcTryList")
         cate = ""
@@ -88,6 +92,7 @@ class taobaoTryUtils:
             if(data['Status']):
                 taobaoTry.config.cateList=data['data']
                 logUtils.info(taobaoTry.config.cateList)
+            del data
 
     def parsePcTaobaoTryList(self, cate, dict, index, page):
         logUtils.info("parsePcTaobaoTryList")
@@ -103,6 +108,7 @@ class taobaoTryUtils:
             soup = BeautifulSoup(data['body'], "html.parser")
             content = soup.find('div', class_="tb-try-pg-report-list")
             item_list=content.find_all('div',class_="report-item");
+            del soup, content, data
             if(len(item_list)>0):
                 list=[];
                 for items in item_list:
@@ -141,6 +147,8 @@ class taobaoTryUtils:
                             else:
                                 logUtils.info("采集完成")
                             return
+                gc.collect();
+
                 if((index<0 and page>=taobaoTryUtils.jingXuanMaxPage)):
                     logUtils.info("采集完成")
                     return
@@ -153,6 +161,8 @@ class taobaoTryUtils:
                     dict['reLoad'] = True;
                     self.parsePcTaobaoTryList(cate, dict, index, nextPage)
             else:#下一个列表
+                del item_list
+                gc.collect();
                 dict['reLoad'] = True;
                 nextIndex=index+1;
                 if(len(taobaoTry.config.cateList)>nextIndex):
@@ -161,6 +171,7 @@ class taobaoTryUtils:
                 else:
                     logUtils.info("列表采集结束")
         else:
+            gc.collect();
             if(dict['reLoad']):
                 logUtils.info(dict['url'] + "采集失败，重试中")
                 dict['reLoad']=False;
@@ -187,11 +198,13 @@ class taobaoTryUtils:
         }
         data= utils.netUtils.netUtils.getData(dict)
         if (data['isSuccess']):
-            return json.loads(data['body']);
+            body = data['body']
+            del data
+            return json.loads(body);
         else:
             if(dict['reLoad']):
                 dict['reLoad']=False
-                self.checkEffectiveList(list)
+                return self.checkEffectiveList(list)
             else:
                 return None
 

@@ -13,8 +13,10 @@ import utils.logUtils
 import traceback
 from utils.logUtils import logUtils
 typeCode = sys.getfilesystemencoding()
+import gc
 
 
+# from memory_profiler import profile
 class netUtils:
     @staticmethod
     def getData(parment):
@@ -137,7 +139,16 @@ class netUtils:
                 'put_cookie': putCookie,
                 'isSuccess': isSuccess
             }
-
+        del driver
+        del driver
+        del isProxy
+        del isSuccess
+        del isCookie
+        del putCookie
+        del get_cookie
+        del body
+        del url
+        gc.collect();
         logUtils.info("utils", "baiduKeyWordsPos getRequestsForSelenium 666")
         return content
 
@@ -258,6 +269,18 @@ class netUtils:
         if (r is not None):
             r.close();
 
+        del r;
+        del body;
+        del isProxy;
+        del errInfo;
+        del postData;
+        del requestType;
+        del url;
+        del isHeader;
+        del isCookie;
+        del putCookie;
+        del isSuccess;
+        gc.collect();
         return content;
 
     @staticmethod
