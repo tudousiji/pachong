@@ -98,10 +98,10 @@ class taobaoTryUtils:
         logUtils.info("parsePcTaobaoTryList")
 
         #print("url:"+dict['url'])
-        # if(index>=0):
-        #    cate = taobaoTry.config.cateList[index+1];
-        # else:
-        #    cate="";
+        if (index >= 0):  # 不能删除，否则有bug
+            cate = taobaoTry.config.cateList[index + 1];
+        else:
+            cate = "";
 
         dict['url']=taobaoTry.config.taobaoTryList.format(cate,page);
         data = utils.netUtils.netUtils().getData(dict)
