@@ -14,7 +14,9 @@ import traceback
 from utils.logUtils import logUtils
 typeCode = sys.getfilesystemencoding()
 import gc
+import socket
 
+socket.setdefaulttimeout(30)
 
 # from memory_profiler import profile
 class netUtils:
@@ -86,7 +88,9 @@ class netUtils:
             driver.get(url)
             logUtils.info("utils", "baiduKeyWordsPos getRequestsForSelenium 333")
             # data = driver.page_source
-            body = driver.find_element_by_tag_name("body").text
+            bodyText = driver.find_element_by_tag_name("body")
+            if bodyText is not None:
+                body = bodyText.text
             if (driver.get_cookies() is not None):
                 for item in driver.get_cookies():
                     # print(item["name"], ":", item["value"])
@@ -182,7 +186,7 @@ class netUtils:
         errInfo = None;
         url = parment['url'];
         r = None
-
+        body = None
 
         if ('requestType' in parment):
             requestType = parment['requestType'].upper();

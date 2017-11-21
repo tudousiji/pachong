@@ -96,6 +96,7 @@ class taobaoTryUtils:
 
     def parsePcTaobaoTryList(self, cate, dict, index, page):
         logUtils.info("parsePcTaobaoTryList")
+
         #print("url:"+dict['url'])
         # if(index>=0):
         #    cate = taobaoTry.config.cateList[index+1];
@@ -104,11 +105,15 @@ class taobaoTryUtils:
 
         dict['url']=taobaoTry.config.taobaoTryList.format(cate,page);
         data = utils.netUtils.netUtils().getData(dict)
+
         if (data['isSuccess']):
             soup = BeautifulSoup(data['body'], "html.parser")
             content = soup.find('div', class_="tb-try-pg-report-list")
             item_list=content.find_all('div',class_="report-item");
-            del soup, content, data
+            del soup
+            del content
+            del data
+
             if(len(item_list)>0):
                 list=[];
                 for items in item_list:
@@ -125,9 +130,18 @@ class taobaoTryUtils:
                         'reportId':reportId,
                         'title':title.getText()
                     }
+                    del report_item_wrap
+                    del title
+                    del href
+                    del result
+                    del params
+                    del itemId
+                    del reportId
                     list.append(idDict)
+                    del idDict
 
                 effectiveList=self.checkEffectiveList(list)
+                del list
                 if(effectiveList is not None or index<0):
                     if(len(effectiveList['data'])>0):
                         for items in effectiveList['data']:
@@ -137,8 +151,14 @@ class taobaoTryUtils:
                             logUtils.info(
                                 " title:" + title + " cate:" + str(taobaoTry.config.cateList[index]) + " page:" + str(
                                     page) + " itemId:" + itemId + " reportId:" + reportId + " url:" + dict['url'])
-                            self.getItemData(None,cate,reportId,itemId)
+                            if cate == 122:
+                                self.getItemData(None, cate, reportId, itemId)
+
+                            del itemId
+                            del reportId
+                            del title
                         if(effectiveList['isNextCate'] is True):
+
                             dict['reLoad'] = True;
                             nextIndex = index + 1;
                             if ( ( len(taobaoTry.config.cateList) > nextIndex and index>=0)):
@@ -147,6 +167,8 @@ class taobaoTryUtils:
                             else:
                                 logUtils.info("采集完成")
                             return
+
+                del item_list
                 gc.collect();
 
                 if((index<0 and page>=taobaoTryUtils.jingXuanMaxPage)):
@@ -158,6 +180,7 @@ class taobaoTryUtils:
                         logUtils.info(dict['url'] + "采集成功，下一页:" + str(nextPage));
                     else:
                         logUtils.info(dict['url'] + "采集失败，下一页:" + str(nextPage));
+                    del effectiveList
                     dict['reLoad'] = True;
                     self.parsePcTaobaoTryList(cate, dict, index, nextPage)
             else:#下一个列表
@@ -237,20 +260,31 @@ class taobaoTryUtils:
                 'cookiesInfoDict': cookies,
 
             }
+
         if (cookiesDict is not None):
             dict['putCookie'] = cookiesDict
+            del cookiesDict
+        del cookies
+        del cookiesStr
+
         data = utils.netUtils.netUtils.getData(dict);
+
         if (data['isSuccess']):
             if (data['body'] is not None):
+
                 jsonStr = utils.utils.utils.replacePreGetBody(data['body'],'mtopjsonp8(')
+
                 #print(dict['url'])
                 #print(jsonStr)
                 body = json.loads(jsonStr)
+                del jsonStr
                 if (body is not None and str(body['ret']).startswith("['FAIL_") is not True and len(body['data']['module'][0]['moduleData'])>0):
                         pass#服务器上发数据
+                        del dict
                         datas = body['data']['module'][0]['moduleData']
                         logUtils.info(datas)
-                        print("cate:::", cate);
+
+                        del body
                         dict ={
                             'data':datas,
                             'itemId':datas['tryItemId'],
@@ -264,6 +298,7 @@ class taobaoTryUtils:
                             #dict['keywords'] = taobaoOther.baiduKeyWordsPos.baiduKeyWordsPos().getData(datas['item']['title']);
                             logUtils.info("baiduKeyWordsPos end")
                         #print(data)
+                        del datas
                         statusStr = utils.utils.utils.postDataForService(dict,config.config.addTaobaoTryUrl)
                         #print(statusStr)
                         if(statusStr['isSuccess']):
@@ -272,11 +307,18 @@ class taobaoTryUtils:
                                 logUtils.info("提交服务器成功")
                             else:
                                 logUtils.info("提交服务器失败")
+                            del statusStr
+                            del status
+                            del dict
+                            gc.collect()
                             logUtils.info("---------------")
                         else:
+                            del statusStr
+
                             utils.utils.utils.postDataForService(dict, config.config.addTaobaoTryUrl)
 
                 else:
+                    del body
                     return self.getItemDataReLoad(data, dict, cate, reportId, itemId)
             else:
                 return self.getItemDataReLoad(data, dict, cate, reportId, itemId)
