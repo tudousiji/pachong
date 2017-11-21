@@ -345,8 +345,16 @@ class taobaoTryUtils:
             dict['url'] = self.getItemUrl(cookiesStr if cookiesStr is not None else "", id, itemId);
             dict['putCookie'] = cookiesDict
             dict['reLoad'] = False
+            del cookies
+            del cookiesStr
+            del cookiesDict
+            del data
             return self.getItemData(dict, cate, id, itemId);
         else:
+            del cookies
+            del cookiesStr
+            del cookiesDict
+            del data
             return None
 
 
