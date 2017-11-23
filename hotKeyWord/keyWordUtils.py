@@ -5,7 +5,7 @@ import utils.utils
 import config.config
 import json
 from hotKeyWord.logUtils import logUtils
-
+import gc
 class keyWordUtils:
     def getHotKeyWords(self):
         data = self.getLevel1();
@@ -34,12 +34,15 @@ class keyWordUtils:
         for type in hotKeyWord.config.type:
             url= hotKeyWord.config.getXlsUrl.format(id, type)
             data = utils.utils.utils.parseXls(url)
+            del url
             for items in data:
                 for index in range(2,len(items)):
                     if(len(items[index])>0 and items[index][0].isdigit()):
                         logUtils.info(items[index][1])
                         list.append(items[index][1])
+            del data
         self.postHotKeyWords(list)
+        del list
 
 
     def postHotKeyWords(self,lists):
@@ -47,6 +50,7 @@ class keyWordUtils:
         postDict = {
             'data': json.dumps(lists),
         }
+        del lists
         dict = {
             'url':config.config.addHotKeyWords,
             'requestType': 'POST',
@@ -55,10 +59,14 @@ class keyWordUtils:
             'postData': postDict,
             'reLoad': True,
         }
+        del postDict
         data  = utils.netUtils.netUtils.getData(dict)
+        del dict
         logUtils.info(data)
         if(data['isSuccess']):
             logUtils.info("提交服务器成功")
         else:
             logUtils.info("提交服务器失败")
+        del data
+        gc.collect()
         logUtils.info("----")

@@ -7,8 +7,8 @@ import json
 import utils.utils
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
 import requests
-from taobaoOther.logUtils import logUtils
-
+# from taobaoOther.logUtils import logUtils
+import gc
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 class askEveryBody:
     def getData(self, itemId, page=1):
@@ -24,6 +24,8 @@ class askEveryBody:
             'putCookie': cookiesDict['putCookie'],
             'isCookie': True,
         }
+        del cookiesDict
+        del url
         return self.getItemData(dict, itemId);
 
 
@@ -37,15 +39,20 @@ class askEveryBody:
                 #print(data['body'])
                 jsonStr = utils.utils.utils.replacePreGetBody(data['body'], "mtopjsonp12(");
                 body = json.loads(jsonStr)
+                del jsonStr
                 if (body is not None):
                     if (str(body['ret']).startswith("['FAIL_") is not True):
-
+                        del dict
                         if('data' in body and 'cards' in body['data'] and len(body['data']['cards'])>0):
-                            return json.dumps(body['data']['cards']);
+                            content = json.dumps(body['data']['cards'])
+                            del body
+                            return content;
                         else:
+                            del body
                             return None
                     else:
                         dict['isCookie'] = True;
+                        del body
                         if('_m_h5_tk' in  data['get_cookie']):
                             cookieArr = data['get_cookie']['_m_h5_tk'].split('_')
                         #print(data['get_cookie'])
@@ -55,16 +62,37 @@ class askEveryBody:
                                 dict['url'] = self.getUrl(cookieArr[0], itemId);
                                 dict['putCookie'] = cookie
                                 dict['reLoad'] = False
+                                del cookie
+                                del cookieArr
+                                gc.collect()
                                 return self.getItemData(dict,itemId);
                             else:
+                                del cookie
+                                del cookieArr
+                                del dict
+                                gc.collect()
                                 return None;
                         else:
+                            del dict
+                            gc.collect()
                             return None
                 else:
+                    del dict
+                    del jsonStr
+                    del data
+                    del body
+                    gc.collect()
                     return None
             else:
+                del data
+                del dict
+                gc.collect()
                 return None
         else:
+
+            del data
+            del dict
+            gc.collect()
             return None
 
     def getUrl(self,cookie,itemId,size=10,page=1):

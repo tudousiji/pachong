@@ -26,6 +26,10 @@ class taobaoTryUtils:
         sign = utils.netUtils.netUtils.getTbkSign(cookie, appConfig.appkey, times, data)
         url = taobaoTry.config.BeautySkinCareUrl.format(appConfig.appkey, times, sign, data)
         #print(url)
+        del data
+        del times
+        del sign
+
         return url;
 
 
@@ -56,7 +60,6 @@ class taobaoTryUtils:
         logUtils.info("handlePcTryList")
         cate = ""
         if (dict is None):
-
             if(index>=0):
                 self.getTryCate();
                 cate = taobaoTry.config.cateList[index + 1];
@@ -85,14 +88,17 @@ class taobaoTryUtils:
         }
 
         jsonStr = utils.netUtils.netUtils.getData(dict)
-
+        del dict
         if(jsonStr['isSuccess']):
             data = json.loads(jsonStr['body'])
             #print(data)
+            del jsonStr
             if(data['Status']):
                 taobaoTry.config.cateList=data['data']
                 logUtils.info(taobaoTry.config.cateList)
             del data
+        else:
+            del jsonStr
 
     def parsePcTaobaoTryList(self, cate, dict, index, page):
         logUtils.info("parsePcTaobaoTryList")
@@ -151,12 +157,13 @@ class taobaoTryUtils:
                             logUtils.info(
                                 " title:" + title + " cate:" + str(taobaoTry.config.cateList[index]) + " page:" + str(
                                     page) + " itemId:" + itemId + " reportId:" + reportId + " url:" + dict['url'])
-                            if cate == 122:
-                                self.getItemData(None, cate, reportId, itemId)
+
+                            self.getItemData(None, cate, reportId, itemId)
 
                             del itemId
                             del reportId
                             del title
+                            gc.collect()
                         if(effectiveList['isNextCate'] is True):
 
                             dict['reLoad'] = True;
@@ -211,6 +218,7 @@ class taobaoTryUtils:
         postDict = {
             'data': json.dumps(list),
         }
+        del list
         dict = {
             'url': config.config.checkEffectiveTaobaoTryIdListUrl,
             'requestType': 'POST',
@@ -219,17 +227,15 @@ class taobaoTryUtils:
             'postData': postDict,
             'reLoad': True,
         }
+        del postDict
         data= utils.netUtils.netUtils.getData(dict)
         if (data['isSuccess']):
             body = data['body']
             del data
+            del dict
             return json.loads(body);
         else:
-            if(dict['reLoad']):
-                dict['reLoad']=False
-                return self.checkEffectiveList(list)
-            else:
-                return None
+            return None
 
 
     def getItemUrl(self,cookie,reportId,itemId):
@@ -258,32 +264,27 @@ class taobaoTryUtils:
                 'putCookie':cookiesDict,
                 'isCookie':True,
                 'cookiesInfoDict': cookies,
-
             }
 
         if (cookiesDict is not None):
             dict['putCookie'] = cookiesDict
-            del cookiesDict
+        del cookiesDict
         del cookies
         del cookiesStr
 
         data = utils.netUtils.netUtils.getData(dict);
-
         if (data['isSuccess']):
             if (data['body'] is not None):
-
                 jsonStr = utils.utils.utils.replacePreGetBody(data['body'],'mtopjsonp8(')
-
-                #print(dict['url'])
-                #print(jsonStr)
                 body = json.loads(jsonStr)
                 del jsonStr
+
                 if (body is not None and str(body['ret']).startswith("['FAIL_") is not True and len(body['data']['module'][0]['moduleData'])>0):
                         pass#服务器上发数据
                         del dict
+                        del data
                         datas = body['data']['module'][0]['moduleData']
                         logUtils.info(datas)
-
                         del body
                         dict ={
                             'data':datas,
@@ -301,7 +302,9 @@ class taobaoTryUtils:
                         del datas
                         statusStr = utils.utils.utils.postDataForService(dict,config.config.addTaobaoTryUrl)
                         #print(statusStr)
+
                         if(statusStr['isSuccess']):
+                            del dict
                             status =json.loads(statusStr['body'])
                             if(statusStr['isSuccess'] and status['Code']==0):
                                 logUtils.info("提交服务器成功")
@@ -309,21 +312,19 @@ class taobaoTryUtils:
                                 logUtils.info("提交服务器失败")
                             del statusStr
                             del status
-                            del dict
-                            gc.collect()
                             logUtils.info("---------------")
                         else:
                             del statusStr
-
-                            utils.utils.utils.postDataForService(dict, config.config.addTaobaoTryUrl)
-
+                            statusStr = utils.utils.utils.postDataForService(dict, config.config.addTaobaoTryUrl)
+                            del statusStr
+                        gc.collect()
                 else:
                     del body
-                    return self.getItemDataReLoad(data, dict, cate, reportId, itemId)
+                    self.getItemDataReLoad(data, dict, cate, reportId, itemId)
             else:
-                return self.getItemDataReLoad(data, dict, cate, reportId, itemId)
+                self.getItemDataReLoad(data, dict, cate, reportId, itemId)
         else:
-            return self.getItemDataReLoad(data, dict, cate, reportId, itemId)
+            self.getItemDataReLoad(data, dict, cate, reportId, itemId)
 
 
     #单条内容获取失败重试
@@ -349,13 +350,14 @@ class taobaoTryUtils:
             del cookiesStr
             del cookiesDict
             del data
-            return self.getItemData(dict, cate, id, itemId);
+            self.getItemData(dict, cate, id, itemId);
         else:
             del cookies
             del cookiesStr
             del cookiesDict
             del data
-            return None
+            del dict
+
 
 
     def getData(self,dict,page,cate):

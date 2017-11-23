@@ -144,7 +144,6 @@ class netUtils:
                 'isSuccess': isSuccess
             }
         del driver
-        del driver
         del isProxy
         del isSuccess
         del isCookie

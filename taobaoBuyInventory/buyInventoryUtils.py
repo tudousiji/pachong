@@ -6,7 +6,7 @@ import json
 import config.config
 from taobaoBuyInventory.logUtils import logUtils
 import taobaoOther.baiduKeyWordsPos
-import os
+
 
 class buyInventoryUtils:
     def getData(self, page=1, index=0):
@@ -24,9 +24,11 @@ class buyInventoryUtils:
             'reLoadList': True,
         }
         data = utils.netUtils.netUtils.getData(dict)
+        del dict
         if (data['isSuccess']):
             if (data['body'] is not None):
                 body = json.loads(data['body'])
+                del data
                 if (index >= len(body) - 1):
                     index = len(body) - 1
                 for index in range(index, len(body)):
@@ -45,8 +47,9 @@ class buyInventoryUtils:
             'putCookie': cookiesDict['putCookie'],
             'isCookie': True,
         }
-
-        return self.getListData(cateId, dict, page, psId, sceneId);
+        del cookiesDict
+        del url
+        self.getListData(cateId, dict, page, psId, sceneId);
 
     def getListData(self, cateId, dict, page, psId, sceneId):
         data = utils.netUtils.netUtils.getData(dict);
@@ -54,17 +57,20 @@ class buyInventoryUtils:
             if (data['body'] is not None):
                 jsonStr = utils.utils.utils.replacePreGetBody(data['body'], "mtopjsonp1(");
                 body = json.loads(jsonStr)
+                del data
+                del jsonStr
                 # print(body)
                 if (body is not None):
                     logUtils.info(page, ":", body)
                     if (str(body['ret']).startswith("['FAIL_") is not True):
                         # itemList = body['data']['result']['1891397']['result'][0]['data'][0]['data'][0][0]['pre'];
                         itemList = self.parserListItem(body)
-
+                        del body
                         effectiveContentId = self.checkEffectiveContentId(itemList, cateId, page)
                         print("itemList size:", len(itemList))
                         print("effectiveContentId size:", len(effectiveContentId))
                         print("列表json:", itemList)
+                        del itemList
                         if (effectiveContentId is not None and effectiveContentId['list'] is not None):
                             for index in range(len(effectiveContentId['list'])):
                                 contentId = effectiveContentId['list'][index]
@@ -76,38 +82,42 @@ class buyInventoryUtils:
                                             }
                                     if ('title' in itemData and itemData['title'] is not None):
                                         print("log baiduKeyWordsPos 111")
-                                        dict['keywords'] = taobaoOther.baiduKeyWordsPos.baiduKeyWordsPos().getData(
-                                            itemData['title'])
+                                        # dict['keywords'] = taobaoOther.baiduKeyWordsPos.baiduKeyWordsPos().getData(
+                                        #    itemData['title'])
                                         print("log baiduKeyWordsPos 222")
                                     print("正在采集 size:", len(effectiveContentId['list']), " index:", index, " cate:",
                                           cateId,
                                           " page:", page, " contentId:", contentId)
+                                    del itemData
                                     self.postItemData(dict)
-
+                                del contentId
+                                del itemData
                             if (effectiveContentId['isNextpage'] is not None and effectiveContentId[
                                 'isNextpage'] is True):
+                                del effectiveContentId
                                 nextPage = page + 1;
                                 self.getListData(cateId, dict, nextPage, psId, sceneId)
                             else:
-                                return None
+                                del effectiveContentId
+                                pass
                         elif (effectiveContentId['isNextpage'] is not None and effectiveContentId[
                             'isNextpage'] is True):
                             nextPage = page + 1;
                             self.getListData(cateId, dict, nextPage, psId, sceneId)
                         else:
-                            return None;
+                            pass;
 
 
                     elif (dict['reLoadList']):
-                        return self.reLoadList(data, cateId, dict, page, psId, sceneId);
+                        self.reLoadList(data, cateId, dict, page, psId, sceneId);
                     else:
-                        return None;
+                        pass;
                 else:
-                    return self.reLoadList(data, cateId, dict, page, psId, sceneId);
+                    self.reLoadList(data, cateId, dict, page, psId, sceneId);
             else:
-                return self.reLoadList(data, cateId, dict, page, psId, sceneId);
+                self.reLoadList(data, cateId, dict, page, psId, sceneId);
         else:
-            return self.reLoadList(data, cateId, dict, page, psId, sceneId);
+            self.reLoadList(data, cateId, dict, page, psId, sceneId);
 
 
     def parserListItem(self, body):
@@ -126,12 +136,18 @@ class buyInventoryUtils:
                     len(body['data']['result']['1891397']['result'][0]['data'][0]['data'][0]) > 0
             ):
             if ('pre' in body['data']['result']['1891397']['result'][0]['data'][0]['data'][0][0]):
-                return body['data']['result']['1891397']['result'][0]['data'][0]['data'][0][0]['pre']
+                content = body['data']['result']['1891397']['result'][0]['data'][0]['data'][0][0]['pre']
+                del body
+                return content
             elif ('qdList' in body['data']['result']['1891397']['result'][0]['data'][0]['data'][0][0]):
-                return body['data']['result']['1891397']['result'][0]['data'][0]['data'][0][0]['qdList']
+                content = body['data']['result']['1891397']['result'][0]['data'][0]['data'][0][0]['qdList']
+                del body
+                return content
             else:
+                del body
                 return None
         else:
+            del body
             return None;
 
     def reLoadList(self, data, cateId, dict, page, psId, sceneId):
@@ -141,14 +157,20 @@ class buyInventoryUtils:
                     data['get_cookie']['_m_h5_tk'] is not None):
             cookieArr = data['get_cookie']['_m_h5_tk'].split('_')
             cookie = utils.taobaokeUtils.taobaokeUtils.putCookies(data['get_cookie']);
+            del data
             if (dict['reLoadList']):
                 dict['url'] = self.getListUrl(cookieArr[0], page, psId, sceneId);
                 dict['putCookie'] = cookie
                 dict['reLoadList'] = False
-                return self.getListData(cateId, dict, page, psId, sceneId);
+                del cookie
+                del cookieArr
+                self.getListData(cateId, dict, page, psId, sceneId);
             else:
+                del cookie
+                del cookieArr
                 return None;
         else:
+            del data
             return None
 
 
@@ -164,6 +186,12 @@ class buyInventoryUtils:
         sign = utils.netUtils.netUtils.getTbkSign(cookie, appConfig.appkey, times, data)
         url = taobaoBuyInventory.config.buyInventoryListUrl.format(appConfig.appkey, times, sign, data)
         # print(url)
+        del dataStr
+        del topic
+        del dataStr
+        del data
+        del times
+        del sign
         return url
 
 
@@ -180,30 +208,37 @@ class buyInventoryUtils:
             'putCookie': cookiesDict['putCookie'],
             'isCookie': True,
         }
+        del cookiesDict
+        del url
         return self.getItemData(dict, contentId)
 
 
     def getItemData(self, dict, contentId):
 
         data = utils.netUtils.netUtils.getData(dict);
+
         if (data['isSuccess']):
             if (data['body'] is not None):
                 jsonStr = utils.utils.utils.replacePreGetBody(data['body'], "mtopjsonp1(");
                 body = json.loads(jsonStr)
-
+                del jsonStr
                 if (body is not None):
                     if (str(body['ret']).startswith("['FAIL_") is not True):
+                        del data
                         if ('data' in body and body['data'] is not None and
                                     'models' in body['data'] and body['data']['models'] is not None
                             and 'content' in body['data']['models']
                             and body['data']['models']['content'] is not None
                             ):
-                            return body['data']['models']['content'];
+                            content = body['data']['models']['content']
+                            del body
+                            return content;
                         else:
                             return None
                     elif (dict['reLoadList']):
                         return self.reLoadItem(data, dict, contentId);
                     else:
+                        del data
                         return None;
                 else:
                     return self.reLoadItem(data, dict, contentId);
@@ -225,10 +260,17 @@ class buyInventoryUtils:
                 dict['url'] = self.getItemUrl(cookieArr[0], contentId);
                 dict['putCookie'] = cookie
                 dict['reLoadList'] = False
+                del cookieArr
+                del cookie
+                del data
                 return self.getItemData(dict, contentId);
             else:
+                del cookieArr
+                del cookie
+                del data
                 return None;
         else:
+            del data
             return None
 
 
@@ -250,6 +292,7 @@ class buyInventoryUtils:
             for index in range(len(dict)):
                 contentId = int(dict[index]['contentId'])
                 contentIdList.append(contentId)
+            del dict
             if (len(contentIdList) > 0):
                 dataDict = {
                     'data': contentIdList,
@@ -259,7 +302,7 @@ class buyInventoryUtils:
                 postDict = {
                     'data': json.dumps(dataDict),
                 }
-
+                del dataDict
                 dict = {
                     'url': config.config.checkEffectiveContentIdList,
                     'requestType': 'POST',
@@ -268,16 +311,23 @@ class buyInventoryUtils:
                     'postData': postDict,
                     'reLoad': True,
                 }
+                del postDict
                 data = utils.netUtils.netUtils.getData(dict)
+                del dict
                 if (data["isSuccess"] and data["body"] is not None):
                     body = json.loads(data["body"])
+                    del data
                     ret = [item for item in contentIdList if item not in body['data']]
                     dictData = {
                         'list': ret,
                         'isNextpage': body['isNextpage'],
                     }
+                    del ret
+                    del body
                     # os._exit(0)
                     return dictData
+                else:
+                    del data
 
         return contentIdList
 
@@ -286,7 +336,7 @@ class buyInventoryUtils:
         postDict = {
             'data': json.dumps(dict),
         }
-
+        del dict
         dict = {
             'url': config.config.addbuyInventoryItemData,
             'requestType': 'POST',
@@ -295,10 +345,12 @@ class buyInventoryUtils:
             'postData': postDict,
             'reLoad': True,
         }
-
+        del postDict
         data = utils.netUtils.netUtils.getData(dict)
+        del dict
         if (data['isSuccess']):
             logUtils.info("提交服务器成功", data)
         else:
             logUtils.info("提交服务器失败", data)
+        del data
         logUtils.info("----")

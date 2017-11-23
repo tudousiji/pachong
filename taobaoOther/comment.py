@@ -7,13 +7,14 @@ import random
 import requests
 import config.config
 from taobaoOther.logUtils import logUtils
-
+import gc
+import traceback
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 class comment:
     taobaoToKen = []
 
     def getData(self, itemId,page=1):
-        cookie=comment.getCookies();
+        # cookie=comment.getCookies();
         dict = {
             'url': taobaoOther.config.commentUrl.format(itemId,page),
             'requestType': 'GET',
@@ -46,22 +47,44 @@ class comment:
 
             if (data['body'] is not None):
                 jsonStr = utils.utils.utils.replacePreGetBody(data['body'], 'jsonp_tbcrate_reviews_list(')
-                body = json.loads(jsonStr);
+                try:
+                    body = json.loads(jsonStr);
+                    del data
+                    del jsonStr
 
-                if ('rateDetail' in body  and  body['rateDetail'] is not None and 'rateList' in body['rateDetail'] and len(body['rateDetail']['rateList']) > 0):
-                    return json.dumps(body['rateDetail']['rateList']);
-                elif(dict['reLoad'] is True):
-                    return self.getItemDataReLoad(dict);
-                else:
+                    if ('rateDetail' in body and body['rateDetail'] is not None and 'rateList' in body[
+                        'rateDetail'] and len(body['rateDetail']['rateList']) > 0):
+                        content = json.dumps(body['rateDetail']['rateList'])
+                        del body
+                        gc.collect()
+                        return content;
+                    elif (dict['reLoad'] is True):
+                        del body
+                        gc.collect()
+                        return self.getItemDataReLoad(dict);
+                    else:
+                        del body
+                        gc.collect()
+                        return None;
+                except Exception as err:
+
+                    gc.collect()
+                    errorData = traceback.format_exc()
+                    utils.logUtils.logUtils.info("error", str(errorData));
                     return None;
             else:
+                del data
+                gc.collect()
                 return None;
         elif (data['code'] ==302):
             logUtils.info("302处理")
-            return self.url302Handler(data['header']['Location']);
+            Location = data['header']['Location']
+            del data
+            return self.url302Handler(Location);
             #print(data['header']['Location'])
             pass
         else:
+            del data
             logUtils.info("失败，重试")
             return self.getItemDataReLoad(dict);
 
@@ -73,9 +96,11 @@ class comment:
             dict['reLoad'] = False,
             dict['isCookie']=True,
             dict['putCookie'] =cookie['putCookie']
-
+            del cookie
             return self.getItemData(dict);
         else:
+            del dict
+            del cookie
             return None;
 
 
@@ -92,6 +117,7 @@ class comment:
             'putCookie': cookie['putCookie'],
             'isHeader': True,
         }
+
         data = utils.netUtils.netUtils.getData(dict);
         dict['isCookie'] = True;
         #print("设置cookie"+(str)(data['get_cookie'])+"-->"+(str)(len(data['get_cookie'])))
@@ -100,13 +126,17 @@ class comment:
         else:
             getCook=comment.getCookies()
             cookie = getCook['putCookie'];
+            del getCook
+        del data
         #print(cookie)
         if (dict['reLoad']):
             dict['putCookie'] = cookie
             dict['reLoad'] = False
-
+            del cookie
             return self.getItemData(dict);
         else:
+            del cookie
+            del dict
             return None
 
     # 获取淘宝客cookies
@@ -119,11 +149,14 @@ class comment:
                 'putCookie': cookiesDict,
                 'index': index,
             }
+            del index
+            del cookiesDict
+
             return dict;
         else:
-            cookie = {'cookie2': "",
-                      '_tb_token_': "",
-                      't': ""}
+            # cookie = {'cookie2': "",
+            #          '_tb_token_': "",
+            #          't': ""}
             dict = {
                 'cookies': None,
                 'putCookie': None
