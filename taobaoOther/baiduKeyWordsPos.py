@@ -9,31 +9,33 @@ from taobaoOther.logUtils import logUtils
 import traceback
 import gc
 
+
 # A-005多功能地面酒店用洗地机手推式地毯清洗机
 class baiduKeyWordsPos:
     baiduToKen = []
-    maxKeyWordsCount=5;
-    def getData(self,keyword):
+    maxKeyWordsCount = 5;
+
+    def getData(self, keyword):
         logUtils.info("baiduKeyWordsPos getData")
         # cookie=self.getCookies();
         if (keyword is None or len(keyword) <= 0):
             return None
         dict = {
-            'url': taobaoOther.config.baiduKeyWordsPos.format(urllib.parse.quote(keyword) ),
+            'url': taobaoOther.config.baiduKeyWordsPos.format(urllib.parse.quote(keyword)),
             'requestType': 'GET',
             'isProxy': False,
             'isHttps': False,
             'reLoad': True,
-            #'putCookie':cookie['putCookie'],
-            'taskType':config.config.taskType.BAIDU,
+            # 'putCookie':cookie['putCookie'],
+            'taskType': config.config.taskType.BAIDU,
         }
         return self.getItemData(dict)
 
-    def getItemData(self,dict):
+    def getItemData(self, dict):
         logUtils.info("baiduKeyWordsPos getItemData")
         data = utils.netUtils.netUtils.getData(dict);
         logUtils.info("baiduKeyWordsPos getItemData 222")
-        if(data['isSuccess']):
+        if (data['isSuccess']):
             if (data['body'] is not None):
                 body = None;
                 try:
@@ -44,11 +46,10 @@ class baiduKeyWordsPos:
                     errorData = traceback.format_exc()
                     utils.logUtils.logUtils.info("error", str(errorData));
 
-
                 if (body is not None and 'result' in body and "res" in body['result'] and "keyword_list" in
                     body['result']['res']):
                     del data
-                    #if (data['get_cookie'] is not None and len(data['get_cookie']) > 0):
+                    # if (data['get_cookie'] is not None and len(data['get_cookie']) > 0):
                     #    cookie = self.putCookies(data['get_cookie']);
 
                     if (body['result']['res']['keyword_list'] is not None and len(
@@ -58,27 +59,27 @@ class baiduKeyWordsPos:
                         gc.collect()
                         return content
                     else:
-                        if(body['result']['res']['keyword_list'] is not None):
-                        #keyWordsList=[];
-                            keyWordsList=(body['result']['res']['keyword_list'])
-                            itemList=[];
-                            for item in body['result']['res']['wordrank'] :
-                                item2=item.split(":");
-                                if(len(item2[0])>=2 and item2[0].isdigit() is False):
+                        if (body['result']['res']['keyword_list'] is not None):
+                            # keyWordsList=[];
+                            keyWordsList = (body['result']['res']['keyword_list'])
+                            itemList = [];
+                            for item in body['result']['res']['wordrank']:
+                                item2 = item.split(":");
+                                if (len(item2[0]) >= 2 and item2[0].isdigit() is False):
                                     itemList.append(item2)
                                 del item2
 
-                            itemList.sort(key=lambda x: x[1],reverse=True)
+                            itemList.sort(key=lambda x: x[1], reverse=True)
                             for item in itemList:
-                                if(item[0] not in keyWordsList):
+                                if (item[0] not in keyWordsList):
                                     keyWordsList.append(item[0])
-                                if(len(keyWordsList)>=baiduKeyWordsPos.maxKeyWordsCount):
+                                if (len(keyWordsList) >= baiduKeyWordsPos.maxKeyWordsCount):
                                     break
-                        content = json.dumps(self.handleList(keyWordsList))
-                        del keyWordsList
-                        del itemList
-                        gc.collect()
-                        return content
+                            content = json.dumps(self.handleList(keyWordsList))
+                            del keyWordsList
+                            del itemList
+                            gc.collect()
+                            return content
                         else:
                             del body
                             gc.collect()
@@ -86,19 +87,19 @@ class baiduKeyWordsPos:
                 else:
                     del body
                     gc.collect()
-                    return self.isReLoad(data,dict);
+                    return self.isReLoad(data, dict);
             else:
-                return self.isReLoad(data,dict);
+                return self.isReLoad(data, dict);
         else:
-            return self.isReLoad(data,dict);
+            return self.isReLoad(data, dict);
 
-    def isReLoad(self,data,dict):
+    def isReLoad(self, data, dict):
         logUtils.info("baiduKeyWordsPos isReLoad")
-        if(dict['reLoad']):
-            dict['reLoad']=False;
+        if (dict['reLoad']):
+            dict['reLoad'] = False;
             cookie = None
-            if (data['get_cookie'] is not None and len(data['get_cookie']) >0):
-                #cookie = self.putCookies(data['get_cookie']);
+            if (data['get_cookie'] is not None and len(data['get_cookie']) > 0):
+                # cookie = self.putCookies(data['get_cookie']);
                 pass
             else:
                 getCook = self.getCookies()
@@ -113,7 +114,6 @@ class baiduKeyWordsPos:
             del data
             gc.collect()
             return None;
-
 
     # 获取淘宝客cookies
     def getCookies(self):
@@ -137,20 +137,19 @@ class baiduKeyWordsPos:
 
     # 设置cookies
 
-    def putCookies(self,cookies):
+    def putCookies(self, cookies):
         logUtils.info("baiduKeyWordsPos putCookies")
-        logUtils.info("putCookies:"+(str)(cookies))
+        logUtils.info("putCookies:" + (str)(cookies))
         cookie = {'BAIDUID': cookies['BAIDUID'],
                   }
-        #if(cookie not in baiduKeyWordsPos.baiduToKen):
+        # if(cookie not in baiduKeyWordsPos.baiduToKen):
         baiduKeyWordsPos.baiduToKen.clear();
         baiduKeyWordsPos.baiduToKen.append(cookie)
-        #else:
+        # else:
         #    print("这个cookies已存在")
         return cookie
 
-
-    def reMoveCookies(self,index):
+    def reMoveCookies(self, index):
         logUtils.info("baiduKeyWordsPos reMoveCookies")
         del baiduKeyWordsPos.baiduToKen[index]
 
