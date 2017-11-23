@@ -26,7 +26,10 @@ print(sys.path)
 # import test.test6
 # task.taobaoOtherTask.taobaoOtherTask().actionTask()
 # import taobaoTryTask
-import test.timeOut
+# import goodsTask
+import hotKeyWordsTask
+
+# import test.timeOut
 try:
     pass
     # taobaoBuyInventory.buyInventoryUtils.buyInventoryUtils().getData(1,0)
