@@ -23,6 +23,7 @@ class buyInventoryUtils:
             'isHttps': False,
             'reLoadList': True,
         }
+        print("url:", dict['url'])
         data = utils.netUtils.netUtils.getData(dict)
         del dict
         if (data['isSuccess']):
@@ -32,11 +33,12 @@ class buyInventoryUtils:
                 if (index >= len(body) - 1):
                     index = len(body) - 1
                 for index in range(index, len(body)):
-                    self.listHandleData(page, body[index]['id'], body[index]['psId'], body[index]['sceneId'])
+                    self.listHandleData(page, body[index]['pagesize'], body[index]['id'], body[index]['psId'],
+                                        body[index]['sceneId'])
 
-    def listHandleData(self, page, cateId, psId, sceneId):
+    def listHandleData(self, page, pageSize, cateId, psId, sceneId):
         cookiesDict = utils.taobaokeUtils.taobaokeUtils.getCookies();
-        url = self.getListUrl(cookiesDict['cookies'], page, psId, sceneId);
+        url = self.getListUrl(cookiesDict['cookies'], page, pageSize, psId, sceneId);
         logUtils.info("list url:", url)
         dict = {
             'url': url,
@@ -49,21 +51,22 @@ class buyInventoryUtils:
         }
         del cookiesDict
         del url
-        self.getListData(cateId, dict, page, psId, sceneId);
+        self.getListData(cateId, dict, page, pageSize, psId, sceneId);
 
-    def getListData(self, cateId, dict, page, psId, sceneId):
+    def getListData(self, cateId, dict, page, pageSize, psId, sceneId):
         data = utils.netUtils.netUtils.getData(dict);
         if (data['isSuccess']):
             if (data['body'] is not None):
                 jsonStr = utils.utils.utils.replacePreGetBody(data['body'], "mtopjsonp1(");
                 body = json.loads(jsonStr)
-                del data
+
                 del jsonStr
                 # print(body)
                 if (body is not None):
                     logUtils.info(page, ":", body)
                     if (str(body['ret']).startswith("['FAIL_") is not True):
                         # itemList = body['data']['result']['1891397']['result'][0]['data'][0]['data'][0][0]['pre'];
+                        del data
                         itemList = self.parserListItem(body)
                         del body
                         effectiveContentId = self.checkEffectiveContentId(itemList, cateId, page)
@@ -88,7 +91,7 @@ class buyInventoryUtils:
                                     print("正在采集 size:", len(effectiveContentId['list']), " index:", index, " cate:",
                                           cateId,
                                           " page:", page, " contentId:", contentId)
-                                    del itemData
+
                                     self.postItemData(dict)
                                 del contentId
                                 del itemData
@@ -96,28 +99,29 @@ class buyInventoryUtils:
                                 'isNextpage'] is True):
                                 del effectiveContentId
                                 nextPage = page + 1;
-                                self.getListData(cateId, dict, nextPage, psId, sceneId)
+                                self.getListData(cateId, dict, nextPage, pageSize, psId, sceneId)
                             else:
                                 del effectiveContentId
                                 pass
                         elif (effectiveContentId['isNextpage'] is not None and effectiveContentId[
                             'isNextpage'] is True):
                             nextPage = page + 1;
-                            self.getListData(cateId, dict, nextPage, psId, sceneId)
+                            self.getListData(cateId, dict, nextPage, pageSize, psId, sceneId)
                         else:
                             pass;
 
 
                     elif (dict['reLoadList']):
-                        self.reLoadList(data, cateId, dict, page, psId, sceneId);
+                        self.reLoadList(data, cateId, dict, page, pageSize, psId, sceneId);
                     else:
+                        del data
                         pass;
                 else:
-                    self.reLoadList(data, cateId, dict, page, psId, sceneId);
+                    self.reLoadList(data, cateId, dict, page, pageSize, psId, sceneId);
             else:
-                self.reLoadList(data, cateId, dict, page, psId, sceneId);
+                self.reLoadList(data, cateId, dict, page, pageSize, psId, sceneId);
         else:
-            self.reLoadList(data, cateId, dict, page, psId, sceneId);
+            self.reLoadList(data, cateId, dict, page, pageSize, psId, sceneId);
 
 
     def parserListItem(self, body):
@@ -150,7 +154,7 @@ class buyInventoryUtils:
             del body
             return None;
 
-    def reLoadList(self, data, cateId, dict, page, psId, sceneId):
+    def reLoadList(self, data, cateId, dict, page, pageSize, psId, sceneId):
         print("log reLoadList")
         dict['isCookie'] = True;
         if (data is not None and data['get_cookie'] is not None and '_m_h5_tk' in data['get_cookie'] and
@@ -159,12 +163,12 @@ class buyInventoryUtils:
             cookie = utils.taobaokeUtils.taobaokeUtils.putCookies(data['get_cookie']);
             del data
             if (dict['reLoadList']):
-                dict['url'] = self.getListUrl(cookieArr[0], page, psId, sceneId);
+                dict['url'] = self.getListUrl(cookieArr[0], page, pageSize, psId, sceneId);
                 dict['putCookie'] = cookie
                 dict['reLoadList'] = False
                 del cookie
                 del cookieArr
-                self.getListData(cateId, dict, page, psId, sceneId);
+                self.getListData(cateId, dict, page, pageSize, psId, sceneId);
             else:
                 del cookie
                 del cookieArr
@@ -173,22 +177,20 @@ class buyInventoryUtils:
             del data
             return None
 
-
-    def getListUrl(self, cookie, page, psId, sceneId):
+    def getListUrl(self, cookie, page, pageSize, psId, sceneId):
 
         if (cookie is None):
             cookie = "";
         dataStr = str(taobaoBuyInventory.config.buyInventoryListData)
         topic = str(psId) + "_" + str(sceneId)
         data = dataStr % (
-            page, topic, taobaoBuyInventory.config.listPageSize, psId, page, "" if sceneId == 0 else sceneId)
+            page, topic, pageSize, psId, page, "" if sceneId == 0 else sceneId)
         times = str(int(round(time.time() * 1000)));
         sign = utils.netUtils.netUtils.getTbkSign(cookie, appConfig.appkey, times, data)
         url = taobaoBuyInventory.config.buyInventoryListUrl.format(appConfig.appkey, times, sign, data)
         # print(url)
         del dataStr
         del topic
-        del dataStr
         del data
         del times
         del sign
@@ -311,12 +313,15 @@ class buyInventoryUtils:
                     'postData': postDict,
                     'reLoad': True,
                 }
+
                 del postDict
                 data = utils.netUtils.netUtils.getData(dict)
+
                 del dict
                 if (data["isSuccess"] and data["body"] is not None):
                     body = json.loads(data["body"])
                     del data
+
                     ret = [item for item in contentIdList if item not in body['data']]
                     dictData = {
                         'list': ret,
