@@ -90,7 +90,7 @@ class baiduKeyWordsPos:
                             gc.collect()
                             return None;
                 else:
-                    del data
+
                     del body
                     gc.collect()
                     return self.isReLoad(data, dict);
