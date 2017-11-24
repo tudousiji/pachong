@@ -56,6 +56,7 @@ class comment:
                         'rateDetail'] and len(body['rateDetail']['rateList']) > 0):
                         content = json.dumps(body['rateDetail']['rateList'])
                         del body
+                        del dict
                         gc.collect()
                         return content;
                     elif (dict['reLoad'] is True):
@@ -64,10 +65,12 @@ class comment:
                         return self.getItemDataReLoad(dict);
                     else:
                         del body
+                        del dict
                         gc.collect()
                         return None;
                 except Exception as err:
-
+                    del data
+                    del dict
                     gc.collect()
                     errorData = traceback.format_exc()
                     utils.logUtils.logUtils.info("error", str(errorData));
@@ -80,6 +83,7 @@ class comment:
             logUtils.info("302处理")
             Location = data['header']['Location']
             del data
+            del dict
             return self.url302Handler(Location);
             #print(data['header']['Location'])
             pass

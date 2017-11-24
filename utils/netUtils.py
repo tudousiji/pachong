@@ -151,6 +151,7 @@ class netUtils:
         del get_cookie
         del body
         del url
+        del parment
         gc.collect();
         logUtils.info("utils", "baiduKeyWordsPos getRequestsForSelenium 666")
         return content
@@ -304,6 +305,7 @@ class netUtils:
         del isCookie;
         del putCookie;
         del isSuccess;
+        del parment
         gc.collect();
         return content;
 

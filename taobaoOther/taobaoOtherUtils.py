@@ -37,7 +37,8 @@ class taobaoOtherUtils:
                         dictData={}
                         keywordsDict={}
                         if(item["keywords"]['status']):
-                            keywordsData = taobaoOther.baiduKeyWordsPos.baiduKeyWordsPos().getData(
+                            keywordsObj = taobaoOther.baiduKeyWordsPos.baiduKeyWordsPos()
+                            keywordsData = keywordsObj.getData(
                                 item["keywords"]['title'])
                             if (keywordsData is not None and keywordsData != 'null'):
                                 keywordsDict['status'] =item["keywords"]['status']
@@ -45,6 +46,7 @@ class taobaoOtherUtils:
                             else:
                                 keywordsDict['status'] = False;
                             del keywordsData
+                            del keywordsObj
                         else:
                             keywordsDict['status'] = False;
 
@@ -54,7 +56,8 @@ class taobaoOtherUtils:
                         reasonDict = {}
 
                         if (item["reason"]):
-                            reasonData = taobaoOther.reason.reason().getData(item['itemId'])
+                            reasonObj = taobaoOther.reason.reason()
+                            reasonData = reasonObj.getData(item['itemId'])
 
                             if (reasonData is not None and reasonData != 'null'):
                                 reasonDict['status'] = item["reason"]
@@ -62,6 +65,7 @@ class taobaoOtherUtils:
                             else:
                                 reasonDict['status'] = False;
                             del reasonData
+                            del reasonObj
                         else:
                             reasonDict['status'] = False;
                         dictData['reason'] = reasonDict
@@ -69,13 +73,15 @@ class taobaoOtherUtils:
                         logUtils.info("结束理由itemId:", item['itemId'])
                         commentDict = {}
                         if (item["commentList"]):
-                            commentData = taobaoOther.comment.comment().getData(item['itemId'], 1)
+                            commentObj = taobaoOther.comment.comment()
+                            commentData = commentObj.getData(item['itemId'], 1)
                             if (commentData is not None and commentData != 'null'):
                                 commentDict['status'] = item["commentList"]
                                 commentDict['data'] = commentData
                             else:
                                 commentDict['status'] = False;
                             del commentData
+                            del commentObj
                         else:
                             commentDict['status'] = False;
                         dictData['commentList'] = commentDict
@@ -83,13 +89,15 @@ class taobaoOtherUtils:
                         logUtils.info("结束评论itemId:", item['itemId'])
                         askeverybodyListDict = {}
                         if (item["askeverybodyList"]):
-                            askeverybodyData = taobaoOther.askEveryBody.askEveryBody().getData(item['itemId'])
+                            askeverybodyObj = taobaoOther.askEveryBody.askEveryBody()
+                            askeverybodyData = askeverybodyObj.getData(item['itemId'])
                             if (askeverybodyData is not None and askeverybodyData != 'null'):
                                 askeverybodyListDict['status'] = item["askeverybodyList"]
                                 askeverybodyListDict['data'] = askeverybodyData
                             else:
                                 askeverybodyListDict['status'] = False;
                             del askeverybodyData
+                            del askeverybodyObj
                         else:
                             askeverybodyListDict['status'] = False;
                         dictData['askeverybodyList'] = askeverybodyListDict

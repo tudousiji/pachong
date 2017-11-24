@@ -27,6 +27,7 @@ class reason:
                 if(body['data'] is not None and len(body['data']['impress'])>0):
                     content = json.dumps(body['data'])
                     del body
+                    del dict
                     gc.collect()
                     return content;
                 else:
@@ -34,6 +35,7 @@ class reason:
                     gc.collect()
                     return self.getItemDataReLoad(dict);
             else:
+                del dict
                 del data
                 return None
         else:

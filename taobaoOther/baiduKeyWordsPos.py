@@ -46,6 +46,7 @@ class baiduKeyWordsPos:
                     errorData = traceback.format_exc()
                     utils.logUtils.logUtils.info("error", str(errorData));
 
+
                 if (body is not None and 'result' in body and "res" in body['result'] and "keyword_list" in
                     body['result']['res']):
                     del data
@@ -56,6 +57,7 @@ class baiduKeyWordsPos:
                             body['result']['res']['keyword_list']) >= baiduKeyWordsPos.maxKeyWordsCount):
                         content = json.dumps(self.handleList(body['result']['res']['keyword_list']))
                         del body
+                        del dict
                         gc.collect()
                         return content
                     else:
@@ -78,13 +80,17 @@ class baiduKeyWordsPos:
                             content = json.dumps(self.handleList(keyWordsList))
                             del keyWordsList
                             del itemList
+                            del body
+                            del dict
                             gc.collect()
                             return content
                         else:
                             del body
+                            del dict
                             gc.collect()
                             return None;
                 else:
+                    del data
                     del body
                     gc.collect()
                     return self.isReLoad(data, dict);

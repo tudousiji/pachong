@@ -43,12 +43,15 @@ class askEveryBody:
                 if (body is not None):
                     if (str(body['ret']).startswith("['FAIL_") is not True):
                         del dict
+                        del data
                         if('data' in body and 'cards' in body['data'] and len(body['data']['cards'])>0):
                             content = json.dumps(body['data']['cards'])
                             del body
+
                             return content;
                         else:
                             del body
+
                             return None
                     else:
                         dict['isCookie'] = True;
@@ -63,16 +66,19 @@ class askEveryBody:
                                 dict['putCookie'] = cookie
                                 dict['reLoad'] = False
                                 del cookie
+                                del data
                                 del cookieArr
                                 gc.collect()
                                 return self.getItemData(dict,itemId);
                             else:
+                                del data
                                 del cookie
                                 del cookieArr
                                 del dict
                                 gc.collect()
                                 return None;
                         else:
+                            del data
                             del dict
                             gc.collect()
                             return None
@@ -103,4 +109,8 @@ class askEveryBody:
         data = taobaoOther.config.askEveryBodyData.format(itemId, page)
         sign = utils.netUtils.netUtils.getTbkSign(cookie, config.config.appkey, times, data)
         url = taobaoOther.config.askEveryBodyUrl.format(config.config.appkey, times, sign, data)
+        del times
+        del data
+        del sign
+        gc.collect()
         return url;

@@ -32,6 +32,7 @@ class taobaoSubKeyWords:
             # print("成功:"+data['body'])
             if (data['body'] is not None):
                 body = json.loads(data['body'])
+
                 for item in body:
                     logUtils.info(body)
                     logUtils.info("item:",item)
@@ -48,6 +49,7 @@ class taobaoSubKeyWords:
                         logUtils.info("内容失败")
                     del subKeyWordsData
                 del body
+                del data
                 if (len(body) >= taobaoSubKeyWords.pageSize):
                     del body
                     nextPage = page + 1;
