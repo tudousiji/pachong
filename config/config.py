@@ -17,7 +17,8 @@ addKeyWordsForSubKeyWordsNull=serviceHost+'index.php/api/Keywords/addKeyWordsFor
 addGoodsItem=serviceHost+'index.php/api/AddGoods/addGoodsItem';#添加商品
 getBuyinventoryCate = serviceHost + 'index.php/api/Buyinventory/getCateList';  # 获取淘宝必买清单分类
 addbuyInventoryItemData = serviceHost + 'index.php/api/Buyinventory/addbuyInventoryItem';  # 添加必买清单
-checkEffectiveContentIdList = serviceHost + 'index.php/api/Buyinventory/checkEffectiveContentIdList';  # 获取可以插入数据库的ContentId列表
+checkEffectiveContentIdList = serviceHost + 'index.php/api/Buyinventory/checkEffectiveContentIdList';  # 获取可以插入数据库的ContentId列表,暂时不用了
+addContentId = serviceHost + 'index.php/api/Buyinventory/addContentId';  # 添加并且检查重复contentid
 
 getProxyList='http://www.xicidaili.com/nn/{0}'
 appkey='12574478';

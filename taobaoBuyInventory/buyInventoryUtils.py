@@ -29,6 +29,7 @@ class buyInventoryUtils:
         if (data['isSuccess']):
             if (data['body'] is not None):
                 body = json.loads(data['body'])
+                print(body)
                 del data
                 if (index >= len(body) - 1):
                     index = len(body) - 1
@@ -74,6 +75,7 @@ class buyInventoryUtils:
                         print("effectiveContentId size:", len(effectiveContentId))
                         print("列表json:", itemList)
                         del itemList
+
                         if (effectiveContentId is not None and effectiveContentId['list'] is not None):
                             for index in range(len(effectiveContentId['list'])):
                                 contentId = effectiveContentId['list'][index]
@@ -333,7 +335,10 @@ class buyInventoryUtils:
                     return dictData
                 else:
                     del data
-
+        dictData = {
+            'list': contentIdList,
+            'isNextpage': False,
+        }
         return contentIdList
 
     def postItemData(self,dict):

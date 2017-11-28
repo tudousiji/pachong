@@ -19,20 +19,36 @@ class taobaoOtherUtils:
             'isHttps': False,
             'reLoad': True,
         }
-        self.getItemData(dict);
+        self.getItemDataWhile(dict);
 
-
-    def getItemData(self,dict):
-        data= utils.netUtils.netUtils.getData(dict);
-
-        if (data['isSuccess']):
-            if (data['body'] is not None):
-                body = json.loads(data['body'])
-                if(len(body)>0):
-                    list=[];
+    def getItemDataWhile(self, dataDict):
+        while (True):
+            data = utils.netUtils.netUtils.getData(dataDict);
+            if (data['isSuccess']):
+                if (data['body'] is not None):
+                    body = json.loads(data['body'])
+                    if (len(body) > 0):
+                        self.getItemData(body)
+                    else:
+                        del dataDict
+                        del body
+                        del data
+                        logUtils.info("已结束")
+                else:
+                    break
+                    del dataDict
                     del data
-                    for item in body:
+                    logUtils.info("已结束,可能出错")
+            else:
+                break
+                del dataDict
+                del data
+                logUtils.info("已结束,可能出错")
 
+    def getItemData(self, body):
+        if (len(body) > 0):
+            list = [];
+                    for item in body:
                         logUtils.info("开始itemId:",item['itemId'])
                         dictData={}
                         keywordsDict={}
@@ -109,23 +125,12 @@ class taobaoOtherUtils:
                         list.append(dictData);
                         del dictData
                         # baseLogUtils.info("baseLogUtils", "1")
-                    del body
+
 
                     gc.collect()
-                    self.postData(list);
-                    self.getItemData(dict);
-                else:
-                    del body
-                    logUtils.info("已结束")
-            else:
-                del dict
-                del data
-        else:
-            del dict
+            self.postData(list, dict);
 
-
-
-    def postData(self,lists):
+    def postData(self, lists, dictList):
         postDict = {
             'data': json.dumps(lists),
         }
@@ -147,6 +152,8 @@ class taobaoOtherUtils:
             logUtils.info("提交服务器失败", data)
         del dict
         del data
+        gc.collect()
+        # self.getItemData(dictList);
         logUtils.info("----")
 
 
