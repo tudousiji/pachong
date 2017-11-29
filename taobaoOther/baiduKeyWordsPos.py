@@ -46,8 +46,9 @@ class baiduKeyWordsPos:
                     errorData = traceback.format_exc()
                     utils.logUtils.logUtils.info("error", str(errorData));
 
-
-                if (body is not None and 'result' in body and "res" in body['result'] and "keyword_list" in
+                logUtils.info("baiduKeyWordsPos body:" + str(body));
+                if (body is not None and 'result' in body and body['result'] is not None and "res" in body['result'] and
+                            body['result']['res'] is not None and "keyword_list" in
                     body['result']['res']):
                     del data
                     # if (data['get_cookie'] is not None and len(data['get_cookie']) > 0):
