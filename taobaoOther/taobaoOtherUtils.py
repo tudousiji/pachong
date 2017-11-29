@@ -32,6 +32,7 @@ class taobaoOtherUtils:
                     if (len(body) > 0):
                         self.getItemData(body)
                     else:
+                        break
                         del dataDict
                         del body
                         del data
@@ -129,9 +130,9 @@ class taobaoOtherUtils:
                 # baseLogUtils.info("baseLogUtils", "1")
 
             gc.collect()
-            self.postData(list, dict);
+            self.postData(list);
 
-    def postData(self, lists, dictList):
+    def postData(self, lists):
         postDict = {
             'data': json.dumps(lists),
         }

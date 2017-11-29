@@ -35,20 +35,24 @@ class baiduKeyWordsPos:
         logUtils.info("baiduKeyWordsPos getItemData")
         data = utils.netUtils.netUtils.getData(dict);
         logUtils.info("baiduKeyWordsPos getItemData 222")
+
         if (data['isSuccess']):
             if (data['body'] is not None):
                 body = None;
                 try:
                     body = json.loads(data['body']);
-
+                    if type(body) == str:
+                        body = json.loads(body);
                 except Exception as err:
                     utils.logUtils.logUtils.info("error", data['body']);
                     errorData = traceback.format_exc()
                     utils.logUtils.logUtils.info("error", str(errorData));
 
                 logUtils.info("baiduKeyWordsPos body:" + str(body));
+
+                print(body["result"])
                 if (body is not None and 'result' in body and body['result'] is not None and "res" in body['result'] and
-                            body['result']['res'] is not None and "keyword_list" in
+                            body['result']['res'] is not None and len(body['result']['res']) > 0 and "keyword_list" in
                     body['result']['res']):
                     del data
                     # if (data['get_cookie'] is not None and len(data['get_cookie']) > 0):
