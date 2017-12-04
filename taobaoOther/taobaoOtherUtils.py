@@ -47,6 +47,7 @@ class taobaoOtherUtils:
                 del dataDict
                 del data
                 logUtils.info("已结束,可能出错")
+        logUtils.info("退出 while")
 
     def getItemData(self, body):
         if (len(body) > 0):
@@ -131,6 +132,9 @@ class taobaoOtherUtils:
 
             gc.collect()
             self.postData(list);
+        else:
+            logUtils.info("body len is 0:" + len(body))
+
 
     def postData(self, lists):
         postDict = {
