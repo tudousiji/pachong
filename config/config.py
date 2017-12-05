@@ -20,6 +20,8 @@ addbuyInventoryItemData = serviceHost + 'index.php/api/Buyinventory/addbuyInvent
 checkEffectiveContentIdList = serviceHost + 'index.php/api/Buyinventory/checkEffectiveContentIdList';  # 获取可以插入数据库的ContentId列表,暂时不用了
 addContentId = serviceHost + 'index.php/api/Buyinventory/addContentId';  # 添加并且检查重复contentid
 
+getContentIdList = serviceHost + 'index.php/api/Buyinventory/getContentIdList';  # 获取未采集的ContentId
+
 getProxyList='http://www.xicidaili.com/nn/{0}'
 appkey='12574478';
 pid="mm_29947721_14832832_57874820";

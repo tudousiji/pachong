@@ -26,6 +26,7 @@ class buyInventoryUtils:
         print("url:", dict['url'])
         data = utils.netUtils.netUtils.getData(dict)
         del dict
+        print(data['body'])
         if (data['isSuccess']):
             if (data['body'] is not None):
                 body = json.loads(data['body'])
@@ -40,7 +41,7 @@ class buyInventoryUtils:
     def listHandleData(self, page, pageSize, cateId, psId, sceneId):
         cookiesDict = utils.taobaokeUtils.taobaokeUtils.getCookies();
         url = self.getListUrl(cookiesDict['cookies'], page, pageSize, psId, sceneId);
-        logUtils.info("list url:", url)
+        # logUtils.info("list url:", url)
         dict = {
             'url': url,
             'requestType': 'GET',
@@ -56,6 +57,7 @@ class buyInventoryUtils:
 
     def getListData(self, cateId, dict, page, pageSize, psId, sceneId):
         data = utils.netUtils.netUtils.getData(dict);
+        logUtils.info("列表 cateId:" + str(cateId) + "-->page:" + str(page) + "-->" + data['body'] + "-->" + dict['url'])
         if (data['isSuccess']):
             if (data['body'] is not None):
                 jsonStr = utils.utils.utils.replacePreGetBody(data['body'], "mtopjsonp1(");
@@ -64,7 +66,7 @@ class buyInventoryUtils:
                 del jsonStr
                 # print(body)
                 if (body is not None):
-                    logUtils.info(page, ":", body)
+                    #logUtils.info(page, ":", body)
                     if (str(body['ret']).startswith("['FAIL_") is not True):
                         # itemList = body['data']['result']['1891397']['result'][0]['data'][0]['data'][0][0]['pre'];
                         del data
@@ -359,8 +361,10 @@ class buyInventoryUtils:
         data = utils.netUtils.netUtils.getData(dict)
         del dict
         if (data['isSuccess']):
-            logUtils.info("提交服务器成功", data)
+            # logUtils.info("提交服务器成功", data)
+            pass
         else:
-            logUtils.info("提交服务器失败", data)
+            # logUtils.info("提交服务器失败", data)
+            pass
         del data
-        logUtils.info("----")
+        #logUtils.info("----")

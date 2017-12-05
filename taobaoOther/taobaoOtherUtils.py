@@ -2,7 +2,7 @@
 # import sys
 import gc
 import json
-
+import time
 import config.config
 import taobaoOther.askEveryBody
 import taobaoOther.baiduKeyWordsPos
@@ -131,33 +131,40 @@ class taobaoOtherUtils:
                 # baseLogUtils.info("baseLogUtils", "1")
 
             gc.collect()
-            self.postData(list);
+            self.postData(None, list);
         else:
             logUtils.info("body len is 0:" + len(body))
 
-
-    def postData(self, lists):
+    def postData(self, dict, lists):
         postDict = {
             'data': json.dumps(lists),
         }
-        del lists
-        dict = {
-            'url': config.config.addTaoBaoItemInfo,
-            'requestType': 'POST',
-            'isProxy': False,
-            'isHttps': False,
-            'postData': postDict,
-            'reLoad': True,
-        }
+
+        if dict is None:
+            dict = {
+                'url': config.config.addTaoBaoItemInfo,
+                'requestType': 'POST',
+                'isProxy': False,
+                'isHttps': False,
+                'postData': postDict,
+                'reLoadCount': 0,
+            }
         del postDict
         data = utils.netUtils.netUtils.getData(dict)
 
         if (data['isSuccess']):
+            dict['reLoadCount'] = 0;
             logUtils.info("提交服务器成功")
+        elif data['reLoadCount'] <= 20:
+            logUtils.info("提交服务器失败,重试中...,第" + data['reLoadCount'] + "次", data)
+            time.sleep(dict['reLoadCount'] * 10)
+            dict['reLoadCount'] = dict['reLoadCount'] + 1
+            self.postData(self, dict, lists)
         else:
-            logUtils.info("提交服务器失败", data)
+            logUtils.info("提交服务器失败,失败次数:" + dict['reLoadCount'], data)
         del dict
         del data
+        del lists
         gc.collect()
         # self.getItemData(dictList);
         logUtils.info("----")
