@@ -43,6 +43,7 @@ class baiduKeyWordsPos:
                     body = json.loads(data['body']);
                     if type(body) == str:
                         body = json.loads(body);
+
                 except Exception as err:
                     utils.logUtils.logUtils.info("error", data['body']);
                     errorData = traceback.format_exc()
@@ -50,11 +51,11 @@ class baiduKeyWordsPos:
 
                 logUtils.info("baiduKeyWordsPos body:" + str(body));
 
-                print(body["result"])
                 if (body is not None and 'result' in body and body['result'] is not None and "res" in body['result'] and
                             body['result']['res'] is not None and len(body['result']['res']) > 0 and "keyword_list" in
                     body['result']['res']):
                     del data
+                    print(body["result"])
                     # if (data['get_cookie'] is not None and len(data['get_cookie']) > 0):
                     #    cookie = self.putCookies(data['get_cookie']);
 

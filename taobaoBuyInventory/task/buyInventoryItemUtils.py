@@ -3,6 +3,8 @@ import utils
 import json
 import taobaoBuyInventory.config
 import time
+import gc
+import urllib
 
 
 class buyInventoryItemUtils:
@@ -24,15 +26,57 @@ class buyInventoryItemUtils:
                     if len(body) > 0:
                         for item in body:
                             contentId = item["contentId"]
-                            content = self.itemHandleData(contentId)
-                            postDict = {
-                                "data": content,
-                                "contentId": contentId,
-                                "cate_id": item["cateId"],
-                            }
-                            self.postItemData(None, postDict)
+                            contentDict = self.itemHandleData(contentId)
+                            if contentDict is not None:
+                                postDict = {
+                                    "data": contentDict['content'],
+                                    "contentId": contentId,
+                                    "cate_id": item["cateId"],
+                                }
+                                self.postItemData(None, postDict)
+                                del postDict
+
+                                if ("personContent" in contentDict and contentDict['personContent'] is not None
+                                    and len(contentDict['personContent']) > 0):
+                                    personContentidList = [];
+                                    for personItem in contentDict['personContent']:
+                                        personContentidList.append(personItem['id'])
+                                    if len(personContentidList) > 0:
+                                        personContentDict = {
+                                            "data": personContentidList,
+                                            "contentId": contentId,
+                                            "cateId": item["cateId"],
+                                            "page": item["page"],
+                                        }
+                                        self.postPersonContentData(None, personContentDict)
+                                        del personContentDict
+                                    del personContentidList
+
+                                if ("tags" in contentDict and contentDict['tags'] is not None
+                                    and len(contentDict['tags']) > 0):
+                                    tagsList = [];
+                                    for tagItem in contentDict['tags']:
+                                        tagItemUrl = urllib.parse.urlparse(tagItem['url'])
+                                        tagItemParse_qs = urllib.parse.parse_qs(tagItemUrl.query, True)
+                                        if tagItemParse_qs is not None and 'tag' in tagItemParse_qs and tagItemParse_qs[
+                                            'tag'] is not None:
+                                            tagsList.append(tagItemParse_qs['tag'])
+                                        del tagItemUrl
+                                        del tagItemParse_qs
+                                    if len(tagsList) > 0:
+                                        tagsDict = {
+                                            "data": tagsList,
+                                            "contentId": contentId,
+                                            "cateId": item["cateId"],
+                                            "page": item["page"],
+                                        }
+                                        self.postTagsData(None, tagsDict)
+                                        del tagsDict
+                                    del tagsList
+
+
                             del contentId
-                            del content
+                            del contentDict
                     else:
                         break
                 else:
@@ -73,12 +117,26 @@ class buyInventoryItemUtils:
                         del data
                         if ('data' in body and body['data'] is not None and
                                     'models' in body['data'] and body['data']['models'] is not None
-                            and 'content' in body['data']['models']
-                            and body['data']['models']['content'] is not None
+
                             ):
-                            content = body['data']['models']['content']
+                            contentDict = {}
+                            if ('content' in body['data']['models'] and body['data']['models']['content'] is not None):
+                                content = body['data']['models']['content']
+                                contentDict['content'] = content
+                                del content
+                            if 'personContent' in body['data']['models'] and body['data']['models'][
+                                'personContent'] is not None:
+                                personContent = body['data']['models']['personContent']
+                                contentDict['personContent'] = personContent
+                                del personContent
+                            if 'tags' in body['data']['models'] and body['data']['models']['tags'] is not None:
+                                tagsList = body['data']['models']['tags']
+                                contentDict['tags'] = tagsList
+                                del tagsList
                             del body
-                            return content;
+                            gc.collect()
+                            return contentDict;
+
                         else:
                             return None
                     elif (dict['reLoadList']):
@@ -129,6 +187,74 @@ class buyInventoryItemUtils:
         # print(url)
         return url;
 
+    def postTagsData(self, tagsDict, tagsDataDict):
+        if tagsDict is None:
+            postDict = {
+                'data': json.dumps(tagsDataDict),
+            }
+            # print("postTagsData:"+json.dumps(tagsDataDict))
+            # del dataDict
+            tagsDict = {
+                'url': appConfig.addBuyinventoryTags,
+                'requestType': 'POST',
+                'isProxy': False,
+                'isHttps': False,
+                'postData': postDict,
+                'reLoadCount': 0,
+
+            }
+            # print("url:::"+tagsDict['url'])
+            del postDict
+
+        data = utils.netUtils.netUtils.getData(tagsDict)
+        # print("postTagsData:"+str(data))
+        if (data["isSuccess"] and data["body"] is not None):
+            del tagsDataDict
+            del tagsDict
+            print("postTagsData服务器提交成功")
+        elif (tagsDict['reLoadCount'] <= 20):
+            print("postTagsData服务器提交失败，重试中.." + str(tagsDict['reLoadCount']))
+            tagsDict['reLoadCount'] = tagsDict['reLoadCount'] + 1;
+
+            self.postTagsData(tagsDict, tagsDataDict)
+        else:
+            print("postTagsData服务器提交失败:" + str(tagsDict['reLoadCount']) + "次")
+            del tagsDataDict
+            del tagsDict
+
+    def postPersonContentData(self, contentIdDict, dataDict):
+        if contentIdDict is None:
+            postDict = {
+                'data': json.dumps(dataDict),
+            }
+            # del dataDict
+            contentIdDict = {
+                'url': appConfig.addContentId,
+                'requestType': 'POST',
+                'isProxy': False,
+                'isHttps': False,
+                'postData': postDict,
+                'reLoadCount': 0,
+
+            }
+
+        del postDict
+        data = utils.netUtils.netUtils.getData(contentIdDict)
+
+        print("postPersonContentData:" + str(data))
+        if (data["isSuccess"] and data["body"] is not None):
+            del contentIdDict
+            del dataDict
+            print("postPersonContentData服务器提交成功")
+        elif (contentIdDict['reLoadCount'] <= 20):
+            print("postPersonContentData服务器提交失败，重试中.." + str(contentIdDict['reLoadCount']))
+            contentIdDict['reLoadCount'] = contentIdDict['reLoadCount'] + 1;
+            self.postPersonContentData(contentIdDict, dataDict)
+        else:
+            print("postPersonContentData服务器提交失败:" + str(contentIdDict['reLoadCount']) + "次")
+            del contentIdDict
+            del dataDict
+
     def postItemData(self, dict, dictData):
         if dict is None:
             postDict = {
@@ -145,8 +271,9 @@ class buyInventoryItemUtils:
             }
         del postDict
         data = utils.netUtils.netUtils.getData(dict)
-        del dict
+
         if (data['isSuccess']):
+            del dict
             print("提交服务器成功", data)
             # logUtils.info("提交服务器成功", data)
             pass
@@ -155,9 +282,11 @@ class buyInventoryItemUtils:
             time.sleep(dict['reLoadCount'] * 10)
             dict['reLoadCount'] = dict['reLoadCount'] + 1
             self.postData(self, dict, dictData)
+            del dict
             # logUtils.info("提交服务器失败", data)
             pass
         else:
+            del dict
             print("提交服务器失败,失败次数:" + dict['reLoadCount'], data)
         del data
         # logUtils.info("----")

@@ -19,7 +19,7 @@ getBuyinventoryCate = serviceHost + 'index.php/api/Buyinventory/getCateList';  #
 addbuyInventoryItemData = serviceHost + 'index.php/api/Buyinventory/addbuyInventoryItem';  # 添加必买清单
 checkEffectiveContentIdList = serviceHost + 'index.php/api/Buyinventory/checkEffectiveContentIdList';  # 获取可以插入数据库的ContentId列表,暂时不用了
 addContentId = serviceHost + 'index.php/api/Buyinventory/addContentId';  # 添加并且检查重复contentid
-
+addBuyinventoryTags = serviceHost + 'index.php/api/Buyinventory/addBuyinventoryTags';  # 添加并且检查重复tags
 getContentIdList = serviceHost + 'index.php/api/Buyinventory/getContentIdList';  # 获取未采集的ContentId
 
 getProxyList='http://www.xicidaili.com/nn/{0}'
