@@ -5,7 +5,7 @@ import taobaoBuyInventory.config
 import time
 import gc
 import urllib
-
+import sys
 
 class buyInventoryItemUtils:
     def getData(self):
@@ -28,11 +28,13 @@ class buyInventoryItemUtils:
                             contentId = item["contentId"]
                             contentDict = self.itemHandleData(contentId)
                             if contentDict is not None:
+
                                 postDict = {
                                     "data": contentDict['content'],
                                     "contentId": contentId,
                                     "cate_id": item["cateId"],
                                 }
+                                print("contentDict:::" + json.dumps(postDict))
                                 self.postItemData(None, postDict)
                                 del postDict
 
@@ -59,8 +61,8 @@ class buyInventoryItemUtils:
                                         tagItemUrl = urllib.parse.urlparse(tagItem['url'])
                                         tagItemParse_qs = urllib.parse.parse_qs(tagItemUrl.query, True)
                                         if tagItemParse_qs is not None and 'tag' in tagItemParse_qs and tagItemParse_qs[
-                                            'tag'] is not None:
-                                            tagsList.append(tagItemParse_qs['tag'])
+                                            'tag'] is not None and len(tagItemParse_qs['tag']) > 0:
+                                            tagsList.append(tagItemParse_qs['tag'][0])
                                         del tagItemUrl
                                         del tagItemParse_qs
                                     if len(tagsList) > 0:
@@ -121,7 +123,90 @@ class buyInventoryItemUtils:
                             ):
                             contentDict = {}
                             if ('content' in body['data']['models'] and body['data']['models']['content'] is not None):
-                                content = body['data']['models']['content']
+                                # content = body['data']['models']['content']
+                                content = {};
+                                content["title"] = body['data']['models']['content']['title']
+                                content["subTitle"] = body['data']['models']['content']['subTitle']
+                                content["summary"] = body['data']['models']['content']['summary']
+                                content["gmtCreate"] = body['data']['models']['content']['gmtCreate']
+                                content["readCount"] = body['data']['models']['content']['readCount']
+
+                                if 'richText' in body['data']['models']['content'] and len(
+                                        body['data']['models']['content']['richText']) > 0:
+                                    content["richText"] = body['data']['models']['content']['richText'];
+                                elif 'modules' in body['data'] and body['data']['modules'] is not None:
+                                    itemList = [];
+                                    for item in body['data']['modules']:
+                                        if "data" in item and item["data"] is not None:
+                                            if "title" in item["data"] and item["data"][
+                                                "title"] is not None and "topNum" in item["data"] and item["data"][
+                                                "topNum"] is not None:
+                                                titleDict = {
+                                                    "title": item["data"]
+                                                }
+                                                # del titleDict["title"]["items"]
+
+                                                if "items" in item["data"] and item["data"][
+                                                    "items"] is not None and len(item["data"]["items"]) > 0:
+                                                    itemsItemList = self.__itemsItemList(item["data"]["items"]);
+                                                    # del titleDict["title"]["items"]
+
+                                                    if itemsItemList is not None and len(itemsItemList) > 0:
+                                                        titleDict["title"]["items"] = itemsItemList
+                                                    del itemsItemList
+                                                itemList.append(titleDict)
+                                                del titleDict
+                                            elif "shopDetail" in item["data"] and item["data"][
+                                                "shopDetail"] is not None:
+                                                shopDetailList = [];
+                                                for shopDetailItem in item["data"]["shopDetail"]:
+                                                    shopDetailDict = {
+                                                        "description": shopDetailItem["description"],
+                                                        "shop_img": shopDetailItem["shop_img"],
+                                                        "shop_logo": shopDetailItem["shop_logo"],
+                                                        "title": shopDetailItem["title"],
+                                                        "shop_title": shopDetailItem["shop_title"],
+                                                        "shop_url": shopDetailItem["shop_url"],
+                                                        "linkUrl": shopDetailItem["linkUrl"],
+                                                        "id": shopDetailItem["id"],
+                                                        "level": shopDetailItem["level"],
+                                                        "shop_desc ": shopDetailItem["shop_desc"],
+                                                        "shop_sid ": shopDetailItem["shop_sid"],
+                                                        "b2cShop ": shopDetailItem["b2cShop"],
+                                                        "type ": shopDetailItem["type"],
+                                                    }
+                                                    shopDetailList.append(shopDetailDict)
+                                                if (len(shopDetailList) > 0):
+                                                    shopDetailListDict = {
+                                                        "shopDetail": shopDetailList
+                                                    }
+                                                    itemList.append(shopDetailListDict)
+                                                del shopDetailList
+                                                del shopDetailListDict
+                                            elif "images" in item["data"] and item["data"]["images"] is not None:
+                                                shopDetailListDict = {
+                                                    "images": item["data"]["images"]
+                                                }
+                                                itemList.append(shopDetailListDict)
+                                                del shopDetailListDict
+                                            elif "text" in item["data"] and item["data"]["text"] is not None and len(
+                                                    item["data"]["text"]) == 1:
+                                                shopDetailListDict = {
+                                                    "text": item["data"]["text"]
+                                                }
+                                                itemList.append(shopDetailListDict)
+                                            elif "items" in item["data"] and item["data"]["items"] is not None:
+                                                itemsItemList = self.__itemsItemList(item["data"]["items"]);
+                                                if (itemsItemList is not None and len(itemsItemList) > 0):
+                                                    itemsListDict = {
+                                                        "items": itemsItemList
+                                                    }
+                                                    itemList.append(itemsListDict)
+                                                    del itemsListDict
+                                                del itemsItemList
+                                    if len(itemList) > 0:
+                                        content["modules"] = itemList
+                                    del itemList
                                 contentDict['content'] = content
                                 del content
                             if 'personContent' in body['data']['models'] and body['data']['models'][
@@ -150,6 +235,27 @@ class buyInventoryItemUtils:
                 return self.reLoadItem(data, dict, contentId);
         else:
             return self.reLoadItem(data, dict, contentId);
+
+    def __itemsItemList(self, items):
+
+        if items is not None and len(items) > 0:
+            itemsItemList = [];
+            for itemsItem in items:
+                itemsItemDict = {
+                    "itemType": itemsItem["itemType"],
+                    "itemTitle": itemsItem["itemTitle"],
+                    "itemClickNativeUrl": itemsItem["itemClickNativeUrl"],
+                    "itemId": itemsItem["itemId"],
+                    "itemQualityDTO": itemsItem["itemQualityDTO"],
+                    "item_pic": itemsItem["item_pic"],
+                    "itemUrl": itemsItem["itemUrl"],
+                    "itemPriceDTO": itemsItem["itemPriceDTO"],
+                }
+
+                itemsItemList.append(itemsItemDict)
+            return itemsItemList
+        else:
+            return None;
 
     def reLoadItem(self, data, dict, contentId):
         print("log reLoadItem")
