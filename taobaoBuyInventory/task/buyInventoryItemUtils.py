@@ -133,7 +133,35 @@ class buyInventoryItemUtils:
 
                                 if 'richText' in body['data']['models']['content'] and len(
                                         body['data']['models']['content']['richText']) > 0:
-                                    content["richText"] = body['data']['models']['content']['richText'];
+                                    # content["richText"] = body['data']['models']['content']['richText'];
+                                    for item in body['data']['models']['content']['richText']:
+                                        if "resource" in item and item["resource"] is not None:
+                                            richTextList = []
+                                            for resourceItem in item["resource"]:
+                                                if "text" in resourceItem and resourceItem["text"] is not None:
+                                                    textDict = {
+                                                        "text": resourceItem["text"]
+                                                    }
+                                                    richTextList.append(textDict)
+                                                    del textDict
+                                                elif "picture" in resourceItem and resourceItem["picture"] is not None:
+                                                    pictureDict = {
+                                                        "picture": resourceItem["picture"]
+                                                    }
+                                                    richTextList.append(pictureDict)
+                                                    del pictureDict
+                                                elif "item" in resourceItem and resourceItem["item"] is not None:
+                                                    print("itemsItem:" + str(
+                                                        body['data']['models']['content']['richText']))
+                                                    itemsItemList = self.__itemsItemList(resourceItem["item"]);
+                                                    itemDict = {
+                                                        "item": itemsItemList
+                                                    }
+                                                    richTextList.append(itemDict)
+                                                    del itemDict
+                                                    del itemsItemList
+                                            content["richText"] = richTextList
+
                                 elif 'modules' in body['data'] and body['data']['modules'] is not None:
                                     itemList = [];
                                     for item in body['data']['modules']:
@@ -238,22 +266,38 @@ class buyInventoryItemUtils:
 
     def __itemsItemList(self, items):
 
-        if items is not None and len(items) > 0:
+        if items is not None and type(items) == list and len(items) > 0:
             itemsItemList = [];
+
             for itemsItem in items:
+
                 itemsItemDict = {
                     "itemType": itemsItem["itemType"],
                     "itemTitle": itemsItem["itemTitle"],
-                    "itemClickNativeUrl": itemsItem["itemClickNativeUrl"],
+                    "itemUrl": itemsItem["itemUrl"],
                     "itemId": itemsItem["itemId"],
-                    "itemQualityDTO": itemsItem["itemQualityDTO"],
                     "item_pic": itemsItem["item_pic"],
                     "itemUrl": itemsItem["itemUrl"],
                     "itemPriceDTO": itemsItem["itemPriceDTO"],
                 }
-
+                if "itemQualityDTO" in items:
+                    itemsItemDict["itemQualityDTO"] = items["itemQualityDTO"]
                 itemsItemList.append(itemsItemDict)
             return itemsItemList
+        elif items is not None and type(items) == dict:
+
+            itemsItemDict = {
+                "itemType": items["itemType"],
+                "itemTitle": items["itemTitle"],
+                "itemUrl": items["itemUrl"],
+                "itemId": items["itemId"],
+                "item_pic": items["item_pic"],
+                "itemUrl": items["itemUrl"],
+                "itemPriceDTO": items["itemPriceDTO"],
+            }
+            if "itemQualityDTO" in items:
+                itemsItemDict["itemQualityDTO"] = items["itemQualityDTO"]
+            return itemsItemDict
         else:
             return None;
 
