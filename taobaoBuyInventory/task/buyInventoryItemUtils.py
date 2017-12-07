@@ -75,6 +75,15 @@ class buyInventoryItemUtils:
                                         self.postTagsData(None, tagsDict)
                                         del tagsDict
                                     del tagsList
+                            else:
+                                postDict = {
+                                    "data": None,
+                                    "contentId": contentId,
+                                    "cate_id": item["cateId"],
+                                }
+
+                                # print("contentDict:::" + json.dumps(postDict))
+                                self.postItemData(None, postDict)
 
 
                             del contentId
@@ -113,10 +122,13 @@ class buyInventoryItemUtils:
             if (data['body'] is not None):
                 jsonStr = utils.utils.utils.replacePreGetBody(data['body'], "mtopjsonp1(");
                 body = json.loads(jsonStr)
+
                 del jsonStr
                 if (body is not None):
+
                     if (str(body['ret']).startswith("['FAIL_") is not True):
                         del data
+
                         if ('data' in body and body['data'] is not None and
                                     'models' in body['data'] and body['data']['models'] is not None
 
@@ -288,6 +300,8 @@ class buyInventoryItemUtils:
 
                         else:
                             return None
+                    elif str(body['ret']).startswith("['107::") is not True:
+                        return None
                     elif (dict['reLoadList']):
                         return self.reLoadItem(data, dict, contentId);
                     else:

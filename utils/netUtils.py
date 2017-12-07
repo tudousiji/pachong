@@ -245,7 +245,12 @@ class netUtils:
                 if (r.encoding is not None):
                     text = r.text;
                     if (len(text) > 0):
-                        body = text.encode(r.encoding).decode(r.apparent_encoding, 'ignore');
+                        # print("r.apparent_encoding:"+str(r.apparent_encoding))
+                        # r.encoding从HTTPheader中猜测的响应内容编码方式(r.apparent_encoding从内容中分析出的响应内容编码方式（备选编码方式）
+                        # r.encoding和r.apparent_encoding的区别 r.encoding：如果header中不存在charset，则认为编码为ISO-8859-1 r.apparent_encoding:根据网页内容分析出的编码方式 综上所述，r.apparent_encoding比r.encoding更为准确
+                        # a = "dfsdf".encode();
+                        # data = chardet.detect(a)
+                        body = text.encode(r.encoding).decode("utf-8", 'ignore');  # r.apparent_encoding
                     else:
                         body = "";
                         # print(text)
