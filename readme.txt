@@ -7,3 +7,4 @@
 7.下载phantomjs http://phantomjs.org/download.html
 8.pip install selenium
 9.pip install pyexcel_xls
+10. mac下启动mysql mysql.server start
