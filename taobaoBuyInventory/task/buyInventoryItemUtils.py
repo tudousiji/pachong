@@ -146,19 +146,31 @@ class buyInventoryItemUtils:
                                 if 'richText' in body['data']['models']['content'] and len(
                                         body['data']['models']['content']['richText']) > 0:
                                     # content["richText"] = body['data']['models']['content']['richText'];
+                                    # print("contentId:" + str(contentId))
                                     # print("richText:::"+str(body['data']['models']['content']['richText']))
+                                    # sys.exit(0)
                                     richTextList = []
                                     for item in body['data']['models']['content']['richText']:
                                         if "resource" in item and item["resource"] is not None:
 
                                             for resourceItem in item["resource"]:
-                                                # print("text:"+str("text" in resourceItem and resourceItem["text"] is not None))
+
+                                                #print("text:"+str("text" in resourceItem and resourceItem["text"] is not None))
                                                 if "text" in resourceItem and resourceItem["text"] is not None and type(
                                                         resourceItem["text"]) == str and len(
                                                         resourceItem["text"].strip()) >0:
                                                     textDict = {
                                                         "text": resourceItem["text"]
                                                     }
+                                                    if "style" in item and item["style"] is not None and type(
+                                                            item["style"]) == dict:
+                                                        if "textAlign" in item["style"] and item["style"][
+                                                            "textAlign"] is not None:
+                                                            if item["style"]["textAlign"] == "center":
+                                                                textDict["type"] = 0  # 0是标题 center属性
+                                                            elif item["style"]["textAlign"] == "center":
+                                                                textDict["type"] = 1  # 1是文字 left属性
+
                                                     #print("textDict:"+str(textDict))
                                                     richTextList.append(textDict)
                                                     del textDict
@@ -300,7 +312,7 @@ class buyInventoryItemUtils:
 
                         else:
                             return None
-                    elif str(body['ret']).startswith("['107::") is not True:
+                    elif str(body['ret']).startswith("['107::") is True:
                         return None
                     elif (dict['reLoadList']):
                         return self.reLoadItem(data, dict, contentId);
@@ -471,7 +483,8 @@ class buyInventoryItemUtils:
             postDict = {
                 'data': json.dumps(dictData),
             }
-            del dictData
+            #print("postDict:::"+json.dumps(dictData))
+
             dict = {
                 'url': appConfig.addbuyInventoryItemData,
                 'requestType': 'POST',
@@ -485,6 +498,7 @@ class buyInventoryItemUtils:
 
         if (data['isSuccess']):
             del dict
+            del dictData
             print("提交服务器成功", data)
             # logUtils.info("提交服务器成功", data)
             pass
@@ -492,12 +506,14 @@ class buyInventoryItemUtils:
             print("提交服务器失败", data)
             time.sleep(dict['reLoadCount'] * 10)
             dict['reLoadCount'] = dict['reLoadCount'] + 1
-            self.postData(self, dict, dictData)
+            self.postItemData(self, dict, dictData)
             del dict
+            del dictData
             # logUtils.info("提交服务器失败", data)
             pass
         else:
             del dict
+            del dictData
             print("提交服务器失败,失败次数:" + dict['reLoadCount'], data)
         del data
         # logUtils.info("----")
