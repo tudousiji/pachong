@@ -1,11 +1,13 @@
 import config.config as appConfig
-import utils
+import utils.taobaokeUtils
 import json
 import taobaoBuyInventory.config
 import time
 import gc
 import urllib
 import sys
+import utils.netUtils
+import utils.utils
 
 class buyInventoryItemUtils:
     def getData(self):
