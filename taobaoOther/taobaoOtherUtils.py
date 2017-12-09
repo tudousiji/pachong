@@ -155,8 +155,8 @@ class taobaoOtherUtils:
         if (data['isSuccess']):
             dict['reLoadCount'] = 0;
             logUtils.info("提交服务器成功")
-        elif data['reLoadCount'] <= 20:
-            logUtils.info("提交服务器失败,重试中...,第" + data['reLoadCount'] + "次", data)
+        elif dict['reLoadCount'] <= 20:
+            logUtils.info("提交服务器失败,重试中...,第" + dict['reLoadCount'] + "次", data)
             time.sleep(dict['reLoadCount'] * 10)
             dict['reLoadCount'] = dict['reLoadCount'] + 1
             self.postData(self, dict, lists)
