@@ -97,7 +97,7 @@ class buyInventoryItemUtils:
 
     def itemHandleData(self, contentId):
         cookiesDict = utils.taobaokeUtils.taobaokeUtils.getCookies();
-        url = self.getItemUrl(cookiesDict['cookies'], contentId);
+        url = self.getItemUrl(cookiesDict['cookies'], "200372126928");
 
         dict = {
             'url': url,
@@ -112,11 +112,11 @@ class buyInventoryItemUtils:
         del url
         return self.getItemData(dict, contentId)
 
-    def getItemData(self, dict, contentId):
+    def getItemData(self, postDict, contentId):
 
-        data = utils.netUtils.netUtils.getData(dict);
+        data = utils.netUtils.netUtils.getData(postDict);
         print("getItemData:" + str(contentId) + "-->" + str(data))
-        print(dict['url'])
+        print(postDict['url'])
         print("--------")
         if (data['isSuccess']):
             if (data['body'] is not None):
@@ -162,6 +162,7 @@ class buyInventoryItemUtils:
                                                     textDict = {
                                                         "text": resourceItem["text"]
                                                     }
+                                                    # print("style:"+str(type(item["style"]) == dict))
                                                     if "style" in item and item["style"] is not None and type(
                                                             item["style"]) == dict:
                                                         if "textAlign" in item["style"] and item["style"][
@@ -173,6 +174,9 @@ class buyInventoryItemUtils:
 
                                                     #print("textDict:"+str(textDict))
                                                     richTextList.append(textDict)
+                                                    # print("textDict:"+str(textDict))
+                                                    # print("body:"+str(body))
+                                                    #sys.exit(0)
                                                     del textDict
                                                 elif "picture" in resourceItem and resourceItem["picture"] is not None:
                                                     pictureDict = {
@@ -314,17 +318,17 @@ class buyInventoryItemUtils:
                             return None
                     elif str(body['ret']).startswith("['107::") is True:
                         return None
-                    elif (dict['reLoadList']):
-                        return self.reLoadItem(data, dict, contentId);
+                    elif (postDict['reLoadList']):
+                        return self.reLoadItem(data, postDict, contentId);
                     else:
                         del data
                         return None;
                 else:
-                    return self.reLoadItem(data, dict, contentId);
+                    return self.reLoadItem(data, postDict, contentId);
             else:
-                return self.reLoadItem(data, dict, contentId);
+                return self.reLoadItem(data, postDict, contentId);
         else:
-            return self.reLoadItem(data, dict, contentId);
+            return self.reLoadItem(data, postDict, contentId);
 
     def __itemsItemList(self, items):
 

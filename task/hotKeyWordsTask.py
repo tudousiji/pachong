@@ -1,9 +1,15 @@
 import os
-import hotKeyWord.keyWordUtils
+import sys
+
+# import hotKeyWord.keyWordUtils
+# __import__("../hotKeyWord/keyWordUtils.py")
+# logUtils=__import__("logUtils.py")
+sys.path.append("..")
 from task.logUtils import logUtils
+from hotKeyWord.keyWordUtils import keyWordUtils
 
 class hotKeyWordsTask:
-    hotKeyWordsLockFile = "lockFile" + os.path.sep + "taobaoInfo.lock"
+    hotKeyWordsLockFile = ".." + os.path.sep + "lockFile" + os.path.sep + "taobaoInfo.lock"
 
     def __init__(self):
 
@@ -21,4 +27,7 @@ class hotKeyWordsTask:
         logUtils.info("退出程序")
 
     def actionTask(self):
-        hotKeyWord.keyWordUtils.keyWordUtils().getHotKeyWords()
+        keyWordUtils().getHotKeyWords()
+
+
+hotKeyWordsTask().actionTask()

@@ -1,9 +1,12 @@
 import os
+import sys
+
+sys.path.append("..")
 import taobaoOther.taobaoOtherUtils
 from task.logUtils import logUtils
 
 class taobaoOtherTask:
-    taobaoLockFile = "lockFile" + os.path.sep + "taobaoInfo.lock"
+    taobaoLockFile = ".." + os.path.sep + "lockFile" + os.path.sep + "taobaoInfo.lock"
     def __init__(self):
 
         if (os.path.exists(taobaoOtherTask.taobaoLockFile)):
@@ -21,3 +24,6 @@ class taobaoOtherTask:
 
     def actionTask(self):
         taobaoOther.taobaoOtherUtils.taobaoOtherUtils().getData()
+
+
+taobaoOtherTask().actionTask();

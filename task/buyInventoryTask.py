@@ -1,11 +1,13 @@
 import os
+import sys
+
+sys.path.append("..")
 import taobaoBuyInventory.buyInventoryUtils
-import os
 from task.logUtils import logUtils
 
 
 class buyInventoryTask:
-    buyInventoryTaskLockFile = "lockFile" + os.path.sep + "buyInventory.lock"
+    buyInventoryTaskLockFile = ".." + os.path.sep + "lockFile" + os.path.sep + "buyInventory.lock"
 
     def __init__(self):
 
@@ -24,3 +26,6 @@ class buyInventoryTask:
 
     def actionTask(self):
         taobaoBuyInventory.buyInventoryUtils.buyInventoryUtils().getData()
+
+
+buyInventoryTask().actionTask()

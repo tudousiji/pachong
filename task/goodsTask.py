@@ -1,10 +1,14 @@
 import os
+import sys
+
+sys.path.append("..")
 import goods.goodsList
-import os
 from task.logUtils import logUtils
 
+print(os.getcwd())  # 获得当前工作目录
+exit(0)
 class goodsTask:
-    goodsTaskLockFile = "lockFile" + os.path.sep + "goods.lock"
+    goodsTaskLockFile = ".." + os.path.sep + "lockFile" + os.path.sep + "goods.lock"
 
     def __init__(self):
 
@@ -23,3 +27,6 @@ class goodsTask:
 
     def actionTask(self):
         goods.goodsList.goodsList().getData()
+
+
+goodsTask().actionTask();

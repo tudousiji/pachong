@@ -4,6 +4,7 @@ import utils.netUtils
 import config.config as appConfig
 import json
 import config.config
+import utils.taobaokeUtils
 from taobaoBuyInventory.logUtils import logUtils
 import taobaoOther.baiduKeyWordsPos
 

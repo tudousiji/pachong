@@ -4,7 +4,7 @@ import time
 class logUtils:
 
     logFileTime=None
-    logRootDirectory="."+os.path.sep+"logDirectory"+os.path.sep
+    logRootDirectory = ".." + os.path.sep + "logDirectory" + os.path.sep
 
     @staticmethod
     def info(moduleName=None,msg=None):
