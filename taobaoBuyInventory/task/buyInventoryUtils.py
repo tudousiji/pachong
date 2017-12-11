@@ -1,6 +1,7 @@
 import taobaoBuyInventory.config
 import time
 import utils.netUtils
+import utils.taobaokeUtils
 import config.config as appConfig
 import json
 import config.config
@@ -83,6 +84,7 @@ class buyInventoryUtils:
                                 'data': contentIdList,
                                 'page': page,
                                 'cateId': cateId,
+                                'contentId': 0,
                             }
                             logUtils.info("哈哈------------------------------")
                             self.postContentId(postDict, cateId, dict, page, pageSize, psId, sceneId)
