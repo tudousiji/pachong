@@ -99,7 +99,7 @@ class buyInventoryItemUtils:
 
     def itemHandleData(self, contentId):
         cookiesDict = utils.taobaokeUtils.taobaokeUtils.getCookies();
-        url = self.getItemUrl(cookiesDict['cookies'], "200372126928");
+        url = self.getItemUrl(cookiesDict['cookies'], contentId);
 
         dict = {
             'url': url,
@@ -173,6 +173,8 @@ class buyInventoryItemUtils:
                                                                 textDict["type"] = 0  # 0是标题 center属性
                                                             elif item["style"]["textAlign"] == "center":
                                                                 textDict["type"] = 1  # 1是文字 left属性
+                                                            else:
+                                                                textDict["type"] = 1  # 1是未知
 
                                                     #print("textDict:"+str(textDict))
                                                     richTextList.append(textDict)
@@ -354,6 +356,9 @@ class buyInventoryItemUtils:
                     itemsItemDict["itemQualityDTO"] = itemsItem["itemQualityDTO"]
                 if "itemQualityDTO" in itemsItem:
                     itemsItemDict["itemQualityDTO"] = itemsItem["itemQualityDTO"]
+                if "itemDescription" in itemsItem:
+                    itemsItemDict["itemDescription"] = itemsItem["itemDescription"]
+
                 itemsItemList.append(itemsItemDict)
             print("__itemsItemList:" + str(itemsItemList))
             print("")
@@ -376,6 +381,8 @@ class buyInventoryItemUtils:
                 itemsItemDict["itemPriceDTO"] = items["itemPriceDTO"]
             if "itemQualityDTO" in items:
                 itemsItemDict["itemQualityDTO"] = items["itemQualityDTO"]
+            if "itemDescription" in items:
+                itemsItemDict["itemDescription"] = items["itemDescription"]
             return itemsItemDict
         else:
             return None;
